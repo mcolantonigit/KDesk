@@ -75,22 +75,19 @@ Podrá:
 
 ## Administrador
 
-Perfil previsto para futuras versiones.
-
 Será responsable de la administración general del sistema.
 
 Entre otras funciones podrá:
 
 - Administrar usuarios.
 - Administrar técnicos.
+- Blanquear credenciales de otros usuarios.
 - Administrar sucursales.
 - Administrar categorías.
 - Configurar prioridades.
 - Configurar estados.
 - Administrar permisos.
 - Acceder a estadísticas generales.
-
-La arquitectura deberá contemplar este perfil desde el inicio aunque no sea implementado en la primera versión.
 
 ---
 
@@ -168,7 +165,10 @@ Se desarrollarán las funcionalidades necesarias para:
 - prioridades;
 - comentarios;
 - historial;
-- panel del Departamento de Sistemas.
+- panel del Departamento de Sistemas;
+- panel de administración (usuarios, técnicos, sucursales, categorías, prioridades, estados, permisos y estadísticas generales);
+- adjuntos en tickets, comentarios y tareas técnicas;
+- estadísticas.
 
 No formarán parte de la primera versión:
 
@@ -177,7 +177,6 @@ No formarán parte de la primera versión:
 - Integración con WhatsApp.
 - Automatización de creación de tickets.
 - Notificaciones automáticas.
-- Dashboard analítico avanzado.
 - Base de conocimiento.
 
 Estas funcionalidades serán incorporadas en futuras versiones.

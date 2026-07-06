@@ -154,7 +154,7 @@ Inicialmente existirán los siguientes tipos:
 - Cambio de Contraseña
 - Otro
 
-La arquitectura deberá permitir agregar nuevos tipos en futuras versiones.
+El Administrador podrá agregar, editar y dar de baja tipos de ticket desde el Panel de Administración (ver RF-024).
 
 ---
 
@@ -172,7 +172,7 @@ Estados iniciales:
 - Cerrado
 - Cancelado
 
-La arquitectura deberá permitir agregar nuevos estados.
+El Administrador podrá agregar, editar y dar de baja estados desde el Panel de Administración (ver RF-024).
 
 ---
 
@@ -190,6 +190,8 @@ Prioridades disponibles:
 El usuario podrá sugerir una prioridad.
 
 La prioridad definitiva será establecida por un Técnico.
+
+El Administrador podrá configurar las prioridades disponibles desde el Panel de Administración (ver RF-024).
 
 ---
 
@@ -242,6 +244,7 @@ Como mínimo deberán registrarse:
 - Cambios de responsable
 - Comentarios
 - Eliminación de comentarios
+- Adjuntos agregados o eliminados
 - Cierre
 
 El historial nunca podrá eliminarse.
@@ -360,17 +363,24 @@ Cada ticket almacenará automáticamente:
 
 # RF-019 - Adjuntos
 
-Funcionalidad prevista para futuras versiones.
+El sistema permitirá adjuntar archivos en:
 
-Permitirá adjuntar archivos tanto a usuarios como a Técnicos.
+- Tickets.
+- Comentarios.
+- Tareas técnicas.
+
+Tanto Usuarios como Técnicos podrán adjuntar archivos, según su nivel de acceso a cada elemento (por ejemplo, las tareas técnicas solo son visibles para el Departamento de Sistemas, según RF-011).
+
+## Restricciones
+
+- Tamaño máximo por archivo (valor a definir).
+- Tipos de archivo permitidos (valor a definir).
 
 ---
 
 # RF-020 - Estadísticas
 
-Funcionalidad prevista para futuras versiones.
-
-Permitirá obtener indicadores sobre:
+El sistema permitirá obtener indicadores sobre:
 
 - Tickets por sucursal
 - Tickets por sector
@@ -378,6 +388,8 @@ Permitirá obtener indicadores sobre:
 - Tiempos de resolución
 - Prioridades
 - Tipos de Ticket
+
+Estas estadísticas serán accesibles desde el Panel de Administración (ver RF-024).
 
 ---
 
@@ -418,3 +430,26 @@ La arquitectura deberá permitir futuras integraciones con:
 - Base de conocimiento
 
 Estas integraciones deberán poder incorporarse sin modificar el núcleo funcional del sistema.
+
+---
+
+# RF-024 - Panel de Administración
+
+El rol Administrador dispondrá de un panel exclusivo para la administración general del sistema.
+
+## Requisitos
+
+- Administrar usuarios: alta, edición y baja.
+- Administrar técnicos: alta, edición y baja.
+- Blanquear las credenciales de cualquier usuario o técnico.
+- Administrar sucursales: alta, edición y baja.
+- Administrar categorías (tipos de ticket, ver RF-006): alta, edición y baja.
+- Configurar las prioridades disponibles (ver RF-008).
+- Configurar los estados disponibles (ver RF-007).
+- Administrar permisos por rol.
+- Acceder a las estadísticas generales del sistema (ver RF-020).
+
+## Restricciones
+
+- Todas las acciones realizadas desde este panel deberán quedar registradas en la auditoría (ver RF-022).
+- El blanqueo de credenciales no expondrá la contraseña anterior del usuario.

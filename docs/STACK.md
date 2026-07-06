@@ -17,6 +17,7 @@
 
 - PostgreSQL
 - SQL puro (sin ORM)
+- pg (driver de conexión a PostgreSQL)
 
 # Autenticación
 
@@ -57,6 +58,7 @@ Claude puede utilizar libremente:
 - jsonwebtoken
 - multer
 - nodemon
+- pg
 
 ---
 
