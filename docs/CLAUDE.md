@@ -13,3 +13,11 @@ Consultar FUNCTIONAL_REQUIREMENTS.md únicamente si la funcionalidad a implement
 Nunca asumir requisitos que no estén documentados.
 
 Si existe una contradicción entre documentos, detener la implementación y consultar.
+
+---
+
+# Gestión de contexto
+
+Si el consumo de contexto/tokens de la conversación se acerca a un nivel alto, avisar a Matías y sugerir hacer `/compact`.
+
+No compactar por cuenta propia: esperar su autorización antes de hacerlo.
