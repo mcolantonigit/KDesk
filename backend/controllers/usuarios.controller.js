@@ -57,7 +57,8 @@ export async function login(req, res) {
   }
 }
 
-export function logout(req, res) {
+export async function logout(req, res) {
+  await usuariosService.cerrarSesion(req.usuario);
   res.clearCookie('token');
   res.json({ message: 'Sesión cerrada' });
 }

@@ -16,6 +16,16 @@ Si existe una contradicción entre documentos, detener la implementación y cons
 
 ---
 
+# Roadmap
+
+`docs/ROADMAP.md` traduce PROJECT.md y FUNCTIONAL_REQUIREMENTS.md en un checklist de implementación.
+
+Cada vez que se complete una tarea que figure en ese checklist, marcar su checkbox como hecho (`- [x]`) en el mismo commit o inmediatamente después.
+
+Si una tarea nueva no está contemplada en el roadmap, agregarla en la sección correspondiente antes de darla por terminada.
+
+---
+
 # Gestión de contexto
 
 Si el consumo de contexto/tokens de la conversación se acerca a un nivel alto, avisar a Matías y sugerir hacer `/compact`.

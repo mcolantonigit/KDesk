@@ -1,4 +1,5 @@
 import * as usuariosModel from '../models/usuarios.model.js';
+import * as auditoriaService from './auditoria.service.js';
 import { hashPassword, compararPassword } from '../utils/password.util.js';
 import { generarToken } from '../utils/jwt.util.js';
 
@@ -30,7 +31,15 @@ export async function registrarUsuario({ nombre, apellido, correo, password, idR
 
   const passwordHash = await hashPassword(password);
 
-  return usuariosModel.create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector });
+  const usuario = await usuariosModel.create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector });
+
+  await auditoriaService.registrarEvento({
+    idUsuario: usuario.id,
+    accion: 'REGISTRO',
+    detalle: `Alta de usuario (${usuario.correo})`,
+  });
+
+  return usuario;
 }
 
 export async function autenticarUsuario({ correo, password }) {
@@ -48,5 +57,19 @@ export async function autenticarUsuario({ correo, password }) {
 
   const token = generarToken({ id: usuario.id, correo: usuario.correo, idRol: usuario.id_rol });
 
+  await auditoriaService.registrarEvento({
+    idUsuario: usuario.id,
+    accion: 'LOGIN',
+    detalle: `Inicio de sesión (${usuario.correo})`,
+  });
+
   return { token, usuario: usuarioSinPassword };
+}
+
+export async function cerrarSesion({ id, correo }) {
+  await auditoriaService.registrarEvento({
+    idUsuario: id,
+    accion: 'LOGOUT',
+    detalle: `Cierre de sesión (${correo})`,
+  });
 }
