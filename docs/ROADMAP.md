@@ -45,10 +45,10 @@ de como una etapa propia al final.
 
 # 3. Perfil de usuario (RF-003)
 
-- [ ] Endpoint para ver el propio perfil (nombre, apellido, correo,
+- [x] Endpoint para ver el propio perfil (nombre, apellido, correo,
       sucursal, sector, fecha de registro)
-- [ ] Endpoint para cambiar la propia contraseña
-- [ ] Auditoría: registrar cambio de contraseña
+- [x] Endpoint para cambiar la propia contraseña
+- [x] Auditoría: registrar cambio de contraseña
 
 ---
 

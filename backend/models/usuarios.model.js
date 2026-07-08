@@ -20,6 +20,15 @@ export async function findByCorreo(correo) {
   return result.rows[0];
 }
 
+export async function findPasswordHashById(id) {
+  const result = await pool.query('SELECT password_hash FROM usuarios WHERE id = $1', [id]);
+  return result.rows[0]?.password_hash;
+}
+
+export async function updatePassword(id, passwordHash) {
+  await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [passwordHash, id]);
+}
+
 export async function create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector }) {
   const result = await pool.query(
     `INSERT INTO usuarios (nombre, apellido, correo, password_hash, id_rol, id_sucursal, id_sector)

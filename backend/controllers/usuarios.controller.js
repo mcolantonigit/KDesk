@@ -39,6 +39,34 @@ export async function register(req, res) {
   }
 }
 
+export async function getPerfil(req, res) {
+  try {
+    const usuario = await usuariosService.getUsuarioById(req.usuario.id);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ message: 'No se pudo obtener el perfil' });
+  }
+}
+
+export async function cambiarPassword(req, res) {
+  try {
+    const { passwordActual, passwordNueva, confirmacion } = req.body;
+    await usuariosService.cambiarPassword({
+      id: req.usuario.id,
+      correo: req.usuario.correo,
+      passwordActual,
+      passwordNueva,
+      confirmacion,
+    });
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cambiar la contraseña' });
+  }
+}
+
 export async function login(req, res) {
   try {
     const { correo, password } = req.body;

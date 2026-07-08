@@ -66,6 +66,31 @@ export async function autenticarUsuario({ correo, password }) {
   return { token, usuario: usuarioSinPassword };
 }
 
+export async function cambiarPassword({ id, correo, passwordActual, passwordNueva, confirmacion }) {
+  if (passwordNueva !== confirmacion) {
+    throw crearError('La nueva contraseña y su confirmación no coinciden', 400);
+  }
+
+  const passwordHashActual = await usuariosModel.findPasswordHashById(id);
+  if (!passwordHashActual) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  const passwordActualValida = await compararPassword(passwordActual, passwordHashActual);
+  if (!passwordActualValida) {
+    throw crearError('La contraseña actual es incorrecta', 401);
+  }
+
+  const passwordHashNuevo = await hashPassword(passwordNueva);
+  await usuariosModel.updatePassword(id, passwordHashNuevo);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: id,
+    accion: 'CAMBIO_PASSWORD',
+    detalle: `Cambio de contraseña (${correo})`,
+  });
+}
+
 export async function cerrarSesion({ id, correo }) {
   await auditoriaService.registrarEvento({
     idUsuario: id,
