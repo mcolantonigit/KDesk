@@ -70,18 +70,29 @@ de como una etapa propia al final.
 
 # 5. Comentarios, tareas técnicas e historial (RF-010, RF-011, RF-012)
 
-- [ ] Conector de `comentarios` (crear, listar, eliminar lógico)
-- [ ] Conector de `tareas_tecnicas` (crear, listar, marcar completada)
-- [ ] Conector de `historial_ticket` (registro cronológico de eventos)
-- [ ] Enganchar historial automáticamente a: creación, cambios de estado,
+- [x] Conector de `comentarios` (crear, listar, eliminar lógico; borra el
+      autor o un técnico/administrador)
+- [x] Conector de `tareas_tecnicas` (crear, listar, marcar completada;
+      solo visibles/administrables por técnicos y administradores)
+- [x] Conector de `historial_ticket` (registro cronológico de eventos)
+- [x] Enganchar historial automáticamente a: creación, cambios de estado,
       cambios de prioridad, cambios de responsable, comentarios,
-      eliminación de comentarios, adjuntos, cierre
-- [ ] Auditoría: registrar creación/eliminación de comentarios y tareas
+      eliminación de comentarios, tareas creadas/completadas
+- [x] Enganchar historial a adjuntos agregados/eliminados (resuelto en
+      la etapa 7, junto con el conector de `adjuntos`)
+- [x] Auditoría (tabla `auditoria`): solo aplica a altas/modificaciones
+      del ticket en sí (creación, cambio de estado/prioridad/responsable),
+      ya cubierto en `tickets.service.js`. Comentarios y tareas técnicas
+      son sub-entidades del ticket: quedan registrados en
+      `historial_ticket`, no en la auditoría general del sistema.
 
 ---
 
 # 6. Paneles (RF-013, RF-014, RF-015, RF-016, RF-017)
 
+- [ ] Pantallas de login y registro (frontend, consumen
+      `POST /usuarios/login` y `POST /usuarios/register`, ya
+      implementados en el backend)
 - [ ] Panel de usuario: solo sus propios tickets
 - [ ] Panel del Departamento de Sistemas: todos los tickets
 - [ ] Vista lista y vista tarjetas
@@ -93,9 +104,13 @@ de como una etapa propia al final.
 
 # 7. Adjuntos (RF-019)
 
-- [ ] Conector de `adjuntos` (tickets, comentarios, tareas técnicas)
-- [ ] Restricciones de tamaño y tipo de archivo (valores a definir)
-- [ ] Auditoría: registrar adjuntos agregados o eliminados
+- [x] Conector de `adjuntos` (tickets, comentarios, tareas técnicas):
+      subir, listar, descargar y eliminar (autor o técnico/administrador)
+- [x] Restricciones: máximo 500MB por archivo; tipos permitidos: imágenes
+      (jpg, png, webp, gif), PDF, txt, Word y Excel
+- [x] Historial: registrar adjuntos agregados o eliminados en
+      `historial_ticket` (sub-entidad del ticket, no va a la auditoría
+      general del sistema, mismo criterio que comentarios y tareas)
 
 ---
 
@@ -115,6 +130,14 @@ de como una etapa propia al final.
 
 # 9. Roles y permisos (RF-021)
 
-- [ ] Middleware/lógica de autorización por rol (Usuario, Técnico,
-      Administrador), reutilizando `req.usuario` que ya arma el
+- [x] Middleware de autorización por rol: `requiereRolTecnico` (técnico
+      o administrador, tratados como "personal del sistema" con el
+      mismo nivel de acceso) reutilizando `req.usuario` que arma el
       middleware de autenticación
+- [x] Rutas protegidas según rol: cambios de estado/prioridad/responsable
+      y tareas técnicas de tickets; listado general de usuarios
+      (`GET /usuarios`, `GET /usuarios/:id`) restringido a personal del
+      sistema, no a usuarios convencionales
+- [ ] Revisar si en el futuro hace falta distinguir permisos entre
+      técnico y administrador (por ahora se tratan igual, según lo
+      definido: "los técnicos son administradores del sistema")

@@ -9,6 +9,10 @@ import estadosRoutes from './routes/estados.routes.js';
 import prioridadesRoutes from './routes/prioridades.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import ticketsRoutes from './routes/tickets.routes.js';
+import comentariosRoutes from './routes/comentarios.routes.js';
+import tareasTecnicasRoutes from './routes/tareasTecnicas.routes.js';
+import historialRoutes from './routes/historial.routes.js';
+import adjuntosRoutes from './routes/adjuntos.routes.js';
 
 const app = express();
 
@@ -24,5 +28,9 @@ app.use('/api', estadosRoutes);
 app.use('/api', prioridadesRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', ticketsRoutes);
+app.use('/api', comentariosRoutes);
+app.use('/api', tareasTecnicasRoutes);
+app.use('/api', historialRoutes);
+app.use('/api', adjuntosRoutes);
 
 export default app;

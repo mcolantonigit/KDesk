@@ -5,6 +5,7 @@ import * as estadosModel from '../models/estados.model.js';
 import * as prioridadesModel from '../models/prioridades.model.js';
 import * as rolesService from './roles.service.js';
 import * as auditoriaService from './auditoria.service.js';
+import * as historialService from './historial.service.js';
 
 const ESTADO_INICIAL = 'Pendiente';
 const TITULO_LONGITUD_MAXIMA = 200;
@@ -48,6 +49,13 @@ export async function crearTicket({ idUsuarioCreador, idTipo, idPrioridadSugerid
     idUsuario: idUsuarioCreador,
     accion: 'CREACION_TICKET',
     detalle: `Creación de ticket ${ticket.numero} (${ticket.titulo})`,
+  });
+
+  await historialService.registrarEvento({
+    idTicket: ticket.id,
+    idUsuario: idUsuarioCreador,
+    evento: 'CREACION',
+    detalle: `Ticket ${ticket.numero} creado`,
   });
 
   return ticket;
@@ -94,6 +102,13 @@ export async function cambiarEstado({ idTicket, idEstado, idUsuarioQueCambia }) 
     detalle: `Ticket ${ticket.numero}: estado -> ${estado.nombre}`,
   });
 
+  await historialService.registrarEvento({
+    idTicket,
+    idUsuario: idUsuarioQueCambia,
+    evento: 'CAMBIO_ESTADO',
+    detalle: `Ticket ${ticket.numero}: estado -> ${estado.nombre}`,
+  });
+
   return ticketActualizado;
 }
 
@@ -113,6 +128,13 @@ export async function cambiarPrioridad({ idTicket, idPrioridad, idUsuarioQueCamb
   await auditoriaService.registrarEvento({
     idUsuario: idUsuarioQueCambia,
     accion: 'CAMBIO_PRIORIDAD',
+    detalle: `Ticket ${ticket.numero}: prioridad -> ${prioridad.nombre}`,
+  });
+
+  await historialService.registrarEvento({
+    idTicket,
+    idUsuario: idUsuarioQueCambia,
+    evento: 'CAMBIO_PRIORIDAD',
     detalle: `Ticket ${ticket.numero}: prioridad -> ${prioridad.nombre}`,
   });
 
@@ -140,6 +162,13 @@ export async function asignarResponsable({ idTicket, idTecnicoResponsable, idUsu
   await auditoriaService.registrarEvento({
     idUsuario: idUsuarioQueCambia,
     accion: 'CAMBIO_RESPONSABLE',
+    detalle: `Ticket ${ticket.numero}: responsable -> ${tecnico.nombre} ${tecnico.apellido}`,
+  });
+
+  await historialService.registrarEvento({
+    idTicket,
+    idUsuario: idUsuarioQueCambia,
+    evento: 'CAMBIO_RESPONSABLE',
     detalle: `Ticket ${ticket.numero}: responsable -> ${tecnico.nombre} ${tecnico.apellido}`,
   });
 

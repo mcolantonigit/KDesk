@@ -1,0 +1,62 @@
+import * as tareasModel from '../models/tareasTecnicas.model.js';
+import * as ticketsModel from '../models/tickets.model.js';
+import * as historialService from './historial.service.js';
+
+function crearError(mensaje, status) {
+  const error = new Error(mensaje);
+  error.status = status;
+  return error;
+}
+
+export async function crearTarea({ idTicket, descripcion, idUsuarioCreador }) {
+  if (!descripcion || !descripcion.trim()) {
+    throw crearError('La descripción de la tarea es obligatoria', 400);
+  }
+
+  const ticket = await ticketsModel.findById(idTicket);
+  if (!ticket) {
+    throw crearError('Ticket no encontrado', 404);
+  }
+
+  const tarea = await tareasModel.create({ idTicket, descripcion });
+
+  await historialService.registrarEvento({
+    idTicket,
+    idUsuario: idUsuarioCreador,
+    evento: 'TAREA_CREADA',
+    detalle: `Ticket ${ticket.numero}: tarea creada (${descripcion})`,
+  });
+
+  return tarea;
+}
+
+export async function listarTareasDeTicket(idTicket) {
+  const ticket = await ticketsModel.findById(idTicket);
+  if (!ticket) {
+    throw crearError('Ticket no encontrado', 404);
+  }
+
+  return tareasModel.findAllByTicket(idTicket);
+}
+
+export async function completarTarea({ idTarea, idUsuarioQueCompleta }) {
+  const tarea = await tareasModel.findById(idTarea);
+  if (!tarea) {
+    throw crearError('Tarea no encontrada', 404);
+  }
+  if (tarea.completada) {
+    throw crearError('La tarea ya fue completada', 400);
+  }
+
+  const ticket = await ticketsModel.findById(tarea.id_ticket);
+  const tareaActualizada = await tareasModel.marcarCompletada(idTarea);
+
+  await historialService.registrarEvento({
+    idTicket: tarea.id_ticket,
+    idUsuario: idUsuarioQueCompleta,
+    evento: 'TAREA_COMPLETADA',
+    detalle: `Ticket ${ticket.numero}: tarea completada (${tarea.descripcion})`,
+  });
+
+  return tareaActualizada;
+}
