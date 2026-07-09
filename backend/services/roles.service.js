@@ -7,3 +7,8 @@ export async function getRoles() {
 export async function getRoleById(id) {
   return rolesModel.findById(id);
 }
+
+export async function esRolTecnicoOAdministrador(idRol) {
+  const rol = await rolesModel.findById(idRol);
+  return rol?.nombre === 'tecnico' || rol?.nombre === 'administrador';
+}

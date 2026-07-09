@@ -8,6 +8,7 @@ import tiposTicketRoutes from './routes/tiposTicket.routes.js';
 import estadosRoutes from './routes/estados.routes.js';
 import prioridadesRoutes from './routes/prioridades.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
+import ticketsRoutes from './routes/tickets.routes.js';
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use('/api', tiposTicketRoutes);
 app.use('/api', estadosRoutes);
 app.use('/api', prioridadesRoutes);
 app.use('/api', usuariosRoutes);
+app.use('/api', ticketsRoutes);
 
 export default app;

@@ -54,16 +54,16 @@ de como una etapa propia al final.
 
 # 4. Tickets (RF-004, RF-005, RF-006, RF-007, RF-008, RF-009, RF-018)
 
-- [ ] Conector base de `tickets` (crear, listar, obtener por id)
-- [ ] Numeración automática TK-000001 (ya resuelto por trigger en BD,
+- [x] Conector base de `tickets` (crear, listar, obtener por id)
+- [x] Numeración automática TK-000001 (ya resuelto por trigger en BD,
       falta exponerlo/usarlo desde el backend)
-- [ ] Armado automático del nombre descriptivo (Sector - Usuario - Título)
-- [ ] Completar automáticamente: usuario creador, sector, sucursal,
+- [x] Armado automático del nombre descriptivo (Sector - Usuario - Título)
+- [x] Completar automáticamente: usuario creador, sector, sucursal,
       estado inicial, responsable sin asignar
-- [ ] Asignación de responsable (solo un técnico principal)
-- [ ] Cambios de prioridad (sugerida por usuario, definitiva por técnico)
-- [ ] Cambios de estado
-- [ ] Auditoría: registrar creación, cambio de estado, cambio de
+- [x] Asignación de responsable (solo un técnico principal)
+- [x] Cambios de prioridad (sugerida por usuario, definitiva por técnico)
+- [x] Cambios de estado
+- [x] Auditoría: registrar creación, cambio de estado, cambio de
       prioridad y cambio de responsable
 
 ---

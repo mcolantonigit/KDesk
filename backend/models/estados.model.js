@@ -9,3 +9,8 @@ export async function findById(id) {
   const result = await pool.query('SELECT id, nombre, activo FROM estados WHERE id = $1', [id]);
   return result.rows[0];
 }
+
+export async function findByNombre(nombre) {
+  const result = await pool.query('SELECT id, nombre, activo FROM estados WHERE nombre = $1', [nombre]);
+  return result.rows[0];
+}
