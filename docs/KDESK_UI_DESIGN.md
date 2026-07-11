@@ -49,6 +49,39 @@ backdrop-filter: blur(14px)
 
 ---
 
+# Fondo de pantalla
+
+Todas las pantallas (login, registro, paneles, etc.) usan este patrón
+geométrico como fondo del contenedor de página, detrás de las cards de
+vidrio:
+
+```css
+.pagina {
+  --s: 85px; /* controla el tamaño */
+  --c1: #000000;
+  --c2: #001d29;
+
+  --g1: conic-gradient(from 45deg at 62.5% 12.5%, #0000 75%, var(--c1) 0);
+  --g2: conic-gradient(from -45deg at 12.5% 12.5%, #0000 75%, var(--c1) 0);
+  --g3: conic-gradient(from 225deg at 87.5% 87.5%, #0000 75%, var(--c2) 0);
+  --g4: conic-gradient(from 135deg at 87.5% 37.5%, #0000 75%, var(--c2) 0);
+
+  background:
+    var(--g4), var(--g4) var(--s) var(--s),
+    var(--g3), var(--g3) var(--s) var(--s),
+    var(--g2), var(--g2) var(--s) var(--s),
+    var(--g1), var(--g1) var(--s) var(--s),
+    repeating-linear-gradient(135deg, var(--c2) 0 12.5%, var(--c1) 0 25%);
+  background-size: calc(2 * var(--s)) calc(2 * var(--s));
+}
+```
+
+Aplicar como background del contenedor raíz de cada pantalla (no en
+`html`/`body` global), para no interferir con futuros layouts que
+tengan su propio fondo (paneles con sidebar, por ejemplo).
+
+---
+
 # Paleta
 
 ## Fondo principal

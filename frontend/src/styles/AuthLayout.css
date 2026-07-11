@@ -1,0 +1,71 @@
+.auth-bg {
+  --s: 85px;
+  --c1: #000000;
+  --c2: #001d29;
+
+  --g1: conic-gradient(from 45deg at 62.5% 12.5%, #0000 75%, var(--c1) 0);
+  --g2: conic-gradient(from -45deg at 12.5% 12.5%, #0000 75%, var(--c1) 0);
+  --g3: conic-gradient(from 225deg at 87.5% 87.5%, #0000 75%, var(--c2) 0);
+  --g4: conic-gradient(from 135deg at 87.5% 37.5%, #0000 75%, var(--c2) 0);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100svh;
+  padding: 24px;
+  background:
+    var(--g4), var(--g4) var(--s) var(--s),
+    var(--g3), var(--g3) var(--s) var(--s),
+    var(--g2), var(--g2) var(--s) var(--s),
+    var(--g1), var(--g1) var(--s) var(--s),
+    repeating-linear-gradient(135deg, var(--c2) 0 12.5%, var(--c1) 0 25%);
+  background-size: calc(2 * var(--s)) calc(2 * var(--s));
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 360px;
+  max-width: 100%;
+  padding: 40px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  backdrop-filter: var(--blur);
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+.auth-logo {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.auth-card h1 {
+  font-size: 28px;
+  text-align: center;
+}
+
+.auth-error {
+  color: var(--error);
+  font-size: 14px;
+  text-align: center;
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.auth-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.auth-links a:hover {
+  color: var(--accent);
+}

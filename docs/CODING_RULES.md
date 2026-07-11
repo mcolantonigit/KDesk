@@ -40,6 +40,11 @@ Versión: 1.0
 
 - Toda comunicación HTTP deberá realizarse desde `services`.
 - No mezclar lógica de negocio con componentes visuales.
+- Matías deja el servidor de desarrollo (`npm run dev` del frontend)
+  corriendo en su propia terminal para ver los cambios en vivo (HMR).
+  Nunca matar ni reiniciar ese proceso al verificar cambios; si hace
+  falta levantar un servidor para probar algo (screenshots, curl),
+  usar un puerto/proceso aparte y no tocar el que ya está corriendo.
 
 ---
 

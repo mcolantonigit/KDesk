@@ -1,0 +1,30 @@
+.panel-layout {
+  min-height: 100svh;
+  background: var(--bg);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-brand {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.panel-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.panel-content {
+  padding: 32px;
+}

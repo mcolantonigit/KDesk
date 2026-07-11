@@ -397,11 +397,19 @@ Estas estadísticas serán accesibles desde el Panel de Administración (ver RF-
 
 Inicialmente existirán tres roles.
 
-- Usuario
-- Técnico
-- Administrador
+- Usuario (rol 1)
+- Técnico (rol 2)
+- Administrador (rol 3)
 
 Cada funcionalidad estará protegida según el rol correspondiente.
+
+## Usuario maestro
+
+El rol Administrador (rol 3) queda reservado exclusivamente para el
+usuario maestro `sistemas@kalop.com.ar`. Ese usuario no se crea por el
+flujo de registro público: se da de alta y se le asigna el rol 3
+manualmente (por ejemplo, directamente en la base de datos). Ningún
+otro usuario podrá tener el rol 3.
 
 ---
 
@@ -446,10 +454,15 @@ El rol Administrador dispondrá de un panel exclusivo para la administración ge
 - Administrar categorías (tipos de ticket, ver RF-006): alta, edición y baja.
 - Configurar las prioridades disponibles (ver RF-008).
 - Configurar los estados disponibles (ver RF-007).
-- Administrar permisos por rol.
+- Administrar permisos por rol: el usuario maestro (ver RF-021) podrá
+  cambiar el rol de cualquier otro usuario registrado, asignando
+  únicamente rol 1 (Usuario) o rol 2 (Técnico).
 - Acceder a las estadísticas generales del sistema (ver RF-020).
 
 ## Restricciones
 
 - Todas las acciones realizadas desde este panel deberán quedar registradas en la auditoría (ver RF-022).
 - El blanqueo de credenciales no expondrá la contraseña anterior del usuario.
+- El cambio de rol nunca podrá asignar el rol 3 (Administrador): ese
+  rol queda reservado al usuario maestro `sistemas@kalop.com.ar` (ver
+  RF-021).

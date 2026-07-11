@@ -90,7 +90,7 @@ de como una etapa propia al final.
 
 # 6. Paneles (RF-013, RF-014, RF-015, RF-016, RF-017)
 
-- [ ] Pantallas de login y registro (frontend, consumen
+- [x] Pantallas de login y registro (frontend, consumen
       `POST /usuarios/login` y `POST /usuarios/register`, ya
       implementados en el backend)
 - [ ] Panel de usuario: solo sus propios tickets
