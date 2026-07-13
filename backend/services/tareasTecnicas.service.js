@@ -39,6 +39,48 @@ export async function listarTareasDeTicket(idTicket) {
   return tareasModel.findAllByTicket(idTicket);
 }
 
+export async function editarTarea({ idTarea, descripcion, idUsuarioQueEdita }) {
+  if (!descripcion || !descripcion.trim()) {
+    throw crearError('La descripción de la tarea es obligatoria', 400);
+  }
+
+  const tarea = await tareasModel.findById(idTarea);
+  if (!tarea) {
+    throw crearError('Tarea no encontrada', 404);
+  }
+
+  const ticket = await ticketsModel.findById(tarea.id_ticket);
+  const tareaActualizada = await tareasModel.updateDescripcion(idTarea, descripcion);
+
+  await historialService.registrarEvento({
+    idTicket: tarea.id_ticket,
+    idUsuario: idUsuarioQueEdita,
+    evento: 'TAREA_EDITADA',
+    detalle: `Ticket ${ticket.numero}: tarea editada (${descripcion})`,
+  });
+
+  return tareaActualizada;
+}
+
+export async function eliminarTarea({ idTarea, idUsuarioQueElimina }) {
+  const tarea = await tareasModel.findById(idTarea);
+  if (!tarea) {
+    throw crearError('Tarea no encontrada', 404);
+  }
+
+  const ticket = await ticketsModel.findById(tarea.id_ticket);
+  await tareasModel.deleteById(idTarea);
+
+  await historialService.registrarEvento({
+    idTicket: tarea.id_ticket,
+    idUsuario: idUsuarioQueElimina,
+    evento: 'TAREA_ELIMINADA',
+    detalle: `Ticket ${ticket.numero}: tarea eliminada (${tarea.descripcion})`,
+  });
+
+  return tarea;
+}
+
 export async function completarTarea({ idTarea, idUsuarioQueCompleta }) {
   const tarea = await tareasModel.findById(idTarea);
   if (!tarea) {

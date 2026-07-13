@@ -7,5 +7,7 @@ const router = Router();
 router.post('/tickets/:idTicket/tareas', requiereAutenticacion, requiereRolTecnico, tareasController.crearTarea);
 router.get('/tickets/:idTicket/tareas', requiereAutenticacion, requiereRolTecnico, tareasController.getTareas);
 router.patch('/tareas/:id/completar', requiereAutenticacion, requiereRolTecnico, tareasController.completarTarea);
+router.patch('/tareas/:id', requiereAutenticacion, requiereRolTecnico, tareasController.editarTarea);
+router.delete('/tareas/:id', requiereAutenticacion, requiereRolTecnico, tareasController.eliminarTarea);
 
 export default router;

@@ -20,3 +20,23 @@ export async function getSucursalById(req, res) {
     res.status(500).json({ message: 'No se pudo obtener la sucursal' });
   }
 }
+
+export async function crearSucursal(req, res) {
+  try {
+    const { nombre } = req.body;
+    const sucursal = await sucursalesService.crearSucursal({ nombre });
+    res.status(201).json(sucursal);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo crear la sucursal' });
+  }
+}
+
+export async function editarSucursal(req, res) {
+  try {
+    const { nombre, activo } = req.body;
+    const sucursal = await sucursalesService.editarSucursal(req.params.id, { nombre, activo });
+    res.json(sucursal);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo editar la sucursal' });
+  }
+}

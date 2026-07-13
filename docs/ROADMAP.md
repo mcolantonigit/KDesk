@@ -72,8 +72,15 @@ de como una etapa propia al final.
 
 - [x] Conector de `comentarios` (crear, listar, eliminar lógico; borra el
       autor o un técnico/administrador)
-- [x] Conector de `tareas_tecnicas` (crear, listar, marcar completada;
-      solo visibles/administrables por técnicos y administradores)
+- [x] Conector de `tareas_tecnicas` (crear, listar, editar texto, marcar
+      completada, eliminar; solo visibles/administrables por técnicos y
+      administradores)
+- [x] Frontend: checklist en el detalle de ticket (RF-014 "Gestionar
+      tareas técnicas"), visible solo para roles técnico/administrador.
+      Botón "Agregar checklist" que despliega el listado; cada item es
+      un input de texto editable con checkbox (marca completado,
+      tachando el texto) y una "X" para eliminarlo; botón "+" para
+      sumar items y botón para eliminar el checklist completo
 - [x] Conector de `historial_ticket` (registro cronológico de eventos)
 - [x] Enganchar historial automáticamente a: creación, cambios de estado,
       cambios de prioridad, cambios de responsable, comentarios,
@@ -93,12 +100,47 @@ de como una etapa propia al final.
 - [x] Pantallas de login y registro (frontend, consumen
       `POST /usuarios/login` y `POST /usuarios/register`, ya
       implementados en el backend)
-- [ ] Panel de usuario: solo sus propios tickets
-- [ ] Panel del Departamento de Sistemas: todos los tickets
-- [ ] Vista lista y vista tarjetas
-- [ ] Filtros combinables (estado, prioridad, tipo, técnico, usuario,
-      sector, sucursal, fecha)
-- [ ] Búsquedas (número, usuario, título, contenido, responsable)
+- [x] Panel de usuario: solo sus propios tickets (menú "Mis tickets":
+      nuevo ticket, tickets activos, tickets cerrados; tabla ordenable
+      por columna; detalle con datos completos, adjuntos, comentarios
+      con sus propios adjuntos e historial cronológico)
+- [x] Endpoint `PATCH /tickets/:id/cerrar`: el usuario creador puede
+      cerrar su propio ticket con un comentario de motivo obligatorio
+      (decisión de producto: reemplaza a "Cancelar tickets cuando
+      corresponda" de RF-013; el usuario solo puede llevar el ticket a
+      "Cerrado", ningún otro cambio de estado)
+- [x] Panel del Departamento de Sistemas: todos los tickets (botón
+      "Dashboard" en el header, visible solo para roles técnico y
+      administrador → submenú "Tablero")
+- [x] Vista lista y vista tarjetas (selector "Vista" en la barra de
+      herramientas del Tablero)
+- [x] Ordenar por cualquier columna en la vista lista (mismo mecanismo
+      que la tabla del panel de usuario)
+- [x] Cierre de ticket desde el Tablero (por fila/tarjeta) y desde el
+      detalle, con comentario de motivo obligatorio — reutiliza
+      `PATCH /tickets/:id/cerrar`, ahora también habilitado para
+      técnicos/administradores sobre cualquier ticket
+- [x] Botón rápido "Nuevo ticket" en la barra de herramientas del
+      Tablero (reutiliza la pantalla de creación existente)
+- [~] Filtros combinables: implementados sucursal, sector, estado
+      (default "activos", con opción "Todos" y por estado puntual),
+      prioridad, técnico responsable (incluye "Sin asignar") y rango de
+      fechas (desde/hasta, con selector de calendario nativo). Falta
+      filtro por tipo de ticket y por usuario creador puntual (hoy solo
+      se puede buscar por texto libre) si se piden más adelante
+- [x] Búsquedas (número, usuario creador, título, contenido/descripción,
+      responsable) — input de texto en la barra de herramientas del
+      Tablero, combinable con los filtros de arriba
+- [x] Ajustes de UX del Tablero: filtros ocultos por defecto (botón
+      "Filtrar" los muestra), selector de vista como botones con ícono
+      en vez de `<select>`, columnas de la tabla configurables (botón
+      "Columnas"; oculta por defecto Última actualización y Fecha de
+      cierre), y edición inline de prioridad/estado/responsable por
+      fila (reutiliza `PATCH /tickets/:id/estado`, `/prioridad` y
+      `/responsable`, ya existentes)
+- [x] Navegación desde el detalle de ticket: botón "Atrás" y teclas
+      Esc/Backspace (fuera de campos de texto) vuelven a la pantalla
+      anterior (Tablero o Mis tickets, según de dónde se entró)
 
 ---
 
@@ -116,15 +158,34 @@ de como una etapa propia al final.
 
 # 8. Panel de administración (RF-024) y estadísticas (RF-020)
 
-- [ ] Administrar usuarios y técnicos (alta, edición, baja)
-- [ ] Blanquear credenciales (sin exponer la contraseña anterior)
-- [ ] Administrar sucursales, tipos de ticket, prioridades y estados
-      desde el panel (ya existen los conectores base, falta el CRUD
-      completo de alta/edición/baja)
-- [ ] Administrar permisos por rol
+- [x] Menú "Administrar" en el header: visible para roles técnico y
+      administrador; "Usuarios y permisos" y "Parámetros" restringidos
+      a rol administrador únicamente (nuevo guard `RutaAdministrador` +
+      middleware `requiereRolAdministrador`)
+- [x] Administrar usuarios: página "Usuarios y permisos" con tabla
+      (búsqueda, columnas configurables), cambio de rol inline
+      (usuario/técnico, `PATCH /usuarios/:id/rol`) y blanqueo de
+      contraseña por modal (`PUT /usuarios/:id/password`, sin pedir la
+      anterior). No permite asignar/quitar el rol administrador desde
+      acá (solo usuario ↔ técnico)
+- [x] Administrar sucursales, sectores, tipos de ticket, prioridades y
+      estados desde el panel ("Parámetros"): alta y edición de nombre,
+      y activar/desactivar en vez de borrar físicamente (evita romper
+      tickets ya cargados con ese valor)
+- [~] Administrar permisos por rol: cubierto el cambio usuario ↔
+      técnico; falta un sistema de permisos más granular si se necesita
+      a futuro (por ahora técnico y administrador comparten el mismo
+      nivel de acceso operativo, según lo definido en la etapa 9)
 - [ ] Estadísticas: por sucursal, sector, técnico, tiempos de
-      resolución, prioridades, tipos de ticket
-- [ ] Auditoría: registrar todas las acciones realizadas desde este panel
+      resolución, prioridades, tipos de ticket — pantalla creada como
+      placeholder, falta definir qué métricas mostrar
+- [x] Auditoría: `GET /auditoria` + pantalla que lista todos los
+      eventos ya registrados por el sistema (login, registro, cambios
+      de ticket, cambios de rol, blanqueo de contraseña, etc.)
+- [ ] **Revisar mañana**: probar a mano en el navegador todo lo armado
+      hoy (Tablero, checklist, filtros de fecha, y sobre todo el panel
+      de Administración completo: usuarios y permisos, parámetros,
+      auditoría) antes de dar por cerrada la etapa
 
 ---
 

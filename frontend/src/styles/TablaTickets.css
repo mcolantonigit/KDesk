@@ -1,0 +1,153 @@
+.tabla-tickets-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tabla-tickets-columnas {
+  position: relative;
+  align-self: flex-end;
+}
+
+.tabla-tickets-columnas-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+  padding: 12px;
+  background: var(--card-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+
+.tabla-tickets-columnas-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tabla-tickets-scroll {
+  overflow-x: auto;
+}
+
+.tabla-tickets {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla-tickets th {
+  text-align: left;
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.tabla-tickets th:hover {
+  color: var(--text);
+}
+
+.tabla-tickets-orden {
+  color: var(--accent);
+}
+
+.tabla-tickets td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.tabla-tickets tbody tr {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.tabla-tickets tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+.tabla-tickets-detalle {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabla-tickets-vacio {
+  text-align: center;
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.tabla-tickets-vacio:hover {
+  background: none;
+}
+
+.tabla-tickets td select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.tabla-tickets td select:focus {
+  border-color: var(--border-active);
+}
+
+.tabla-tickets td select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tabla-catalogo tbody tr {
+  cursor: default;
+}
+
+.tabla-catalogo tbody tr:hover {
+  background: none;
+}
+
+.tabla-catalogo td input[type='text'] {
+  height: 34px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  width: 100%;
+  max-width: 280px;
+}
+
+.tabla-catalogo td input[type='text']:focus {
+  border-color: var(--border-active);
+}
+
+.tabla-catalogo td input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}

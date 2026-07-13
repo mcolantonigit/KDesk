@@ -1,0 +1,119 @@
+.tablero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tablero-toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.tablero-toolbar-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.tablero-vista-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tablero-vista-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tablero-vista-btn + .tablero-vista-btn {
+  border-left: 1px solid var(--border);
+}
+
+.tablero-vista-btn:hover {
+  color: var(--text);
+}
+
+.tablero-vista-btn.activo {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tablero-busqueda {
+  flex: 1;
+  min-width: 240px;
+  height: 40px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+}
+
+.tablero-busqueda:focus {
+  border-color: var(--border-active);
+}
+
+.tablero-filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.tablero-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.tablero-campo select,
+.tablero-campo input[type='date'] {
+  height: 40px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+}
+
+.tablero-campo select:focus,
+.tablero-campo input[type='date']:focus {
+  border-color: var(--border-active);
+}
+
+.tablero-campo input[type='date'] {
+  color-scheme: dark;
+}
+
+.tablero-campo select option {
+  background: var(--bg);
+  color: var(--text);
+}

@@ -1,0 +1,17 @@
+.ticket-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 560px;
+}
+
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ticket-form-error {
+  color: var(--error);
+  font-size: 14px;
+}

@@ -52,6 +52,14 @@ export async function updateEstado(id, idEstado) {
   return result.rows[0];
 }
 
+export async function cerrar(id, idEstado) {
+  const result = await pool.query(
+    `UPDATE tickets SET id_estado = $1, fecha_cierre = NOW() WHERE id = $2 RETURNING ${CAMPOS}`,
+    [idEstado, id]
+  );
+  return result.rows[0];
+}
+
 export async function updatePrioridad(id, idPrioridad) {
   const result = await pool.query(
     `UPDATE tickets SET id_prioridad = $1 WHERE id = $2 RETURNING ${CAMPOS}`,

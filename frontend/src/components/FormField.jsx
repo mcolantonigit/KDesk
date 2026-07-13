@@ -1,6 +1,6 @@
 import '../styles/FormField.css';
 
-function FormField({ id, label, type = 'text', value, onChange, placeholder, required, options }) {
+function FormField({ id, label, type = 'text', value, onChange, placeholder, required, options, rows = 5, maxLength }) {
   return (
     <div className="form-field">
       <label htmlFor={id}>{label}</label>
@@ -15,6 +15,16 @@ function FormField({ id, label, type = 'text', value, onChange, placeholder, req
             </option>
           ))}
         </select>
+      ) : type === 'textarea' ? (
+        <textarea
+          id={id}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          rows={rows}
+          maxLength={maxLength}
+        />
       ) : (
         <input
           id={id}
@@ -23,6 +33,7 @@ function FormField({ id, label, type = 'text', value, onChange, placeholder, req
           onChange={onChange}
           placeholder={placeholder}
           required={required}
+          maxLength={maxLength}
         />
       )}
     </div>

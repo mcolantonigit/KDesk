@@ -13,6 +13,7 @@ import comentariosRoutes from './routes/comentarios.routes.js';
 import tareasTecnicasRoutes from './routes/tareasTecnicas.routes.js';
 import historialRoutes from './routes/historial.routes.js';
 import adjuntosRoutes from './routes/adjuntos.routes.js';
+import auditoriaRoutes from './routes/auditoria.routes.js';
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use('/api', comentariosRoutes);
 app.use('/api', tareasTecnicasRoutes);
 app.use('/api', historialRoutes);
 app.use('/api', adjuntosRoutes);
+app.use('/api', auditoriaRoutes);
 
 export default app;

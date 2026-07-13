@@ -7,3 +7,7 @@ export async function registrarEvento({ idUsuario, accion, detalle }) {
     console.error('No se pudo registrar el evento de auditoría:', error.message);
   }
 }
+
+export async function listarAuditoria() {
+  return auditoriaModel.findAll();
+}

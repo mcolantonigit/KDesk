@@ -84,7 +84,7 @@ CREATE TABLE usuarios (
 CREATE TABLE tickets (
     id                      SERIAL PRIMARY KEY,
     numero                  VARCHAR(20) NOT NULL UNIQUE,
-    titulo                  VARCHAR(200) NOT NULL,
+    titulo                  VARCHAR(35) NOT NULL,
     descripcion             TEXT NOT NULL,
     nombre_descriptivo      VARCHAR(300) NOT NULL,
 

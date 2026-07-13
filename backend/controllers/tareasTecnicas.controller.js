@@ -23,6 +23,32 @@ export async function getTareas(req, res) {
   }
 }
 
+export async function editarTarea(req, res) {
+  try {
+    const { descripcion } = req.body;
+    const tarea = await tareasService.editarTarea({
+      idTarea: req.params.id,
+      descripcion,
+      idUsuarioQueEdita: req.usuario.id,
+    });
+    res.json(tarea);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo editar la tarea' });
+  }
+}
+
+export async function eliminarTarea(req, res) {
+  try {
+    const tarea = await tareasService.eliminarTarea({
+      idTarea: req.params.id,
+      idUsuarioQueElimina: req.usuario.id,
+    });
+    res.json(tarea);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo eliminar la tarea' });
+  }
+}
+
 export async function completarTarea(req, res) {
   try {
     const tarea = await tareasService.completarTarea({

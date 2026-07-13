@@ -29,6 +29,14 @@ export async function updatePassword(id, passwordHash) {
   await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [passwordHash, id]);
 }
 
+export async function updateRol(id, idRol) {
+  const result = await pool.query(
+    `UPDATE usuarios SET id_rol = $1 WHERE id = $2 RETURNING ${CAMPOS_PUBLICOS}`,
+    [idRol, id]
+  );
+  return result.rows[0];
+}
+
 export async function create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector }) {
   const result = await pool.query(
     `INSERT INTO usuarios (nombre, apellido, correo, password_hash, id_rol, id_sucursal, id_sector)

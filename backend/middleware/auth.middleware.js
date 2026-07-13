@@ -23,3 +23,11 @@ export async function requiereRolTecnico(req, res, next) {
   }
   next();
 }
+
+export async function requiereRolAdministrador(req, res, next) {
+  const esAdministrador = await rolesService.esRolAdministrador(req.usuario.idRol);
+  if (!esAdministrador) {
+    return res.status(403).json({ message: 'Acción permitida solo para administradores' });
+  }
+  next();
+}

@@ -2,9 +2,19 @@ import { Route, Routes } from 'react-router-dom';
 import Login from '../pages/Login';
 import Registro from '../pages/Registro';
 import Inicio from '../pages/Inicio';
+import NuevoTicket from '../pages/NuevoTicket';
+import ListaTickets from '../pages/ListaTickets';
+import DetalleTicket from '../pages/DetalleTicket';
+import Tablero from '../pages/Tablero';
+import UsuariosPermisos from '../pages/UsuariosPermisos';
+import Parametros from '../pages/Parametros';
+import Estadisticas from '../pages/Estadisticas';
+import Auditoria from '../pages/Auditoria';
 import PanelLayout from '../layouts/PanelLayout';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
+import RutaTecnico from './RutaTecnico';
+import RutaAdministrador from './RutaAdministrador';
 
 function AppRoutes() {
   return (
@@ -17,6 +27,21 @@ function AppRoutes() {
       <Route element={<RutaProtegida />}>
         <Route element={<PanelLayout />}>
           <Route path="/" element={<Inicio />} />
+          <Route path="/tickets/nuevo" element={<NuevoTicket />} />
+          <Route path="/tickets/activos" element={<ListaTickets soloCerrados={false} />} />
+          <Route path="/tickets/cerrados" element={<ListaTickets soloCerrados />} />
+          <Route path="/tickets/:id" element={<DetalleTicket />} />
+
+          <Route element={<RutaTecnico />}>
+            <Route path="/dashboard/tablero" element={<Tablero />} />
+            <Route path="/administrar/estadisticas" element={<Estadisticas />} />
+            <Route path="/administrar/auditoria" element={<Auditoria />} />
+          </Route>
+
+          <Route element={<RutaAdministrador />}>
+            <Route path="/administrar/usuarios" element={<UsuariosPermisos />} />
+            <Route path="/administrar/parametros" element={<Parametros />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

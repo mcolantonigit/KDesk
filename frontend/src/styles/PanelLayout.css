@@ -28,3 +28,62 @@
 .panel-content {
   padding: 32px;
 }
+
+.panel-nav {
+  display: flex;
+  align-items: center;
+}
+
+.panel-nav-item {
+  position: relative;
+  padding: 22px 0;
+}
+
+.panel-nav-trigger {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: background var(--transition);
+}
+
+.panel-nav-item:hover .panel-nav-trigger {
+  background: var(--hover-bg);
+}
+
+.panel-nav-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  min-width: 180px;
+  padding: 8px;
+  background: var(--card-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+
+.panel-nav-item:hover .panel-nav-submenu {
+  display: flex;
+}
+
+.panel-nav-submenu a {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.panel-nav-submenu a:hover,
+.panel-nav-submenu a.active {
+  background: var(--hover-bg);
+  color: var(--text);
+}

@@ -20,3 +20,23 @@ export async function getEstadoById(req, res) {
     res.status(500).json({ message: 'No se pudo obtener el estado' });
   }
 }
+
+export async function crearEstado(req, res) {
+  try {
+    const { nombre } = req.body;
+    const estado = await estadosService.crearEstado({ nombre });
+    res.status(201).json(estado);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo crear el estado' });
+  }
+}
+
+export async function editarEstado(req, res) {
+  try {
+    const { nombre, activo } = req.body;
+    const estado = await estadosService.editarEstado(req.params.id, { nombre, activo });
+    res.json(estado);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo editar el estado' });
+  }
+}

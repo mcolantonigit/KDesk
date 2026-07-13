@@ -91,6 +91,48 @@ export async function cambiarPassword({ id, correo, passwordActual, passwordNuev
   });
 }
 
+const ROLES_ASIGNABLES = [1, 2];
+
+export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
+  if (!ROLES_ASIGNABLES.includes(Number(idRol))) {
+    throw crearError('El rol debe ser usuario o técnico', 400);
+  }
+
+  const usuario = await usuariosModel.findById(id);
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  const usuarioActualizado = await usuariosModel.updateRol(id, idRol);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: idUsuarioQueCambia,
+    accion: 'CAMBIO_ROL',
+    detalle: `Cambio de rol de ${usuario.correo} -> id_rol ${idRol}`,
+  });
+
+  return usuarioActualizado;
+}
+
+export async function blanquearPassword({ id, passwordNueva, idUsuarioQueBlanquea }) {
+  const usuario = await usuariosModel.findById(id);
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+  if (!passwordNueva || passwordNueva.length < 8) {
+    throw crearError('La nueva contraseña debe tener al menos 8 caracteres', 400);
+  }
+
+  const passwordHash = await hashPassword(passwordNueva);
+  await usuariosModel.updatePassword(id, passwordHash);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: idUsuarioQueBlanquea,
+    accion: 'BLANQUEO_PASSWORD',
+    detalle: `Blanqueo de contraseña de ${usuario.correo}`,
+  });
+}
+
 export async function cerrarSesion({ id, correo }) {
   await auditoriaService.registrarEvento({
     idUsuario: id,

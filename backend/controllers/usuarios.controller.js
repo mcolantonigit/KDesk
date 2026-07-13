@@ -67,6 +67,34 @@ export async function cambiarPassword(req, res) {
   }
 }
 
+export async function cambiarRol(req, res) {
+  try {
+    const { idRol } = req.body;
+    const usuario = await usuariosService.cambiarRolUsuario({
+      id: req.params.id,
+      idRol,
+      idUsuarioQueCambia: req.usuario.id,
+    });
+    res.json(usuario);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cambiar el rol' });
+  }
+}
+
+export async function blanquearPassword(req, res) {
+  try {
+    const { passwordNueva } = req.body;
+    await usuariosService.blanquearPassword({
+      id: req.params.id,
+      passwordNueva,
+      idUsuarioQueBlanquea: req.usuario.id,
+    });
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo blanquear la contraseña' });
+  }
+}
+
 export async function login(req, res) {
   try {
     const { correo, password } = req.body;

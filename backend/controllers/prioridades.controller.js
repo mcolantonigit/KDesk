@@ -20,3 +20,23 @@ export async function getPrioridadById(req, res) {
     res.status(500).json({ message: 'No se pudo obtener la prioridad' });
   }
 }
+
+export async function crearPrioridad(req, res) {
+  try {
+    const { nombre } = req.body;
+    const prioridad = await prioridadesService.crearPrioridad({ nombre });
+    res.status(201).json(prioridad);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo crear la prioridad' });
+  }
+}
+
+export async function editarPrioridad(req, res) {
+  try {
+    const { nombre, activo } = req.body;
+    const prioridad = await prioridadesService.editarPrioridad(req.params.id, { nombre, activo });
+    res.json(prioridad);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo editar la prioridad' });
+  }
+}

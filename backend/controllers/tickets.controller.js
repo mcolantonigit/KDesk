@@ -51,6 +51,20 @@ export async function cambiarEstado(req, res) {
   }
 }
 
+export async function cerrarTicket(req, res) {
+  try {
+    const { comentario } = req.body;
+    const ticket = await ticketsService.cerrarTicket({
+      idTicket: req.params.id,
+      comentario,
+      usuario: req.usuario,
+    });
+    res.json(ticket);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cerrar el ticket' });
+  }
+}
+
 export async function cambiarPrioridad(req, res) {
   try {
     const { idPrioridad } = req.body;

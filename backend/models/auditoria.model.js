@@ -9,3 +9,10 @@ export async function create({ idUsuario, accion, detalle }) {
   );
   return result.rows[0];
 }
+
+export async function findAll() {
+  const result = await pool.query(
+    'SELECT id, id_usuario, accion, detalle, fecha FROM auditoria ORDER BY fecha DESC'
+  );
+  return result.rows;
+}

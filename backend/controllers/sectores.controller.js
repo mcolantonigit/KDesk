@@ -20,3 +20,23 @@ export async function getSectorById(req, res) {
     res.status(500).json({ message: 'No se pudo obtener el sector' });
   }
 }
+
+export async function crearSector(req, res) {
+  try {
+    const { nombre } = req.body;
+    const sector = await sectoresService.crearSector({ nombre });
+    res.status(201).json(sector);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo crear el sector' });
+  }
+}
+
+export async function editarSector(req, res) {
+  try {
+    const { nombre, activo } = req.body;
+    const sector = await sectoresService.editarSector(req.params.id, { nombre, activo });
+    res.json(sector);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo editar el sector' });
+  }
+}

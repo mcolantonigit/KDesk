@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as usuariosController from '../controllers/usuarios.controller.js';
-import { requiereAutenticacion, requiereRolTecnico } from '../middleware/auth.middleware.js';
+import { requiereAutenticacion, requiereRolTecnico, requiereRolAdministrador } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
@@ -11,5 +11,7 @@ router.get('/usuarios/perfil', requiereAutenticacion, usuariosController.getPerf
 router.put('/usuarios/perfil/password', requiereAutenticacion, usuariosController.cambiarPassword);
 router.get('/usuarios', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarios);
 router.get('/usuarios/:id', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarioById);
+router.patch('/usuarios/:id/rol', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarRol);
+router.put('/usuarios/:id/password', requiereAutenticacion, requiereRolAdministrador, usuariosController.blanquearPassword);
 
 export default router;
