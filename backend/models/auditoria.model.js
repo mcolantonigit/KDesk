@@ -16,3 +16,8 @@ export async function findAll() {
   );
   return result.rows;
 }
+
+export async function deleteAnterioresA(fecha) {
+  const result = await pool.query('DELETE FROM auditoria WHERE fecha < $1', [fecha]);
+  return result.rowCount;
+}

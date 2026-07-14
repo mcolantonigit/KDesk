@@ -42,6 +42,8 @@ function DetalleTicket() {
   const [adjuntoComentario, setAdjuntoComentario] = useState(null);
   const [enviandoComentario, setEnviandoComentario] = useState(false);
 
+  const [historialVisibles, setHistorialVisibles] = useState(10);
+
   const [mostrarCierre, setMostrarCierre] = useState(false);
   const [comentarioCierre, setComentarioCierre] = useState('');
   const [adjuntoCierre, setAdjuntoCierre] = useState(null);
@@ -67,6 +69,7 @@ function DetalleTicket() {
     setComentarios(comentariosConAdjuntos);
     setAdjuntosTicket(adjuntosData);
     setHistorial(historialData);
+    setHistorialVisibles(10);
   }
 
   useEffect(() => {
@@ -166,6 +169,9 @@ function DetalleTicket() {
     (prioridad) => prioridad.id === ticket.id_prioridad_sugerida
   )?.nombre;
   const nombreTipo = catalogos.tipos.find((tipo) => tipo.id === ticket.id_tipo)?.nombre ?? '—';
+
+  const historialOrdenado = [...historial].reverse();
+  const historialMostrado = historialOrdenado.slice(0, historialVisibles);
 
   const esCreador = ticket.id_usuario_creador === usuario?.id;
   const esTecnico = ROLES_TECNICOS.includes(usuario?.id_rol);
@@ -331,7 +337,7 @@ function DetalleTicket() {
       <div className="detalle-ticket-historial">
         <h2>Historial</h2>
         <ul className="detalle-ticket-historial-lista">
-          {historial.map((evento) => (
+          {historialMostrado.map((evento) => (
             <li key={evento.id}>
               <span className="detalle-ticket-historial-detalle">{evento.detalle}</span>
               <span className="detalle-ticket-historial-fecha">{new Date(evento.fecha).toLocaleString()}</span>
@@ -339,6 +345,15 @@ function DetalleTicket() {
           ))}
           {historial.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin eventos registrados</li>}
         </ul>
+        {historialVisibles < historialOrdenado.length && (
+          <button
+            type="button"
+            className="detalle-ticket-historial-cargar-mas"
+            onClick={() => setHistorialVisibles((anteriores) => anteriores + 10)}
+          >
+            Cargar 10 más
+          </button>
+        )}
       </div>
     </div>
   );

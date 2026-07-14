@@ -39,6 +39,10 @@
 
 .tabla-tickets-scroll {
   overflow-x: auto;
+  background: var(--card-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
 .tabla-tickets {
@@ -117,6 +121,23 @@
 .tabla-tickets td select option {
   background: var(--bg);
   color: var(--text);
+}
+
+.tabla-catalogo-mostrar-inactivos {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tabla-catalogo-mostrar-inactivos input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
 }
 
 .tabla-catalogo tbody tr {

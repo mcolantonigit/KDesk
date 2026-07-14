@@ -128,7 +128,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
 
   return (
     <div className="tabla-tickets-contenedor">
-      <div className="tabla-tickets-columnas">
+      <div className="tabla-tickets-columnas no-imprimir">
         <Button variant="secondary" type="button" onClick={() => setMostrarColumnas(!mostrarColumnas)}>
           Columnas
         </Button>
@@ -158,7 +158,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
                   {ordenPor === columna.key && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
                 </th>
               ))}
-              <th>Acciones</th>
+              <th className="no-imprimir">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +167,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
                 {columnasActivas.map((columna) => (
                   <td key={columna.key}>{renderCelda(ticket, columna.key)}</td>
                 ))}
-                <td onClick={(event) => event.stopPropagation()}>
+                <td className="no-imprimir" onClick={(event) => event.stopPropagation()}>
                   {ticket.estado !== ESTADO_CERRADO && (
                     <Button variant="secondary" onClick={() => onCerrar(ticket)}>
                       Cerrar

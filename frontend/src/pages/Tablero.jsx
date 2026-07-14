@@ -16,10 +16,27 @@ import TablaTicketsAdmin from '../components/TablaTicketsAdmin';
 import TarjetasTickets from '../components/TarjetasTickets';
 import ModalCerrarTicket from '../components/ModalCerrarTicket';
 import Button from '../components/Button';
+import { usePersistentState } from '../hooks/usePersistentState';
+import { descargarCSV, filasACSV } from '../utils/exportar';
 import '../styles/Tablero.css';
 
 const ESTADOS_CERRADOS = ['Cerrado', 'Cancelado'];
 const ROLES_TECNICOS = [2, 3];
+
+const COLUMNAS_REPORTE = [
+  { key: 'numero', label: 'ID' },
+  { key: 'titulo', label: 'Detalle' },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'prioridad', label: 'Prioridad' },
+  { key: 'estado', label: 'Estado' },
+  { key: 'usuarioCreador', label: 'Usuario' },
+  { key: 'tecnicoResponsable', label: 'Responsable' },
+  { key: 'sucursal', label: 'Sucursal' },
+  { key: 'sector', label: 'Sector' },
+  { key: 'fechaCreacion', label: 'Fecha de creación' },
+  { key: 'fechaActualizacion', label: 'Última actualización' },
+  { key: 'fechaCierre', label: 'Fecha de cierre' },
+];
 
 const FILTROS_INICIALES = {
   idSucursal: '',
@@ -61,11 +78,12 @@ function Tablero() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  const [vista, setVista] = useState('lista');
+  const [vista, setVista] = usePersistentState('kdesk:tablero:vista', 'lista');
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
-  const [filtros, setFiltros] = useState(FILTROS_INICIALES);
-  const [busqueda, setBusqueda] = useState('');
+  const [filtros, setFiltros] = usePersistentState('kdesk:tablero:filtros', FILTROS_INICIALES);
+  const [busqueda, setBusqueda] = usePersistentState('kdesk:tablero:busqueda', '');
   const [ticketACerrar, setTicketACerrar] = useState(null);
+  const [mostrarReporte, setMostrarReporte] = useState(false);
 
   async function cargarTodo({ mostrarCargando = true } = {}) {
     if (mostrarCargando) setCargando(true);
@@ -214,6 +232,22 @@ function Tablero() {
     }
   }
 
+  function handleExportarCSV() {
+    const filasReporte = ticketsFiltrados.map((ticket) => ({
+      ...ticket,
+      fechaCreacion: new Date(ticket.fecha_creacion).toLocaleString(),
+      fechaActualizacion: new Date(ticket.fecha_actualizacion).toLocaleString(),
+      fechaCierre: ticket.fecha_cierre ? new Date(ticket.fecha_cierre).toLocaleString() : '',
+    }));
+    descargarCSV('tablero-kdesk.csv', filasACSV(COLUMNAS_REPORTE, filasReporte));
+    setMostrarReporte(false);
+  }
+
+  function handleExportarPDF() {
+    setMostrarReporte(false);
+    window.print();
+  }
+
   if (cargando) return <p>Cargando...</p>;
   if (error) return <p className="ticket-form-error">{error}</p>;
 
@@ -221,7 +255,7 @@ function Tablero() {
     <div className="tablero">
       <h1>Tablero</h1>
 
-      <div className="tablero-toolbar">
+      <div className="tablero-toolbar no-imprimir">
         <div className="tablero-toolbar-fila">
           <div className="tablero-vista-toggle">
             <button
@@ -255,6 +289,22 @@ function Tablero() {
           <Link to="/tickets/nuevo">
             <Button type="button">Nuevo ticket</Button>
           </Link>
+
+          <div className="tablero-reporte">
+            <Button variant="secondary" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
+              Generar reporte
+            </Button>
+            {mostrarReporte && (
+              <div className="tablero-reporte-panel">
+                <button type="button" onClick={handleExportarCSV}>
+                  Exportar CSV
+                </button>
+                <button type="button" onClick={handleExportarPDF}>
+                  Exportar PDF (imprimir)
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {mostrarFiltros && (
@@ -355,7 +405,15 @@ function Tablero() {
           onAsignarResponsable={handleAsignarResponsable}
         />
       ) : (
-        <TarjetasTickets tickets={ticketsFiltrados} onCerrar={setTicketACerrar} />
+        <TarjetasTickets
+          tickets={ticketsFiltrados}
+          catalogos={catalogos}
+          tecnicos={tecnicos}
+          onCerrar={setTicketACerrar}
+          onCambiarEstado={handleCambiarEstado}
+          onCambiarPrioridad={handleCambiarPrioridad}
+          onAsignarResponsable={handleAsignarResponsable}
+        />
       )}
 
       {ticketACerrar && (

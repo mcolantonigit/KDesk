@@ -3,6 +3,7 @@ import { getTickets } from '../services/tickets.service';
 import { getEstados } from '../services/estados.service';
 import { getPrioridades } from '../services/prioridades.service';
 import TablaTickets from '../components/TablaTickets';
+import '../styles/Tablero.css';
 
 const ESTADOS_CERRADOS = ['Cerrado', 'Cancelado'];
 
@@ -45,7 +46,7 @@ function ListaTickets({ soloCerrados }) {
   }, [soloCerrados]);
 
   return (
-    <div>
+    <div className="tablero">
       <h1>{soloCerrados ? 'Tickets cerrados' : 'Tickets activos'}</h1>
 
       {error && <p className="ticket-form-error">{error}</p>}

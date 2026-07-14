@@ -172,10 +172,11 @@ de como una etapa propia al final.
       estados desde el panel ("Parámetros"): alta y edición de nombre,
       y activar/desactivar en vez de borrar físicamente (evita romper
       tickets ya cargados con ese valor)
-- [~] Administrar permisos por rol: cubierto el cambio usuario ↔
-      técnico; falta un sistema de permisos más granular si se necesita
-      a futuro (por ahora técnico y administrador comparten el mismo
-      nivel de acceso operativo, según lo definido en la etapa 9)
+- [x] Administrar permisos por rol: cubierto el cambio usuario ↔
+      técnico desde "Usuarios y permisos". No hay (ni se necesita) forma
+      de ascender/crear un administrador desde la interfaz: va a existir
+      un único administrador, y si eso cambia en el futuro se provisiona
+      manualmente por pgAdmin, no por la app
 - [x] Estadísticas: tickets por sucursal, sector, técnico, prioridad y
       tipo (gráficos de barras horizontales), tiempo de resolución
       promedio general (hero figure) y desglosado por técnico. Filtro
@@ -202,6 +203,135 @@ de como una etapa propia al final.
       y tareas técnicas de tickets; listado general de usuarios
       (`GET /usuarios`, `GET /usuarios/:id`) restringido a personal del
       sistema, no a usuarios convencionales
-- [ ] Revisar si en el futuro hace falta distinguir permisos entre
-      técnico y administrador (por ahora se tratan igual, según lo
-      definido: "los técnicos son administradores del sistema")
+- [x] Revisado: técnico y administrador comparten el mismo nivel de
+      acceso operativo sobre tickets (estados, prioridades, responsable,
+      tareas técnicas, cierre, comentarios) y también ven Dashboard,
+      Estadísticas y Auditoría por igual. La única distinción real es
+      dentro de "Administrar": "Usuarios y permisos" y "Parámetros" son
+      admin-only (`requiereRolAdministrador`). No hace falta separar más
+      — va a haber un solo administrador, provisionado manualmente por
+      pgAdmin, no desde la app
+
+---
+
+# 10. Mejoras previas a producción
+
+Lista abierta de pulido pedida después de cerrar la v1 funcional. Cada
+punto se implementa y se tilda por separado, no son parte de ningún RF
+puntual.
+
+- [x] "Usuarios y permisos" → blanqueo de contraseña: botón "Generar
+      automáticamente" en `ModalBlanquearPassword` (10 caracteres
+      alfanuméricos, garantiza mayúscula + minúscula + número; excluye
+      caracteres ambiguos O/0/I/1/l), más un toggle "Mostrar/Ocultar"
+      para poder leer y copiar la contraseña generada
+- [x] Detalle de ticket (`/tickets/:id`): la sección "Historial" ahora
+      se muestra con el evento más reciente primero, recortada a los
+      últimos 10, con botón "Cargar 10 más" que expande de a 10 (se
+      sigue trayendo todo el historial en una sola llamada; el recorte
+      es en el cliente, dado el volumen esperado por ticket)
+- [x] Pantalla de Auditoría (`/administrar/auditoria`): ordenar por
+      cualquier encabezado de la tabla (igual que el Tablero); paginado
+      real de a 10 con componente `Paginacion.jsx` (botones numerados +
+      anterior/siguiente) debajo de la tabla; barra de herramientas
+      arriba con búsqueda de texto libre (usuario, acción, detalle) y
+      filtro de fecha "desde"/"hasta" con calendario (mismo control que
+      el Tablero). Probado con los 68 eventos reales ya generados
+- [x] Tablero → vista Tarjetas: Estado, Prioridad y Responsable ahora
+      son `<select>` editables (mismos handlers que la vista Lista,
+      con refresco silencioso sin perder el estado de la tarjeta), y
+      se agregó la descripción del ticket recortada a 2 renglones con
+      `-webkit-line-clamp` + `overflow: hidden`
+- [x] Persistir en `localStorage` los filtros y la búsqueda de Auditoría
+      y del Tablero (más la vista Lista/Tarjetas del Tablero), con el
+      hook reutilizable `usePersistentState`
+- [x] Tablero → botón "Generar reporte": CSV real (`utils/exportar.js`,
+      sin dependencias nuevas — decisión: nada de librería PDF, PDF se
+      resuelve con `window.print()` + CSS de impresión) con los tickets
+      filtrados/buscados actuales; PDF vía "Exportar PDF (imprimir)" que
+      dispara el diálogo de impresión del navegador. Se agregó un CSS
+      de impresión global (`index.css`, clase `no-imprimir`) que oculta
+      el header/nav y las columnas de acciones, y corrige los colores
+      para que el texto se lea en papel blanco (la app fuerza tema
+      oscuro y sin este ajuste el PDF salía ilegible)
+- [x] Estadísticas → botón "Generar reporte": CSV con las 6 secciones
+      apiladas (rango de fechas, promedio de resolución, resolución por
+      técnico, y los 5 conteos), reutilizando `descargarCSV`/`filasACSV`
+      del Tablero; PDF vía el mismo "Exportar PDF (imprimir)"
+- [x] Retención y limpieza de logs (solo administrador): nueva tabla
+      `configuracion_sistema` (fila única, `dias_retencion_logs`,
+      default 365). En Auditoría: campo "Preservar auditorías desde
+      actualidad hasta (días)" que persiste el valor, y botón "Limpiar
+      logs y auditorías" (modal con confirmación) que borra ya mismo
+      `auditoria` y `historial_ticket` más viejos que el corte indicado.
+      Tarea automática todas las noches a las 00:00hs (`setTimeout`
+      autoprogramado en `jobs/limpiezaLogs.job.js`, sin dependencias
+      nuevas) que aplica el mismo borrado con el valor guardado. La
+      tabla `tickets` nunca se toca, solo se poda su historial de
+      eventos. **Decisión de producto que actualiza RF-012** (antes decía
+      "el historial nunca podrá eliminarse") — reflejado en
+      `FUNCTIONAL_REQUIREMENTS.md`. Probado con datos reales: un evento
+      de auditoría de 400 días se borró con retención de 365; con
+      retención de 100000 días no se borró nada
+- [x] CSS global: `h1`, `h2`, `h3` con `caret-color: transparent` (se
+      pueden seleccionar pero sin el cursor titilando); los `<button>`
+      no deberían poder seleccionarse (`user-select: none`)
+- [x] Botón "Nuevo Ticket" del nav ("Mis tickets" → submenú) en
+      naranja/acento, no como link de texto plano
+- [x] Centrar el contenido de "Nuevo Ticket" y el detalle de ticket
+      (`/tickets/:id`) — hoy quedan pegados al margen izquierdo del
+      panel en vez de centrados
+- [x] Tablero → toolbar con efecto sticky (se pega arriba al scrollear
+      la tabla), con 5px de margen para que no quede pegada del todo al
+      borde superior de la pantalla (aplica a toda `.tablero-toolbar`,
+      que también reusan Estadísticas/Auditoría/Usuarios y permisos)
+- [x] Logo de KDesk en el nav: badge cuadrado redondeado con "K" en
+      color de acento junto al texto "KDesk", todo envuelto en un
+      `Link` a Inicio (`/`). No había ningún asset de logo, se armó
+      como marca simple en CSS/JSX en vez de un ícono importado
+- [x] Reemplazar textos por íconos en el nav: "Administrar" → ícono de
+      engranaje, "Cerrar sesión" → ícono de puerta con flecha (ambos
+      con `title`/`aria-label` para no perder accesibilidad)
+- [x] Registro: permitir también los dominios @ergoscables.com.ar y
+      @kalop.cl (antes solo @kalop.com.ar). Había DOS validaciones que
+      actualizar: la del servicio (`usuarios.service.js`) y una
+      restricción `CHECK` a nivel de base de datos (`chk_correo_kalop`)
+      que no se había detectado al principio y también hacía falta
+      alterar; probado registrando un usuario con cada uno de los 3
+      dominios y confirmando que un dominio ajeno sigue rechazado
+- [x] Auditoría: el campo "Preservar auditorías desde actualidad hasta
+      (días)" salió del toolbar y ahora vive en un modal propio
+      (`ModalConfigurarRetencion`, botón "Limpieza automática"); los
+      botones "Limpiar logs y auditorías" y "Limpieza automática" están
+      ubicados después de la tabla y la paginación, no en la barra de
+      herramientas
+- [x] Nuevo Ticket: si el usuario es rol técnico/administrador, aparecen
+      selects de Sucursal y Sector para elegir a nombre de qué
+      sucursal/sector se crea el ticket. Backend: `crearTicket` acepta
+      `idSucursal`/`idSector` opcionales, pero solo los aplica si quien
+      crea es técnico/admin (valida que existan); un usuario común que
+      intente forzarlos vía API los tiene ignorados, siempre usa su
+      propio perfil. Probado con ambos roles
+- [x] Panel de "Novedades" — **ajuste de alcance en la implementación**:
+      pasa a ser hijo de Dashboard (`/dashboard/novedades`, con su link
+      en el submenú), solo para roles técnico/administrador; rol 1 no
+      tiene esta pantalla. Contenido: tarjetas "sin asignar" / "asignados
+      a vos" / "abiertos (total)", lista de los sin asignar más antiguos
+      (proxy de "próximos a vencer" — sigue sin existir campo de
+      vencimiento/SLA real en la base) y accesos directos (Nuevo ticket /
+      Tablero). La ruta raíz `/` ahora es un redirect según rol: usuario
+      común → `/tickets/activos`, técnico/admin → `/dashboard/novedades`
+- [ ] Checklist del ticket: mover el botón "Eliminar checklist" abajo a
+      la derecha (hoy queda a la izquierda, debajo de la lista)
+- [ ] Checklist del ticket: al escribir una tarea y presionar Enter,
+      debe crear una nueva tarea vacía y poner el foco ahí para seguir
+      escribiendo (encadenar altas sin tocar el botón "+" cada vez)
+- [ ] Checklist del ticket: destildar el checkbox de una tarea ya
+      completada debe volver a marcarla como pendiente (hoy es de una
+      sola dirección — una vez completada, el checkbox queda
+      deshabilitado; hay que sumar el camino inverso, incluyendo el
+      endpoint de backend si hace falta)
+- [ ] Detalle de ticket / Nuevo comentario: el input de adjunto
+      ("Seleccionar archivo, Ningún archivo seleccionado") queda pegado
+      al margen superior del bloque — debería quedar centrado
+      verticalmente como el resto de los campos

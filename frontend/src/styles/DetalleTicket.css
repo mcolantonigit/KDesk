@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 32px;
   max-width: 720px;
+  margin: 0 auto;
 }
 
 .detalle-ticket-volver {
@@ -51,6 +52,16 @@
 .detalle-ticket-datos dd {
   margin: 0;
   font-weight: 600;
+}
+
+.detalle-ticket-descripcion,
+.detalle-ticket-adjuntos,
+.detalle-ticket-comentarios,
+.detalle-ticket-historial {
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
 
 .detalle-ticket-descripcion h2,
@@ -189,4 +200,24 @@
 .detalle-ticket-historial-fecha {
   color: var(--text-secondary);
   white-space: nowrap;
+}
+
+.detalle-ticket-historial-cargar-mas {
+  margin-top: 12px;
+  height: 36px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.detalle-ticket-historial-cargar-mas:hover {
+  background: var(--hover-bg);
+  border-color: var(--border-active);
 }

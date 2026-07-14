@@ -6,8 +6,20 @@ import { getTiposTicket } from '../services/tiposTicket.service';
 import { getPrioridades } from '../services/prioridades.service';
 import { getUsuarios } from '../services/usuarios.service';
 import BarChartHorizontal from '../components/BarChartHorizontal';
+import Button from '../components/Button';
+import { descargarCSV, filasACSV } from '../utils/exportar';
 import '../styles/Tablero.css';
 import '../styles/Estadisticas.css';
+
+const COLUMNAS_CONTEO = [
+  { key: 'label', label: 'Nombre' },
+  { key: 'value', label: 'Cantidad' },
+];
+
+const COLUMNAS_DIAS = [
+  { key: 'label', label: 'Técnico' },
+  { key: 'value', label: 'Días promedio' },
+];
 
 function contarPor(tickets, obtenerClave, nombresPorClave) {
   const conteos = new Map();
@@ -33,6 +45,7 @@ function Estadisticas() {
   const [error, setError] = useState('');
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
+  const [mostrarReporte, setMostrarReporte] = useState(false);
 
   useEffect(() => {
     async function cargar() {
@@ -149,6 +162,43 @@ function Estadisticas() {
       .sort((a, b) => b.value - a.value);
   }, [ticketsCerrados, nombresPorId]);
 
+  function handleExportarCSV() {
+    const dias = resolucionPorTecnico.map((item) => ({ label: item.label, value: item.value.toFixed(1) }));
+    const contenido = [
+      'Estadísticas KDesk',
+      `Rango de fechas,${fechaDesde || 'inicio'} a ${fechaHasta || 'hoy'}`,
+      '',
+      `Tiempo promedio de resolución (días),${diasResolucionPromedio === null ? '' : diasResolucionPromedio.toFixed(1)}`,
+      `Tickets cerrados considerados,${ticketsCerrados.length}`,
+      '',
+      'Tiempo de resolución por técnico (días)',
+      filasACSV(COLUMNAS_DIAS, dias),
+      '',
+      'Tickets por sucursal',
+      filasACSV(COLUMNAS_CONTEO, porSucursal),
+      '',
+      'Tickets por sector',
+      filasACSV(COLUMNAS_CONTEO, porSector),
+      '',
+      'Tickets por técnico',
+      filasACSV(COLUMNAS_CONTEO, porTecnico),
+      '',
+      'Tickets por prioridad',
+      filasACSV(COLUMNAS_CONTEO, porPrioridad),
+      '',
+      'Tickets por tipo',
+      filasACSV(COLUMNAS_CONTEO, porTipo),
+    ].join('\n');
+
+    descargarCSV('estadisticas-kdesk.csv', contenido);
+    setMostrarReporte(false);
+  }
+
+  function handleExportarPDF() {
+    setMostrarReporte(false);
+    window.print();
+  }
+
   if (cargando) return <p>Cargando...</p>;
   if (error) return <p className="ticket-form-error">{error}</p>;
 
@@ -156,7 +206,7 @@ function Estadisticas() {
     <div className="tablero">
       <h1>Estadísticas</h1>
 
-      <div className="tablero-toolbar">
+      <div className="tablero-toolbar no-imprimir">
         <div className="tablero-toolbar-fila">
           <label className="tablero-campo">
             <span>Fecha desde</span>
@@ -176,6 +226,22 @@ function Estadisticas() {
               onChange={(event) => setFechaHasta(event.target.value)}
             />
           </label>
+
+          <div className="tablero-reporte">
+            <Button variant="secondary" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
+              Generar reporte
+            </Button>
+            {mostrarReporte && (
+              <div className="tablero-reporte-panel">
+                <button type="button" onClick={handleExportarCSV}>
+                  Exportar CSV
+                </button>
+                <button type="button" onClick={handleExportarPDF}>
+                  Exportar PDF (imprimir)
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

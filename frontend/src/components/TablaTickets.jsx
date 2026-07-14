@@ -37,36 +37,38 @@ function TablaTickets({ tickets }) {
   }
 
   return (
-    <table className="tabla-tickets">
-      <thead>
-        <tr>
-          {COLUMNAS.map((columna) => (
-            <th key={columna.key} onClick={() => handleOrdenar(columna.key)}>
-              {columna.label}
-              {ordenPor === columna.key && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {ticketsOrdenados.map((ticket) => (
-          <tr key={ticket.id} onClick={() => navigate(`/tickets/${ticket.id}`)}>
-            <td>{ticket.numero}</td>
-            <td>{ticket.prioridad}</td>
-            <td className="tabla-tickets-detalle">{ticket.titulo}</td>
-            <td>{ticket.estado}</td>
-            <td>{new Date(ticket.fecha_creacion).toLocaleDateString()}</td>
-          </tr>
-        ))}
-        {ticketsOrdenados.length === 0 && (
+    <div className="tabla-tickets-scroll">
+      <table className="tabla-tickets">
+        <thead>
           <tr>
-            <td colSpan={COLUMNAS.length} className="tabla-tickets-vacio">
-              No hay tickets para mostrar
-            </td>
+            {COLUMNAS.map((columna) => (
+              <th key={columna.key} onClick={() => handleOrdenar(columna.key)}>
+                {columna.label}
+                {ordenPor === columna.key && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
+              </th>
+            ))}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {ticketsOrdenados.map((ticket) => (
+            <tr key={ticket.id} onClick={() => navigate(`/tickets/${ticket.id}`)}>
+              <td>{ticket.numero}</td>
+              <td>{ticket.prioridad}</td>
+              <td className="tabla-tickets-detalle">{ticket.titulo}</td>
+              <td>{ticket.estado}</td>
+              <td>{new Date(ticket.fecha_creacion).toLocaleDateString()}</td>
+            </tr>
+          ))}
+          {ticketsOrdenados.length === 0 && (
+            <tr>
+              <td colSpan={COLUMNAS.length} className="tabla-tickets-vacio">
+                No hay tickets para mostrar
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

@@ -1,6 +1,7 @@
 import * as ticketsModel from '../models/tickets.model.js';
 import * as usuariosModel from '../models/usuarios.model.js';
 import * as sectoresModel from '../models/sectores.model.js';
+import * as sucursalesModel from '../models/sucursales.model.js';
 import * as estadosModel from '../models/estados.model.js';
 import * as prioridadesModel from '../models/prioridades.model.js';
 import * as comentariosModel from '../models/comentarios.model.js';
@@ -18,7 +19,16 @@ function crearError(mensaje, status) {
   return error;
 }
 
-export async function crearTicket({ idUsuarioCreador, idTipo, idPrioridadSugerida, titulo, descripcion }) {
+export async function crearTicket({
+  idUsuarioCreador,
+  idRolCreador,
+  idTipo,
+  idPrioridadSugerida,
+  titulo,
+  descripcion,
+  idSucursal,
+  idSector,
+}) {
   if (!titulo || !titulo.trim()) {
     throw crearError('El título es obligatorio', 400);
   }
@@ -30,10 +40,29 @@ export async function crearTicket({ idUsuarioCreador, idTipo, idPrioridadSugerid
   }
 
   const usuario = await usuariosModel.findById(idUsuarioCreador);
-  const sector = await sectoresModel.findById(usuario.id_sector);
   const estadoInicial = await estadosModel.findByNombre(ESTADO_INICIAL);
 
-  const nombreDescriptivo = `${sector.nombre} - ${usuario.nombre} ${usuario.apellido} - ${titulo}`;
+  let idSucursalFinal = usuario.id_sucursal;
+  let idSectorFinal = usuario.id_sector;
+
+  const esTecnico = await rolesService.esRolTecnicoOAdministrador(idRolCreador);
+  if (esTecnico && idSucursal) {
+    const sucursalElegida = await sucursalesModel.findById(idSucursal);
+    if (!sucursalElegida) {
+      throw crearError('Sucursal inválida', 400);
+    }
+    idSucursalFinal = sucursalElegida.id;
+  }
+  if (esTecnico && idSector) {
+    const sectorElegido = await sectoresModel.findById(idSector);
+    if (!sectorElegido) {
+      throw crearError('Sector inválido', 400);
+    }
+    idSectorFinal = sectorElegido.id;
+  }
+
+  const sectorParaNombre = await sectoresModel.findById(idSectorFinal);
+  const nombreDescriptivo = `${sectorParaNombre.nombre} - ${usuario.nombre} ${usuario.apellido} - ${titulo}`;
 
   const ticket = await ticketsModel.create({
     titulo,
@@ -43,8 +72,8 @@ export async function crearTicket({ idUsuarioCreador, idTipo, idPrioridadSugerid
     idPrioridadSugerida,
     idEstado: estadoInicial.id,
     idUsuarioCreador,
-    idSucursal: usuario.id_sucursal,
-    idSector: usuario.id_sector,
+    idSucursal: idSucursalFinal,
+    idSector: idSectorFinal,
   });
 
   await auditoriaService.registrarEvento({

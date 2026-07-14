@@ -29,11 +29,15 @@ El sistema permitirá acceder únicamente a colaboradores de Kalop mediante su c
 
 ## Restricciones
 
-- Solo se permitirán correos pertenecientes al dominio:
+- Solo se permitirán correos pertenecientes a alguno de estos dominios
+  (decisión de producto 2026-07-14: se suman los dos últimos a la lista
+  original que solo tenía @kalop.com.ar):
 
 @kalop.com.ar
+@ergoscables.com.ar
+@kalop.cl
 
-No se permitirá el registro con dominios externos.
+No se permitirá el registro con dominios externos a esta lista.
 
 ---
 
@@ -247,7 +251,14 @@ Como mínimo deberán registrarse:
 - Adjuntos agregados o eliminados
 - Cierre
 
-El historial nunca podrá eliminarse.
+El historial se conserva por un período configurable (por defecto 365
+días) desde el Panel de Administración → Auditoría. Una tarea automática
+corre todas las noches a las 00:00hs y elimina las entradas de
+`historial_ticket` más viejas que ese período; también existe una
+limpieza manual inmediata. El ticket en sí (tabla `tickets`) nunca se
+toca ni se elimina por esta limpieza, solo su historial de eventos más
+antiguo. (Decisión de producto 2026-07-14: reemplaza la redacción
+original "el historial nunca podrá eliminarse").
 
 ---
 

@@ -1,0 +1,41 @@
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.paginacion button {
+  height: 32px;
+  min-width: 32px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.paginacion button:hover:not(:disabled) {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.paginacion button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.paginacion button.activo {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.paginacion-ellipsis {
+  color: var(--text-secondary);
+  padding: 0 4px;
+}

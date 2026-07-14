@@ -3,7 +3,7 @@ import * as auditoriaService from './auditoria.service.js';
 import { hashPassword, compararPassword } from '../utils/password.util.js';
 import { generarToken } from '../utils/jwt.util.js';
 
-const DOMINIO_CORREO_PERMITIDO = '@kalop.com.ar';
+const DOMINIOS_CORREO_PERMITIDOS = ['@kalop.com.ar', '@ergoscables.com.ar', '@kalop.cl'];
 
 function crearError(mensaje, status) {
   const error = new Error(mensaje);
@@ -20,8 +20,8 @@ export async function getUsuarioById(id) {
 }
 
 export async function registrarUsuario({ nombre, apellido, correo, password, idRol, idSucursal, idSector }) {
-  if (!correo.endsWith(DOMINIO_CORREO_PERMITIDO)) {
-    throw crearError(`El correo debe pertenecer al dominio ${DOMINIO_CORREO_PERMITIDO}`, 400);
+  if (!DOMINIOS_CORREO_PERMITIDOS.some((dominio) => correo.endsWith(dominio))) {
+    throw crearError(`El correo debe pertenecer a alguno de estos dominios: ${DOMINIOS_CORREO_PERMITIDOS.join(', ')}`, 400);
   }
 
   const usuarioExistente = await usuariosModel.findByCorreo(correo);

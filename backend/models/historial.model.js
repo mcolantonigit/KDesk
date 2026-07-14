@@ -18,3 +18,8 @@ export async function findAllByTicket(idTicket) {
   );
   return result.rows;
 }
+
+export async function deleteAnterioresA(fecha) {
+  const result = await pool.query('DELETE FROM historial_ticket WHERE fecha < $1', [fecha]);
+  return result.rowCount;
+}

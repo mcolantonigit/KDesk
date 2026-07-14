@@ -20,12 +20,12 @@ export async function getTicketById(id) {
   return data;
 }
 
-export async function crearTicket({ idTipo, idPrioridadSugerida, titulo, descripcion }) {
+export async function crearTicket({ idTipo, idPrioridadSugerida, titulo, descripcion, idSucursal, idSector }) {
   const response = await fetch('/api/tickets', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ idTipo, idPrioridadSugerida, titulo, descripcion }),
+    body: JSON.stringify({ idTipo, idPrioridadSugerida, titulo, descripcion, idSucursal, idSector }),
   });
 
   const data = await response.json();

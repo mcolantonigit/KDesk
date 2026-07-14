@@ -74,7 +74,9 @@ CREATE TABLE usuarios (
     fecha_registro  TIMESTAMP NOT NULL DEFAULT NOW(),
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
 
-    CONSTRAINT chk_correo_kalop CHECK (correo LIKE '%@kalop.com.ar')
+    CONSTRAINT chk_correo_kalop CHECK (
+        correo LIKE '%@kalop.com.ar' OR correo LIKE '%@ergoscables.com.ar' OR correo LIKE '%@kalop.cl'
+    )
 );
 
 -- ---------------------------------------------------------------------
@@ -211,6 +213,17 @@ CREATE TABLE auditoria (
     detalle     TEXT,
     fecha       TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- ---------------------------------------------------------------------
+-- Configuración del sistema (fila única) - retención de logs/auditoría
+-- ---------------------------------------------------------------------
+
+CREATE TABLE configuracion_sistema (
+    id                    SERIAL PRIMARY KEY,
+    dias_retencion_logs   INT NOT NULL DEFAULT 365
+);
+
+INSERT INTO configuracion_sistema (id, dias_retencion_logs) VALUES (1, 365);
 
 -- =====================================================================
 -- Datos base (seed) - catálogos definidos en FUNCTIONAL_REQUIREMENTS.md

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Login from '../pages/Login';
 import Registro from '../pages/Registro';
 import Inicio from '../pages/Inicio';
+import Novedades from '../pages/Novedades';
 import NuevoTicket from '../pages/NuevoTicket';
 import ListaTickets from '../pages/ListaTickets';
 import DetalleTicket from '../pages/DetalleTicket';
@@ -33,6 +34,7 @@ function AppRoutes() {
           <Route path="/tickets/:id" element={<DetalleTicket />} />
 
           <Route element={<RutaTecnico />}>
+            <Route path="/dashboard/novedades" element={<Novedades />} />
             <Route path="/dashboard/tablero" element={<Tablero />} />
             <Route path="/administrar/estadisticas" element={<Estadisticas />} />
             <Route path="/administrar/auditoria" element={<Auditoria />} />

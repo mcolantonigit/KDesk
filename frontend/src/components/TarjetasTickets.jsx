@@ -4,7 +4,15 @@ import '../styles/TarjetasTickets.css';
 
 const ESTADO_CERRADO = 'Cerrado';
 
-function TarjetasTickets({ tickets, onCerrar }) {
+function TarjetasTickets({
+  tickets,
+  catalogos,
+  tecnicos,
+  onCerrar,
+  onCambiarEstado,
+  onCambiarPrioridad,
+  onAsignarResponsable,
+}) {
   const navigate = useNavigate();
 
   if (tickets.length === 0) {
@@ -17,27 +25,63 @@ function TarjetasTickets({ tickets, onCerrar }) {
         <div key={ticket.id} className="tarjeta-ticket" onClick={() => navigate(`/tickets/${ticket.id}`)}>
           <div className="tarjeta-ticket-header">
             <span className="tarjeta-ticket-numero">{ticket.numero}</span>
-            <span className="tarjeta-ticket-estado">{ticket.estado}</span>
+            <select
+              value={ticket.id_estado}
+              onClick={(event) => event.stopPropagation()}
+              onChange={(event) => onCambiarEstado(ticket, Number(event.target.value))}
+            >
+              {catalogos.estados.map((estado) => (
+                <option key={estado.id} value={estado.id}>
+                  {estado.nombre}
+                </option>
+              ))}
+            </select>
           </div>
 
           <h3 className="tarjeta-ticket-titulo">{ticket.titulo}</h3>
+          <p className="tarjeta-ticket-descripcion">{ticket.descripcion}</p>
 
           <dl className="tarjeta-ticket-datos">
             <div>
               <dt>Tipo</dt>
               <dd>{ticket.tipo}</dd>
             </div>
-            <div>
+            <div onClick={(event) => event.stopPropagation()}>
               <dt>Prioridad</dt>
-              <dd>{ticket.prioridad}</dd>
+              <dd>
+                <select
+                  value={ticket.idPrioridadEfectiva ?? ''}
+                  onChange={(event) => onCambiarPrioridad(ticket, Number(event.target.value))}
+                >
+                  {catalogos.prioridades.map((prioridad) => (
+                    <option key={prioridad.id} value={prioridad.id}>
+                      {prioridad.nombre}
+                    </option>
+                  ))}
+                </select>
+              </dd>
             </div>
             <div>
               <dt>Usuario</dt>
               <dd>{ticket.usuarioCreador}</dd>
             </div>
-            <div>
+            <div onClick={(event) => event.stopPropagation()}>
               <dt>Responsable</dt>
-              <dd>{ticket.tecnicoResponsable}</dd>
+              <dd>
+                <select
+                  value={ticket.id_tecnico_responsable ?? ''}
+                  onChange={(event) => onAsignarResponsable(ticket, Number(event.target.value))}
+                >
+                  <option value="" disabled>
+                    Sin asignar
+                  </option>
+                  {tecnicos.map((tecnico) => (
+                    <option key={tecnico.id} value={tecnico.id}>
+                      {tecnico.nombre} {tecnico.apellido}
+                    </option>
+                  ))}
+                </select>
+              </dd>
             </div>
             <div>
               <dt>Sucursal</dt>
@@ -58,7 +102,7 @@ function TarjetasTickets({ tickets, onCerrar }) {
           </dl>
 
           {ticket.estado !== ESTADO_CERRADO && (
-            <div className="tarjeta-ticket-acciones" onClick={(event) => event.stopPropagation()}>
+            <div className="tarjeta-ticket-acciones no-imprimir" onClick={(event) => event.stopPropagation()}>
               <Button variant="secondary" onClick={() => onCerrar(ticket)}>
                 Cerrar
               </Button>

@@ -1,20 +1,40 @@
 .panel-layout {
   min-height: 100svh;
-  background: var(--bg);
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 64px;
+  height: var(--panel-header-height);
   padding: 0 32px;
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
 }
 
 .panel-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   letter-spacing: -0.03em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.panel-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.panel-header-derecha {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .panel-user {
@@ -40,6 +60,8 @@
 }
 
 .panel-nav-trigger {
+  display: inline-flex;
+  align-items: center;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
@@ -47,6 +69,13 @@
   padding: 8px 14px;
   border-radius: 8px;
   transition: background var(--transition);
+}
+
+.panel-logout-btn {
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .panel-nav-item:hover .panel-nav-trigger {
@@ -73,6 +102,17 @@
   display: flex;
 }
 
+.panel-nav-submenu-derecha {
+  left: auto;
+  right: 0;
+}
+
+.panel-header-derecha .panel-nav-item {
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
 .panel-nav-submenu a {
   padding: 10px 12px;
   border-radius: 8px;
@@ -86,4 +126,15 @@
 .panel-nav-submenu a.active {
   background: var(--hover-bg);
   color: var(--text);
+}
+
+.panel-nav-submenu a.panel-nav-destacado {
+  color: #fff;
+  background: var(--accent);
+  font-weight: 600;
+}
+
+.panel-nav-submenu a.panel-nav-destacado:hover {
+  background: var(--accent-hover);
+  color: #fff;
 }

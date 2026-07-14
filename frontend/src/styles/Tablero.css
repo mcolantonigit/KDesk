@@ -10,8 +10,12 @@
   gap: 12px;
   padding: 16px;
   background: var(--card-bg);
+  backdrop-filter: var(--blur);
   border: 1px solid var(--border);
   border-radius: 12px;
+  position: sticky;
+  top: calc(var(--panel-header-height) + 5px);
+  z-index: 15;
 }
 
 .tablero-toolbar-fila {
@@ -116,4 +120,42 @@
 .tablero-campo select option {
   background: var(--bg);
   color: var(--text);
+}
+
+.tablero-reporte {
+  position: relative;
+}
+
+.tablero-reporte-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 8px;
+  background: var(--card-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+
+.tablero-reporte-panel button {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.tablero-reporte-panel button:hover {
+  background: var(--hover-bg);
 }
