@@ -95,6 +95,38 @@ export async function blanquearPassword(req, res) {
   }
 }
 
+export async function activarCuenta(req, res) {
+  try {
+    const { token } = req.body;
+    const usuario = await usuariosService.activarCuenta(token);
+    res.json({ message: 'Cuenta activada', usuario });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo activar la cuenta' });
+  }
+}
+
+export async function solicitarResetPassword(req, res) {
+  try {
+    const { correo } = req.body;
+    await usuariosService.solicitarResetPassword(correo);
+  } catch (error) {
+    console.error('Error al solicitar reset de contraseña:', error.message);
+  } finally {
+    // Siempre la misma respuesta, exista o no el correo, para no filtrar qué cuentas están registradas
+    res.json({ message: 'Si el correo existe, te enviamos un mail con instrucciones' });
+  }
+}
+
+export async function resetearPassword(req, res) {
+  try {
+    const { token, passwordNueva, confirmacion } = req.body;
+    await usuariosService.resetearPassword({ token, passwordNueva, confirmacion });
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo restablecer la contraseña' });
+  }
+}
+
 export async function login(req, res) {
   try {
     const { correo, password } = req.body;

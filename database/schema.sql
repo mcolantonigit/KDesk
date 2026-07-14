@@ -73,10 +73,27 @@ CREATE TABLE usuarios (
     id_sector       INT NOT NULL REFERENCES sectores(id),
     fecha_registro  TIMESTAMP NOT NULL DEFAULT NOW(),
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
+    email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
 
     CONSTRAINT chk_correo_kalop CHECK (
         correo LIKE '%@kalop.com.ar' OR correo LIKE '%@ergoscables.com.ar' OR correo LIKE '%@kalop.cl'
     )
+);
+
+-- ---------------------------------------------------------------------
+-- Tokens de un solo uso (activación de cuenta / reset de contraseña)
+-- ---------------------------------------------------------------------
+
+CREATE TABLE tokens_verificacion (
+    id                  SERIAL PRIMARY KEY,
+    id_usuario          INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token_hash          VARCHAR(64) NOT NULL UNIQUE,
+    tipo                VARCHAR(30) NOT NULL,
+    fecha_creacion      TIMESTAMP NOT NULL DEFAULT NOW(),
+    fecha_expiracion    TIMESTAMP NOT NULL,
+    usado               BOOLEAN NOT NULL DEFAULT FALSE,
+
+    CONSTRAINT chk_tipo_token CHECK (tipo IN ('ACTIVACION', 'RESET_PASSWORD'))
 );
 
 -- ---------------------------------------------------------------------

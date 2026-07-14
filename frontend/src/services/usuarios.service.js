@@ -31,6 +31,54 @@ export async function register({ nombre, apellido, correo, password, idRol, idSu
   return data;
 }
 
+export async function activarCuenta(token) {
+  const response = await fetch('/api/usuarios/activar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo activar la cuenta');
+  }
+
+  return data;
+}
+
+export async function solicitarResetPassword(correo) {
+  const response = await fetch('/api/usuarios/recuperar-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correo }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo procesar la solicitud');
+  }
+
+  return data;
+}
+
+export async function resetearPassword({ token, passwordNueva, confirmacion }) {
+  const response = await fetch('/api/usuarios/resetear-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, passwordNueva, confirmacion }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo restablecer la contraseña');
+  }
+
+  return data;
+}
+
 export async function getPerfil() {
   const response = await fetch('/api/usuarios/perfil', { credentials: 'include' });
 

@@ -37,8 +37,40 @@ de como una etapa propia al final.
 - [x] Login con JWT en cookie httpOnly
 - [x] Logout
 - [x] Middleware de autenticación (`requiereAutenticacion`)
-- [ ] Recuperación de contraseña (versión futura, no es parte del alcance
-      de la v1 según PROJECT.md)
+- [x] Recuperación de contraseña: `/recuperar-contrasena` pide el
+      correo (siempre responde igual, exista o no, para no filtrar qué
+      cuentas están registradas) y manda un mail con link a
+      `/resetear-contrasena?token=...` (vence en 1 hora, un solo uso).
+      Pasa a ser parte del alcance v1 (antes decía "versión futura,
+      no es parte de la v1 según PROJECT.md")
+- [x] Envío de mail de activación al registrarse: cuenta nueva queda
+      `email_verificado = false`; se manda un mail con link a
+      `/activar-cuenta?token=...` (vence en 24hs, un solo uso). El login
+      queda bloqueado (403) hasta que se activa. Si el envío del mail
+      falla, se hace rollback completo del alta (no queda un usuario
+      "fantasma" sin poder activarse ni volver a registrarse)
+- [x] Infraestructura de mail: Nodemailer + SMTP de Microsoft 365
+      (`smtp.office365.com:587`), credenciales por `.env`
+      (`SMTP_HOST/PORT/USER/PASSWORD/FROM`, `FRONTEND_URL` para armar
+      los links). Hacía falta `requireTLS: true` en el transporter —
+      sin eso Office 365 rechazaba el login (error 535) aunque la
+      contraseña fuera correcta, porque el tenant exige TLS antes de
+      autenticar. Probado con un registro real: el mail sale
+      correctamente (`prueba.mailreal@kalop.com.ar`, `email_verificado: false`
+      hasta que se activa desde el link del mail)
+- [x] Tabla `tokens_verificacion` (un solo uso, con expiración, tipo
+      ACTIVACION/RESET_PASSWORD, `ON DELETE CASCADE` contra usuarios).
+      Usuarios ya existentes antes de este cambio se marcaron
+      `email_verificado = true` para no bloquearlos retroactivamente
+- [x] Probado de punta a punta con tokens generados a mano (sin
+      credenciales SMTP reales todavía): activación, doble uso de token
+      rechazado, reset con contraseñas que no coinciden rechazado,
+      reset exitoso, login con la contraseña nueva
+- [x] `FRONTEND_URL` pasó de `http://localhost:5173` a la IP de la
+      máquina (`http://192.168.20.70:5173`) — los links de los mails con
+      "localhost" solo funcionan en la PC que corre el backend, no desde
+      el resto de la red. Pendiente para cuando haya un dominio/DNS real
+      de producción: `FRONTEND_URL` pasa a ser ese dominio
 - [x] Auditoría: registrar login y logout
 
 ---
