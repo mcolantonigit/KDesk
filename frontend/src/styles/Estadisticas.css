@@ -1,0 +1,43 @@
+.estadisticas-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.estadisticas-hero-valor {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.estadisticas-hero-etiqueta {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.estadisticas-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.estadisticas-card h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}

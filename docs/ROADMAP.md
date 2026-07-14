@@ -176,16 +176,19 @@ de como una etapa propia al final.
       técnico; falta un sistema de permisos más granular si se necesita
       a futuro (por ahora técnico y administrador comparten el mismo
       nivel de acceso operativo, según lo definido en la etapa 9)
-- [ ] Estadísticas: por sucursal, sector, técnico, tiempos de
-      resolución, prioridades, tipos de ticket — pantalla creada como
-      placeholder, falta definir qué métricas mostrar
+- [x] Estadísticas: tickets por sucursal, sector, técnico, prioridad y
+      tipo (gráficos de barras horizontales), tiempo de resolución
+      promedio general (hero figure) y desglosado por técnico. Filtro
+      de rango de fechas (desde/hasta) aplicado a todo. Todo calculado
+      en el frontend a partir de `GET /tickets` + catálogos, sin
+      endpoints nuevos de agregación. Paleta categórica validada contra
+      el fondo oscuro de KDesk con el validador de la skill de dataviz
 - [x] Auditoría: `GET /auditoria` + pantalla que lista todos los
       eventos ya registrados por el sistema (login, registro, cambios
       de ticket, cambios de rol, blanqueo de contraseña, etc.)
-- [ ] **Revisar mañana**: probar a mano en el navegador todo lo armado
-      hoy (Tablero, checklist, filtros de fecha, y sobre todo el panel
-      de Administración completo: usuarios y permisos, parámetros,
-      auditoría) antes de dar por cerrada la etapa
+- [x] Revisado a mano en el navegador: Tablero, checklist, filtros de
+      fecha y panel de Administración completo (usuarios y permisos,
+      parámetros, auditoría)
 
 ---
 
