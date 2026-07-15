@@ -4,11 +4,9 @@ import { getSectores, crearSector, editarSector } from '../services/sectores.ser
 import { getTiposTicket, crearTipoTicket, editarTipoTicket } from '../services/tiposTicket.service';
 import { getPrioridades, crearPrioridad, editarPrioridad } from '../services/prioridades.service';
 import { getEstados, crearEstado, editarEstado } from '../services/estados.service';
-import { usePreferencias } from '../context/PreferenciasContext';
 import TablaCatalogo from '../components/TablaCatalogo';
 import Button from '../components/Button';
 import '../styles/Tablero.css';
-import '../styles/Parametros.css';
 
 const CATALOGOS = {
   sucursales: { label: 'Sucursales', getAll: getSucursales, crear: crearSucursal, editar: editarSucursal },
@@ -19,7 +17,6 @@ const CATALOGOS = {
 };
 
 function Parametros() {
-  const { fondoAnimado, setFondoAnimado } = usePreferencias();
   const [catalogoActivo, setCatalogoActivo] = useState('sucursales');
   const [items, setItems] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -73,15 +70,6 @@ function Parametros() {
   return (
     <div className="tablero">
       <h1>Parámetros</h1>
-
-      <label className="parametros-preferencia">
-        <input
-          type="checkbox"
-          checked={fondoAnimado}
-          onChange={(event) => setFondoAnimado(event.target.checked)}
-        />
-        Fondo animado
-      </label>
 
       <div className="tablero-toolbar">
         <div className="tablero-toolbar-fila">

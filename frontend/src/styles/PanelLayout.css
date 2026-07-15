@@ -113,7 +113,8 @@
   align-items: center;
 }
 
-.panel-nav-submenu a {
+.panel-nav-submenu a,
+.panel-nav-submenu > button {
   padding: 10px 12px;
   border-radius: 8px;
   color: var(--text-secondary);
@@ -122,10 +123,41 @@
   transition: background var(--transition), color var(--transition);
 }
 
+.panel-nav-submenu > button {
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+}
+
 .panel-nav-submenu a:hover,
-.panel-nav-submenu a.active {
+.panel-nav-submenu a.active,
+.panel-nav-submenu > button:hover {
   background: var(--hover-bg);
   color: var(--text);
+}
+
+.panel-nav-submenu-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.panel-nav-submenu-checkbox:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.panel-nav-submenu-checkbox input {
+  cursor: pointer;
+  accent-color: var(--accent);
 }
 
 .panel-nav-submenu a.panel-nav-destacado {

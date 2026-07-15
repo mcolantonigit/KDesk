@@ -9,8 +9,7 @@
   grid-template-columns: 1fr;
   gap: 12px;
   padding: 16px;
-  background: var(--card-bg);
-  backdrop-filter: var(--blur);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 12px;
   position: sticky;
@@ -23,6 +22,10 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+.tablero-toolbar-fila .btn {
+  height: 40px;
 }
 
 .tablero-vista-toggle {

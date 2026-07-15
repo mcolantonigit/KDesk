@@ -14,6 +14,7 @@ import UsuariosPermisos from '../pages/UsuariosPermisos';
 import Parametros from '../pages/Parametros';
 import Estadisticas from '../pages/Estadisticas';
 import Auditoria from '../pages/Auditoria';
+import Backups from '../pages/Backups';
 import PanelLayout from '../layouts/PanelLayout';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
@@ -45,6 +46,7 @@ function AppRoutes() {
             <Route path="/dashboard/tablero" element={<Tablero />} />
             <Route path="/administrar/estadisticas" element={<Estadisticas />} />
             <Route path="/administrar/auditoria" element={<Auditoria />} />
+            <Route path="/administrar/backups" element={<Backups />} />
           </Route>
 
           <Route element={<RutaAdministrador />}>

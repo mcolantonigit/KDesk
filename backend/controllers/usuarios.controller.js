@@ -81,6 +81,20 @@ export async function cambiarRol(req, res) {
   }
 }
 
+export async function cambiarActivo(req, res) {
+  try {
+    const { activo } = req.body;
+    const usuario = await usuariosService.cambiarEstadoActivo({
+      id: req.params.id,
+      activo,
+      idUsuarioQueCambia: req.usuario.id,
+    });
+    res.json(usuario);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cambiar el estado del usuario' });
+  }
+}
+
 export async function blanquearPassword(req, res) {
   try {
     const { passwordNueva } = req.body;
@@ -134,7 +148,7 @@ export async function login(req, res) {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.COOKIE_SECURE === 'true',
       sameSite: 'strict',
       maxAge: 8 * 60 * 60 * 1000,
     });

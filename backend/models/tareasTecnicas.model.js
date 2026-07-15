@@ -35,6 +35,16 @@ export async function marcarCompletada(id) {
   return result.rows[0];
 }
 
+export async function marcarPendiente(id) {
+  const result = await pool.query(
+    `UPDATE tareas_tecnicas SET completada = FALSE, fecha_completada = NULL
+     WHERE id = $1
+     RETURNING ${CAMPOS}`,
+    [id]
+  );
+  return result.rows[0];
+}
+
 export async function updateDescripcion(id, descripcion) {
   const result = await pool.query(
     `UPDATE tareas_tecnicas SET descripcion = $1 WHERE id = $2 RETURNING ${CAMPOS}`,

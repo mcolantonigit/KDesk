@@ -236,8 +236,14 @@ CREATE TABLE auditoria (
 -- ---------------------------------------------------------------------
 
 CREATE TABLE configuracion_sistema (
-    id                    SERIAL PRIMARY KEY,
-    dias_retencion_logs   INT NOT NULL DEFAULT 365
+    id                          SERIAL PRIMARY KEY,
+    dias_retencion_logs        INT NOT NULL DEFAULT 365,
+    backup_automatico_activo   BOOLEAN NOT NULL DEFAULT FALSE,
+    -- Días de la semana en que corre el backup automático, separados por
+    -- coma (convención JS Date.getDay(): 0 = domingo ... 6 = sábado).
+    -- Vacío = ningún día seleccionado.
+    backup_dias                VARCHAR(20) NOT NULL DEFAULT '',
+    backup_hora                TIME NOT NULL DEFAULT '00:00:00'
 );
 
 INSERT INTO configuracion_sistema (id, dias_retencion_logs) VALUES (1, 365);

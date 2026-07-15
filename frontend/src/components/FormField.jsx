@@ -1,8 +1,20 @@
 import '../styles/FormField.css';
 
-function FormField({ id, label, type = 'text', value, onChange, placeholder, required, options, rows = 5, maxLength }) {
+function FormField({
+  id,
+  label,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  required,
+  options,
+  rows = 5,
+  maxLength,
+  className,
+}) {
   return (
-    <div className="form-field">
+    <div className={className ? `form-field ${className}` : 'form-field'}>
       <label htmlFor={id}>{label}</label>
       {options ? (
         <select id={id} value={value} onChange={onChange} required={required}>

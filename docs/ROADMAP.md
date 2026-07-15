@@ -353,17 +353,156 @@ puntual.
       vencimiento/SLA real en la base) y accesos directos (Nuevo ticket /
       Tablero). La ruta raíz `/` ahora es un redirect según rol: usuario
       común → `/tickets/activos`, técnico/admin → `/dashboard/novedades`
-- [ ] Checklist del ticket: mover el botón "Eliminar checklist" abajo a
-      la derecha (hoy queda a la izquierda, debajo de la lista)
-- [ ] Checklist del ticket: al escribir una tarea y presionar Enter,
-      debe crear una nueva tarea vacía y poner el foco ahí para seguir
-      escribiendo (encadenar altas sin tocar el botón "+" cada vez)
-- [ ] Checklist del ticket: destildar el checkbox de una tarea ya
-      completada debe volver a marcarla como pendiente (hoy es de una
-      sola dirección — una vez completada, el checkbox queda
-      deshabilitado; hay que sumar el camino inverso, incluyendo el
-      endpoint de backend si hace falta)
-- [ ] Detalle de ticket / Nuevo comentario: el input de adjunto
-      ("Seleccionar archivo, Ningún archivo seleccionado") queda pegado
-      al margen superior del bloque — debería quedar centrado
-      verticalmente como el resto de los campos
+- [x] Checklist del ticket: botón "Eliminar checklist" movido abajo a la
+      derecha (`align-self: flex-end` en `.checklist-boton-eliminar-todo`)
+- [x] Checklist del ticket: al presionar Enter en el texto de una tarea
+      se guarda el texto actual, se crea una tarea nueva vacía y el foco
+      pasa a su input (ref por id de tarea + estado `focoPendiente`),
+      permitiendo encadenar altas sin tocar el botón "+"
+- [x] Checklist del ticket: destildar una tarea completada vuelve a
+      marcarla como pendiente. `PATCH /tareas/:id/completar` pasa a ser
+      un toggle en el backend (antes rechazaba con 400 si ya estaba
+      completada); nuevo evento de historial `TAREA_REABIERTA` además
+      de `TAREA_COMPLETADA`. El checkbox del frontend deja de
+      deshabilitarse cuando la tarea está completada
+- [x] Detalle de ticket / Nuevo comentario: el input de adjunto quedaba
+      pegado arriba porque `.form-field input` fija `height: 48px` pero
+      el contenido nativo de `input[type="file"]` no se autocentra en
+      esa altura. Se agregó una regla específica
+      `.form-field input[type='file'] { display: flex; align-items: center }`
+- [x] Dropdown "Administrar" del header pasa a ser visible para los 3
+      roles (antes solo técnico/administrador). Dentro: "Cambiar
+      contraseña" (nuevo, arriba de todo, solo roles usuario/técnico —
+      abre `ModalCambiarPassword`, reutiliza `PUT /usuarios/perfil/password`
+      ya existente con 3 campos: actual, nueva y confirmación; éxito
+      muestra "Contraseña cambiada", error muestra el mensaje del
+      backend), "Usuarios y permisos"/"Parámetros" (solo administrador,
+      sin cambios), "Estadísticas"/"Auditoría" (ahora con guard propio
+      de rol técnico/administrador, antes heredaban la visibilidad del
+      dropdown completo) y "Fondo animado" (checkbox, abajo de todo,
+      visible para los 3 roles — se movió acá desde la página
+      Parámetros, que quedó sin ese checkbox; se borró `Parametros.css`
+      por quedar sin ninguna regla en uso)
+- [x] "Usuarios y permisos": columna "ID" sacada de la tabla. Columna
+      "Activo" con botón "Deshabilitar"/"Habilitar" por fila (antes era
+      solo texto Sí/No, oculta por defecto); al deshabilitar pide
+      confirmación con `window.confirm` explicando que no borra al
+      usuario de la base pero le impide usar el sistema (mismo patrón
+      que `TablaCatalogo.jsx` para sucursales/sectores/etc.). Checkbox
+      "Mostrar deshabilitados" arriba de la tabla (oculta deshabilitados
+      por defecto). Encabezado "Acciones" renombrado a "Contraseña".
+      Ordenamiento por click en encabezado agregado a toda la tabla
+      (incluida "Activo"), salvo "Contraseña". Nuevo endpoint
+      `PATCH /usuarios/:id/activo` (admin-only, con auditoría
+      HABILITAR_USUARIO/DESHABILITAR_USUARIO); un administrador no puede
+      deshabilitarse a sí mismo. El login ahora rechaza (403) a usuarios
+      con `activo = false` — **decisión de alcance**: no se cortan las
+      sesiones ya abiertas al deshabilitar (JWT stateless, sin
+      revocación), solo se bloquea el próximo login
+- [x] Nuevo Ticket: rol técnico/administrador puede elegir "Usuario que
+      crea el ticket" (select opcional, mismo patrón que Sucursal/Sector
+      ya existentes; lista todos los usuarios activos, no solo rol 1).
+      **Decisión de diseño**: se separó "quién queda como dueño del
+      ticket" de "quién queda registrado como autor en auditoría e
+      historial" — si un técnico crea a nombre de otro usuario, el
+      ticket pasa a pertenecer a ese usuario (aparece en su Mis tickets,
+      puede cerrarlo, define sucursal/sector por defecto y el nombre
+      descriptivo), pero auditoría/historial siguen registrando al
+      técnico que lo cargó (accountability), con el detalle del evento
+      aclarando "a nombre de [usuario]". Backend: `tickets.service.js`
+      ahora distingue `idUsuarioActor` (quien hace la request) de
+      `idUsuarioCreador` (dueño final del ticket, antes eran siempre el
+      mismo valor)
+- [x] Rendimiento: varias pantallas (Usuarios y permisos, Tablero,
+      Estadísticas, Auditoría) se sentían trabadas al hacer scroll
+      (caídas de FPS). Causa: `backdrop-filter: blur(14px)` sobre
+      paneles grandes que se mueven con el scroll (`.tabla-tickets-scroll`
+      y `.tablero-toolbar`, esta última además con `position: sticky`,
+      la peor combinación posible ya que fuerza recalcular el blur en
+      cada frame). Se sacó el `backdrop-filter` de esos dos y se pasó
+      `.tablero-toolbar` a fondo sólido (`var(--bg)`, igual que el
+      header) en vez de translúcido, para que siga tapando bien el
+      contenido que scrollea debajo al quedar pegada arriba. Los demás
+      usos de `backdrop-filter` (dropdowns chicos, modales, tarjeta de
+      login) se dejaron igual: son paneles pequeños y estáticos, no
+      pesan. Confirmado a mano por Matías: "va como piña"
+- [x] Registro: los 7 campos pasan a un grid de 2 columnas
+      (`.registro-campos`) para verse más equilibrado — Correo ocupa la
+      fila completa, el resto se empareja (Nombre/Apellido,
+      Contraseña/Confirmar, Sucursal/Sector). Media query a 720px
+      (mismo breakpoint que ya usa `Inicio.css`) vuelve a 1 columna en
+      celulares. Tarjeta ensanchada a 560px solo para esta pantalla
+      (`.auth-card-registro`, vía nuevo prop `className` en
+      `AuthLayout`/`FormField`) — Login y el resto de las pantallas de
+      auth no se tocaron. Fix de un desborde: `grid-template-columns: 1fr
+      1fr` sin `minmax(0, ...)` no deja que las columnas bajen de su
+      ancho mínimo de contenido y desbordaba la tarjeta. Link "¿Ya tenés
+      cuenta?" centrado (`justify-content: center`) con una clase aparte
+      para no romper el `space-between` de los dos links de Login
+- [x] Detalle de ticket (`/tickets/:id`): agregados "Creado por",
+      "Sucursal" y "Sector" junto a Estado/Tipo/Prioridad. Para rol
+      usuario se muestra directamente su propio nombre (un ticket
+      siempre es suyo); para técnico/administrador se resuelve contra
+      `GET /usuarios` (mismo patrón que ya usa el Tablero), reflejando
+      correctamente cuando el ticket fue creado "a nombre de" otro
+      usuario. Sin cambios de backend
+- [x] Tablero → toolbar: "Filtrar", "Nuevo ticket" y "Generar reporte"
+      (botón `Button` compartido, 48px de alto) quedaban más altos que
+      la barra de búsqueda y los botones Lista/Tarjetas (40px). Fix
+      acotado a la toolbar (`.tablero-toolbar-fila .btn { height: 40px
+      }` en `Tablero.css`) en vez de tocar el `Button` global, para no
+      afectar Login/modales/formularios. De paso empareja el botón
+      "Columnas" de Usuarios y permisos, que comparte la misma clase
+
+---
+
+# 11. Backups
+
+Pantalla nueva `/administrar/backups`, disponible únicamente para roles
+técnico y administrador (rol 2 y 3), agregada al dropdown "Administrar"
+del header junto a Estadísticas/Auditoría.
+
+- [x] Mecanismo: `pg_dump`/`psql` (herramientas oficiales del cliente de
+      Postgres) invocadas vía `child_process` desde `backend/utils/backup.util.js`
+      — no son dependencias npm, sino un requisito de infraestructura
+      nuevo (el server necesita el cliente de Postgres instalado).
+      Variable de entorno nueva `PG_BIN_DIR` (ruta a la carpeta `bin` de
+      la instalación de Postgres) para el caso de que esos binarios no
+      estén en el PATH del sistema — en esta máquina apuntando a
+      `C:\Program Files\PostgreSQL\18\bin`. **Autorizado explícitamente
+      por Matías** antes de implementar
+- [x] Backup manual: botón "Generar backup ahora", corre `pg_dump
+      --format=plain --clean --if-exists` (dump en SQL plano,
+      inspeccionable, con los DROP necesarios ya incluidos para que
+      restaurar sea un simple `psql -f archivo.sql`) contra la carpeta
+      `backend/backups/` (nueva, gitignoreada salvo `.gitkeep`, mismo
+      patrón que `uploads/`)
+- [x] Backup automático programado: nueva sección "Backup automático"
+      con checkbox activar/desactivar, checkboxes de día (Lun a Dom) y
+      hora. Configuración persistida en `configuracion_sistema`
+      (columnas nuevas `backup_automatico_activo`, `backup_dias`
+      —CSV de 0-6, domingo=0, convención `Date.getDay()`—, `backup_hora`).
+      Job `backend/jobs/backups.job.js` (mismo estilo que
+      `limpiezaLogs.job.js`): chequea cada 60 segundos si el
+      día/hora/minuto actual matchea la configuración, con guarda en
+      memoria para no disparar dos veces el mismo minuto
+- [x] Restaurar desde un backup ya generado (listado de la carpeta, con
+      nombre/fecha/tamaño) o desde un archivo `.sql` subido a mano.
+      **Antes de restaurar, el sistema genera automáticamente un backup
+      de seguridad del estado actual** (decisión tomada con Matías, dado
+      que restaurar reemplaza toda la base). Confirmación con
+      `window.confirm` explicando la severidad (mismo patrón que
+      "Limpiar logs y auditorías"). Restauración acotada al esquema
+      `public` de la base ya existente (`--clean --if-exists`, no
+      dropea/recrea la base completa, así no hace falta una conexión
+      aparte fuera del pool de la app)
+- [x] Descargar cualquier backup de la lista (`GET
+      /backups/:nombreArchivo/descargar`, mismo patrón que la descarga
+      de adjuntos de tickets)
+- [x] Auditoría: `BACKUP_MANUAL` y `RESTAURACION_BACKUP` (esta última
+      deja registrado en el detalle el nombre del backup de seguridad
+      generado antes de restaurar)
+- [x] Probado de punta a punta contra la base real: generación de dump
+      (1876 líneas), restauración del mismo dump sobre la propia base
+      (`--clean --if-exists`) y verificación de que los datos siguieron
+      intactos (15 usuarios, 14 tickets) después del ciclo completo

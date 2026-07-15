@@ -6,6 +6,7 @@ import { getTiposTicket } from '../services/tiposTicket.service';
 import { getPrioridades } from '../services/prioridades.service';
 import { getSucursales } from '../services/sucursales.service';
 import { getSectores } from '../services/sectores.service';
+import { getUsuarios } from '../services/usuarios.service';
 import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
@@ -22,10 +23,12 @@ function NuevoTicket() {
   const [prioridades, setPrioridades] = useState([]);
   const [sucursales, setSucursales] = useState([]);
   const [sectores, setSectores] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [idTipo, setIdTipo] = useState('');
   const [idPrioridadSugerida, setIdPrioridadSugerida] = useState('');
   const [idSucursal, setIdSucursal] = useState('');
   const [idSector, setIdSector] = useState('');
+  const [idUsuarioCreador, setIdUsuarioCreador] = useState('');
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [adjunto, setAdjunto] = useState(null);
@@ -40,6 +43,13 @@ function NuevoTicket() {
     if (esTecnico) {
       getSucursales().then((data) => setSucursales(data.filter((sucursal) => sucursal.activo)));
       getSectores().then((data) => setSectores(data.filter((sector) => sector.activo)));
+      getUsuarios().then((data) =>
+        setUsuarios(
+          data
+            .filter((usuarioItem) => usuarioItem.activo)
+            .map((usuarioItem) => ({ id: usuarioItem.id, nombre: `${usuarioItem.nombre} ${usuarioItem.apellido}` }))
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -57,6 +67,7 @@ function NuevoTicket() {
         descripcion,
         idSucursal: esTecnico ? idSucursal : undefined,
         idSector: esTecnico ? idSector : undefined,
+        idUsuarioCreador: esTecnico ? idUsuarioCreador : undefined,
       });
       if (adjunto) {
         await subirAdjuntoDeTicket(ticket.id, adjunto);
@@ -94,6 +105,14 @@ function NuevoTicket() {
 
         {esTecnico && (
           <>
+            <FormField
+              id="idUsuarioCreador"
+              label="Usuario que crea el ticket (opcional)"
+              value={idUsuarioCreador}
+              onChange={(event) => setIdUsuarioCreador(event.target.value)}
+              options={usuarios}
+            />
+
             <FormField
               id="idSucursal"
               label="Sucursal"

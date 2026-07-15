@@ -15,6 +15,7 @@ router.put('/usuarios/perfil/password', requiereAutenticacion, usuariosControlle
 router.get('/usuarios', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarios);
 router.get('/usuarios/:id', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarioById);
 router.patch('/usuarios/:id/rol', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarRol);
+router.patch('/usuarios/:id/activo', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarActivo);
 router.put('/usuarios/:id/password', requiereAutenticacion, requiereRolAdministrador, usuariosController.blanquearPassword);
 
 export default router;

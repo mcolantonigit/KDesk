@@ -20,14 +20,15 @@ function crearError(mensaje, status) {
 }
 
 export async function crearTicket({
-  idUsuarioCreador,
-  idRolCreador,
+  idUsuarioActor,
+  idRolActor,
   idTipo,
   idPrioridadSugerida,
   titulo,
   descripcion,
   idSucursal,
   idSector,
+  idUsuarioCreador,
 }) {
   if (!titulo || !titulo.trim()) {
     throw crearError('El título es obligatorio', 400);
@@ -39,13 +40,23 @@ export async function crearTicket({
     throw crearError('La descripción es obligatoria', 400);
   }
 
-  const usuario = await usuariosModel.findById(idUsuarioCreador);
   const estadoInicial = await estadosModel.findByNombre(ESTADO_INICIAL);
+  const esTecnico = await rolesService.esRolTecnicoOAdministrador(idRolActor);
+
+  let idUsuarioFinal = idUsuarioActor;
+  if (esTecnico && idUsuarioCreador) {
+    const usuarioSeleccionado = await usuariosModel.findById(idUsuarioCreador);
+    if (!usuarioSeleccionado) {
+      throw crearError('El usuario creador seleccionado no existe', 400);
+    }
+    idUsuarioFinal = usuarioSeleccionado.id;
+  }
+
+  const usuario = await usuariosModel.findById(idUsuarioFinal);
 
   let idSucursalFinal = usuario.id_sucursal;
   let idSectorFinal = usuario.id_sector;
 
-  const esTecnico = await rolesService.esRolTecnicoOAdministrador(idRolCreador);
   if (esTecnico && idSucursal) {
     const sucursalElegida = await sucursalesModel.findById(idSucursal);
     if (!sucursalElegida) {
@@ -71,22 +82,25 @@ export async function crearTicket({
     idTipo,
     idPrioridadSugerida,
     idEstado: estadoInicial.id,
-    idUsuarioCreador,
+    idUsuarioCreador: idUsuarioFinal,
     idSucursal: idSucursalFinal,
     idSector: idSectorFinal,
   });
 
+  const aNombreDeOtro = idUsuarioFinal !== idUsuarioActor;
+  const sufijoDetalle = aNombreDeOtro ? ` a nombre de ${usuario.nombre} ${usuario.apellido}` : '';
+
   await auditoriaService.registrarEvento({
-    idUsuario: idUsuarioCreador,
+    idUsuario: idUsuarioActor,
     accion: 'CREACION_TICKET',
-    detalle: `Creación de ticket ${ticket.numero} (${ticket.titulo})`,
+    detalle: `Creación de ticket ${ticket.numero} (${ticket.titulo})${sufijoDetalle}`,
   });
 
   await historialService.registrarEvento({
     idTicket: ticket.id,
-    idUsuario: idUsuarioCreador,
+    idUsuario: idUsuarioActor,
     evento: 'CREACION',
-    detalle: `Ticket ${ticket.numero} creado`,
+    detalle: `Ticket ${ticket.numero} creado${sufijoDetalle}`,
   });
 
   return ticket;

@@ -11,6 +11,9 @@ import {
 import { getEstados } from '../services/estados.service';
 import { getPrioridades } from '../services/prioridades.service';
 import { getTiposTicket } from '../services/tiposTicket.service';
+import { getSucursales } from '../services/sucursales.service';
+import { getSectores } from '../services/sectores.service';
+import { getUsuarios } from '../services/usuarios.service';
 import {
   getAdjuntosDeTicket,
   getAdjuntosDeComentario,
@@ -29,12 +32,20 @@ function DetalleTicket() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { usuario } = useAuth();
+  const esTecnico = ROLES_TECNICOS.includes(usuario?.id_rol);
 
   const [ticket, setTicket] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [adjuntosTicket, setAdjuntosTicket] = useState([]);
   const [historial, setHistorial] = useState([]);
-  const [catalogos, setCatalogos] = useState({ estados: [], prioridades: [], tipos: [] });
+  const [catalogos, setCatalogos] = useState({
+    estados: [],
+    prioridades: [],
+    tipos: [],
+    sucursales: [],
+    sectores: [],
+    usuarios: [],
+  });
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
@@ -76,12 +87,15 @@ function DetalleTicket() {
     async function cargar() {
       setCargando(true);
       try {
-        const [estados, prioridades, tipos] = await Promise.all([
+        const [estados, prioridades, tipos, sucursales, sectores, usuarios] = await Promise.all([
           getEstados(),
           getPrioridades(),
           getTiposTicket(),
+          getSucursales(),
+          getSectores(),
+          esTecnico ? getUsuarios() : Promise.resolve([]),
         ]);
-        setCatalogos({ estados, prioridades, tipos });
+        setCatalogos({ estados, prioridades, tipos, sucursales, sectores, usuarios });
         await cargarTicket();
       } catch (err) {
         setError(err.message);
@@ -169,12 +183,19 @@ function DetalleTicket() {
     (prioridad) => prioridad.id === ticket.id_prioridad_sugerida
   )?.nombre;
   const nombreTipo = catalogos.tipos.find((tipo) => tipo.id === ticket.id_tipo)?.nombre ?? '—';
+  const nombreSucursal = catalogos.sucursales.find((sucursal) => sucursal.id === ticket.id_sucursal)?.nombre ?? '—';
+  const nombreSector = catalogos.sectores.find((sector) => sector.id === ticket.id_sector)?.nombre ?? '—';
+  const usuarioCreador = catalogos.usuarios.find((item) => item.id === ticket.id_usuario_creador);
+  const nombreCreador = esTecnico
+    ? usuarioCreador
+      ? `${usuarioCreador.nombre} ${usuarioCreador.apellido}`
+      : '—'
+    : `${usuario.nombre} ${usuario.apellido}`;
 
   const historialOrdenado = [...historial].reverse();
   const historialMostrado = historialOrdenado.slice(0, historialVisibles);
 
   const esCreador = ticket.id_usuario_creador === usuario?.id;
-  const esTecnico = ROLES_TECNICOS.includes(usuario?.id_rol);
   const puedeCerrar = esCreador || esTecnico;
   const yaCerrado = nombreEstado === ESTADO_CERRADO;
 
@@ -205,6 +226,18 @@ function DetalleTicket() {
         <div>
           <dt>Prioridad</dt>
           <dd>{nombrePrioridad ?? `${nombrePrioridadSugerida ?? '—'} (sugerida)`}</dd>
+        </div>
+        <div>
+          <dt>Creado por</dt>
+          <dd>{nombreCreador}</dd>
+        </div>
+        <div>
+          <dt>Sucursal</dt>
+          <dd>{nombreSucursal}</dd>
+        </div>
+        <div>
+          <dt>Sector</dt>
+          <dd>{nombreSector}</dd>
         </div>
         <div>
           <dt>Fecha de creación</dt>

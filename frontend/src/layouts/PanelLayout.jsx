@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { usePreferencias } from '../context/PreferenciasContext';
 import Button from '../components/Button';
+import ModalCambiarPassword from '../components/ModalCambiarPassword';
 import '../styles/PanelLayout.css';
 
 const ROLES_DASHBOARD = [2, 3];
@@ -30,10 +33,13 @@ const ICONO_CERRAR_SESION = (
 
 function PanelLayout() {
   const { usuario, cerrarSesion } = useAuth();
+  const { fondoAnimado, setFondoAnimado } = usePreferencias();
   const navigate = useNavigate();
+  const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
-  const puedeVerAdministrar = ROLES_DASHBOARD.includes(usuario?.id_rol);
+  const esTecnicoOAdministrador = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esAdministrador = usuario?.id_rol === ROL_ADMINISTRADOR;
+  const puedeCambiarPasswordDesdeMenu = usuario && !esAdministrador;
 
   async function handleLogout() {
     await cerrarSesion();
@@ -76,23 +82,39 @@ function PanelLayout() {
             <span>{usuario?.nombre} {usuario?.apellido}</span>
           </div>
 
-          {puedeVerAdministrar && (
-            <div className="panel-nav-item">
-              <Button
-                variant="secondary"
-                className="panel-logout-btn"
-                title="Administrar"
-                aria-label="Administrar"
-              >
-                {ICONO_ENGRANAJE}
-              </Button>
-              <div className="panel-nav-submenu panel-nav-submenu-derecha">
-                {esAdministrador && <NavLink to="/administrar/usuarios">Usuarios y permisos</NavLink>}
-                {esAdministrador && <NavLink to="/administrar/parametros">Parámetros</NavLink>}
-                <NavLink to="/administrar/estadisticas">Estadísticas</NavLink>
-                <NavLink to="/administrar/auditoria">Auditoría</NavLink>
-              </div>
+          <div className="panel-nav-item">
+            <Button
+              variant="secondary"
+              className="panel-logout-btn"
+              title="Administrar"
+              aria-label="Administrar"
+            >
+              {ICONO_ENGRANAJE}
+            </Button>
+            <div className="panel-nav-submenu panel-nav-submenu-derecha">
+              {puedeCambiarPasswordDesdeMenu && (
+                <button type="button" onClick={() => setModalPasswordAbierto(true)}>
+                  Cambiar contraseña
+                </button>
+              )}
+              {esAdministrador && <NavLink to="/administrar/usuarios">Usuarios y permisos</NavLink>}
+              {esAdministrador && <NavLink to="/administrar/parametros">Parámetros</NavLink>}
+              {esTecnicoOAdministrador && <NavLink to="/administrar/estadisticas">Estadísticas</NavLink>}
+              {esTecnicoOAdministrador && <NavLink to="/administrar/auditoria">Auditoría</NavLink>}
+              {esTecnicoOAdministrador && <NavLink to="/administrar/backups">Backups</NavLink>}
+              <label className="panel-nav-submenu-checkbox">
+                <input
+                  type="checkbox"
+                  checked={fondoAnimado}
+                  onChange={(event) => setFondoAnimado(event.target.checked)}
+                />
+                Fondo animado
+              </label>
             </div>
+          </div>
+
+          {modalPasswordAbierto && (
+            <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />
           )}
 
           <Button

@@ -86,11 +86,22 @@ export async function completarTarea({ idTarea, idUsuarioQueCompleta }) {
   if (!tarea) {
     throw crearError('Tarea no encontrada', 404);
   }
-  if (tarea.completada) {
-    throw crearError('La tarea ya fue completada', 400);
-  }
 
   const ticket = await ticketsModel.findById(tarea.id_ticket);
+
+  if (tarea.completada) {
+    const tareaActualizada = await tareasModel.marcarPendiente(idTarea);
+
+    await historialService.registrarEvento({
+      idTicket: tarea.id_ticket,
+      idUsuario: idUsuarioQueCompleta,
+      evento: 'TAREA_REABIERTA',
+      detalle: `Ticket ${ticket.numero}: tarea reabierta (${tarea.descripcion})`,
+    });
+
+    return tareaActualizada;
+  }
+
   const tareaActualizada = await tareasModel.marcarCompletada(idTarea);
 
   await historialService.registrarEvento({

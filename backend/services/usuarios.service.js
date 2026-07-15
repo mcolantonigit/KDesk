@@ -157,6 +157,10 @@ export async function autenticarUsuario({ correo, password }) {
     throw crearError('Tenés que activar tu cuenta antes de iniciar sesión. Revisá el mail que te enviamos al registrarte', 403);
   }
 
+  if (!usuario.activo) {
+    throw crearError('Tu cuenta está deshabilitada. Contactá a un administrador', 403);
+  }
+
   const { password_hash, ...usuarioSinPassword } = usuario;
 
   const token = generarTokenJWT({ id: usuario.id, correo: usuario.correo, idRol: usuario.id_rol });
@@ -213,6 +217,26 @@ export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
     idUsuario: idUsuarioQueCambia,
     accion: 'CAMBIO_ROL',
     detalle: `Cambio de rol de ${usuario.correo} -> id_rol ${idRol}`,
+  });
+
+  return usuarioActualizado;
+}
+
+export async function cambiarEstadoActivo({ id, activo, idUsuarioQueCambia }) {
+  const usuario = await usuariosModel.findById(id);
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+  if (!activo && Number(id) === Number(idUsuarioQueCambia)) {
+    throw crearError('No podés deshabilitar tu propia cuenta', 400);
+  }
+
+  const usuarioActualizado = await usuariosModel.updateActivo(id, activo);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: idUsuarioQueCambia,
+    accion: activo ? 'HABILITAR_USUARIO' : 'DESHABILITAR_USUARIO',
+    detalle: `${activo ? 'Habilitación' : 'Deshabilitación'} de usuario (${usuario.correo})`,
   });
 
   return usuarioActualizado;

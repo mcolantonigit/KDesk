@@ -50,6 +50,14 @@ export async function updateRol(id, idRol) {
   return result.rows[0];
 }
 
+export async function updateActivo(id, activo) {
+  const result = await pool.query(
+    `UPDATE usuarios SET activo = $1 WHERE id = $2 RETURNING ${CAMPOS_PUBLICOS}`,
+    [activo, id]
+  );
+  return result.rows[0];
+}
+
 export async function create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector }) {
   const result = await pool.query(
     `INSERT INTO usuarios (nombre, apellido, correo, password_hash, id_rol, id_sucursal, id_sector)

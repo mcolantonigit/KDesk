@@ -123,6 +123,40 @@ export async function cambiarRolUsuario(id, idRol) {
   return data;
 }
 
+export async function cambiarPassword({ passwordActual, passwordNueva, confirmacion }) {
+  const response = await fetch('/api/usuarios/perfil/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ passwordActual, passwordNueva, confirmacion }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo cambiar la contraseña');
+  }
+
+  return data;
+}
+
+export async function cambiarEstadoActivo(id, activo) {
+  const response = await fetch(`/api/usuarios/${id}/activo`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ activo }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo cambiar el estado del usuario');
+  }
+
+  return data;
+}
+
 export async function blanquearPassword(id, passwordNueva) {
   const response = await fetch(`/api/usuarios/${id}/password`, {
     method: 'PUT',

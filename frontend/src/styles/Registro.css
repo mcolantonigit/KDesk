@@ -1,0 +1,23 @@
+.auth-card-registro {
+  width: 560px;
+}
+
+.registro-campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.registro-campo-completo {
+  grid-column: 1 / -1;
+}
+
+.registro-links {
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .registro-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

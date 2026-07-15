@@ -2,16 +2,17 @@ import * as ticketsService from '../services/tickets.service.js';
 
 export async function crearTicket(req, res) {
   try {
-    const { idTipo, idPrioridadSugerida, titulo, descripcion, idSucursal, idSector } = req.body;
+    const { idTipo, idPrioridadSugerida, titulo, descripcion, idSucursal, idSector, idUsuarioCreador } = req.body;
     const ticket = await ticketsService.crearTicket({
-      idUsuarioCreador: req.usuario.id,
-      idRolCreador: req.usuario.idRol,
+      idUsuarioActor: req.usuario.id,
+      idRolActor: req.usuario.idRol,
       idTipo,
       idPrioridadSugerida,
       titulo,
       descripcion,
       idSucursal,
       idSector,
+      idUsuarioCreador,
     });
     res.status(201).json(ticket);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsuarios, cambiarRolUsuario } from '../services/usuarios.service';
+import { getUsuarios, cambiarRolUsuario, cambiarEstadoActivo } from '../services/usuarios.service';
 import { getRoles } from '../services/roles.service';
 import { getSucursales } from '../services/sucursales.service';
 import { getSectores } from '../services/sectores.service';
@@ -12,7 +12,6 @@ const ROL_ADMINISTRADOR = 3;
 const ROLES_ASIGNABLES = [1, 2];
 
 const COLUMNAS = [
-  { key: 'id', label: 'ID', visiblePorDefecto: true },
   { key: 'nombre', label: 'Nombre', visiblePorDefecto: true },
   { key: 'apellido', label: 'Apellido', visiblePorDefecto: true },
   { key: 'correo', label: 'Correo', visiblePorDefecto: true },
@@ -20,7 +19,6 @@ const COLUMNAS = [
   { key: 'sucursal', label: 'Sucursal', visiblePorDefecto: true },
   { key: 'sector', label: 'Sector', visiblePorDefecto: true },
   { key: 'fecha_registro', label: 'Fecha de registro', visiblePorDefecto: false },
-  { key: 'activo', label: 'Activo', visiblePorDefecto: false },
 ];
 
 function UsuariosPermisos() {
@@ -32,11 +30,14 @@ function UsuariosPermisos() {
   const [error, setError] = useState('');
 
   const [busqueda, setBusqueda] = useState('');
+  const [mostrarDeshabilitados, setMostrarDeshabilitados] = useState(false);
   const [usuarioParaPassword, setUsuarioParaPassword] = useState(null);
   const [mostrarColumnas, setMostrarColumnas] = useState(false);
   const [columnasVisibles, setColumnasVisibles] = useState(() =>
     Object.fromEntries(COLUMNAS.map((columna) => [columna.key, columna.visiblePorDefecto]))
   );
+  const [ordenPor, setOrdenPor] = useState('nombre');
+  const [ordenAsc, setOrdenAsc] = useState(true);
 
   async function cargarTodo() {
     try {
@@ -80,17 +81,75 @@ function UsuariosPermisos() {
 
   const usuariosFiltrados = useMemo(() => {
     const busquedaNormalizada = busqueda.trim().toLowerCase();
-    if (!busquedaNormalizada) return usuarios;
 
     return usuarios.filter((usuario) => {
+      if (!mostrarDeshabilitados && !usuario.activo) return false;
+
+      if (!busquedaNormalizada) return true;
       const campos = [usuario.nombre, usuario.apellido, usuario.correo];
       return campos.some((campo) => campo?.toLowerCase().includes(busquedaNormalizada));
     });
-  }, [usuarios, busqueda]);
+  }, [usuarios, busqueda, mostrarDeshabilitados]);
+
+  function valorOrdenable(usuario, key) {
+    switch (key) {
+      case 'rol':
+        return rolesPorId[usuario.id_rol] ?? '';
+      case 'sucursal':
+        return sucursalesPorId[usuario.id_sucursal] ?? '';
+      case 'sector':
+        return sectoresPorId[usuario.id_sector] ?? '';
+      case 'fecha_registro':
+        return new Date(usuario.fecha_registro).getTime();
+      case 'activo':
+        return usuario.activo ? 1 : 0;
+      default:
+        return usuario[key] ?? '';
+    }
+  }
+
+  const usuariosOrdenados = useMemo(() => {
+    const copia = [...usuariosFiltrados];
+    copia.sort((a, b) => {
+      const valorA = valorOrdenable(a, ordenPor);
+      const valorB = valorOrdenable(b, ordenPor);
+      if (valorA < valorB) return ordenAsc ? -1 : 1;
+      if (valorA > valorB) return ordenAsc ? 1 : -1;
+      return 0;
+    });
+    return copia;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuariosFiltrados, ordenPor, ordenAsc, rolesPorId, sucursalesPorId, sectoresPorId]);
+
+  function handleOrdenar(columna) {
+    if (columna === ordenPor) {
+      setOrdenAsc(!ordenAsc);
+    } else {
+      setOrdenPor(columna);
+      setOrdenAsc(true);
+    }
+  }
 
   async function handleCambiarRol(usuario, idRol) {
     try {
       await cambiarRolUsuario(usuario.id, idRol);
+      await refrescarUsuarios();
+    } catch (err) {
+      window.alert(err.message);
+    }
+  }
+
+  async function handleToggleActivo(usuario) {
+    if (usuario.activo) {
+      const confirmado = window.confirm(
+        `Deshabilitar a ${usuario.nombre} ${usuario.apellido} no lo borra de la base de datos, ` +
+          'pero le impedirá usar el sistema. ¿Confirmás?'
+      );
+      if (!confirmado) return;
+    }
+
+    try {
+      await cambiarEstadoActivo(usuario.id, !usuario.activo);
       await refrescarUsuarios();
     } catch (err) {
       window.alert(err.message);
@@ -105,8 +164,6 @@ function UsuariosPermisos() {
 
   function renderCelda(usuario, key) {
     switch (key) {
-      case 'id':
-        return usuario.id;
       case 'nombre':
         return usuario.nombre;
       case 'apellido':
@@ -131,8 +188,6 @@ function UsuariosPermisos() {
         return sectoresPorId[usuario.id_sector] ?? '—';
       case 'fecha_registro':
         return new Date(usuario.fecha_registro).toLocaleDateString();
-      case 'activo':
-        return usuario.activo ? 'Sí' : 'No';
       default:
         return null;
     }
@@ -158,6 +213,15 @@ function UsuariosPermisos() {
       </div>
 
       <div className="tabla-tickets-contenedor">
+        <label className="tabla-catalogo-mostrar-inactivos">
+          <input
+            type="checkbox"
+            checked={mostrarDeshabilitados}
+            onChange={(event) => setMostrarDeshabilitados(event.target.checked)}
+          />
+          Mostrar deshabilitados
+        </label>
+
         <div className="tabla-tickets-columnas">
           <Button variant="secondary" type="button" onClick={() => setMostrarColumnas(!mostrarColumnas)}>
             Columnas
@@ -183,17 +247,29 @@ function UsuariosPermisos() {
             <thead>
               <tr>
                 {columnasActivas.map((columna) => (
-                  <th key={columna.key}>{columna.label}</th>
+                  <th key={columna.key} onClick={() => handleOrdenar(columna.key)}>
+                    {columna.label}
+                    {ordenPor === columna.key && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
+                  </th>
                 ))}
-                <th>Acciones</th>
+                <th onClick={() => handleOrdenar('activo')}>
+                  Activo
+                  {ordenPor === 'activo' && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
+                </th>
+                <th>Contraseña</th>
               </tr>
             </thead>
             <tbody>
-              {usuariosFiltrados.map((usuario) => (
+              {usuariosOrdenados.map((usuario) => (
                 <tr key={usuario.id}>
                   {columnasActivas.map((columna) => (
                     <td key={columna.key}>{renderCelda(usuario, columna.key)}</td>
                   ))}
+                  <td>
+                    <Button variant="secondary" onClick={() => handleToggleActivo(usuario)}>
+                      {usuario.activo ? 'Deshabilitar' : 'Habilitar'}
+                    </Button>
+                  </td>
                   <td>
                     <Button variant="secondary" onClick={() => setUsuarioParaPassword(usuario)}>
                       Cambiar contraseña
@@ -201,9 +277,9 @@ function UsuariosPermisos() {
                   </td>
                 </tr>
               ))}
-              {usuariosFiltrados.length === 0 && (
+              {usuariosOrdenados.length === 0 && (
                 <tr>
-                  <td colSpan={columnasActivas.length + 1} className="tabla-tickets-vacio">
+                  <td colSpan={columnasActivas.length + 2} className="tabla-tickets-vacio">
                     No hay usuarios para mostrar
                   </td>
                 </tr>

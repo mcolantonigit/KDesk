@@ -1,5 +1,8 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import healthRoutes from './routes/health.routes.js';
 import rolesRoutes from './routes/roles.routes.js';
 import sucursalesRoutes from './routes/sucursales.routes.js';
@@ -14,6 +17,7 @@ import tareasTecnicasRoutes from './routes/tareasTecnicas.routes.js';
 import historialRoutes from './routes/historial.routes.js';
 import adjuntosRoutes from './routes/adjuntos.routes.js';
 import auditoriaRoutes from './routes/auditoria.routes.js';
+import backupsRoutes from './routes/backups.routes.js';
 
 const app = express();
 
@@ -34,5 +38,19 @@ app.use('/api', tareasTecnicasRoutes);
 app.use('/api', historialRoutes);
 app.use('/api', adjuntosRoutes);
 app.use('/api', auditoriaRoutes);
+app.use('/api', backupsRoutes);
+
+// Producción: Express sirve el build del frontend (npm run build en
+// frontend/). En desarrollo esta carpeta no existe (se usa el servidor
+// de Vite en :5173 en su lugar), por eso queda condicionado a que exista.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const carpetaFrontend = path.join(__dirname, '../frontend/dist');
+
+if (fs.existsSync(carpetaFrontend)) {
+  app.use(express.static(carpetaFrontend));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(carpetaFrontend, 'index.html'));
+  });
+}
 
 export default app;

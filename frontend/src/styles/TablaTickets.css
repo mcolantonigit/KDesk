@@ -40,7 +40,6 @@
 .tabla-tickets-scroll {
   overflow-x: auto;
   background: var(--card-bg);
-  backdrop-filter: var(--blur);
   border: 1px solid var(--border);
   border-radius: 16px;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   getTareas,
   crearTarea,
@@ -16,6 +16,17 @@ function Checklist({ idTicket }) {
   const [mostrar, setMostrar] = useState(false);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [focoPendiente, setFocoPendiente] = useState(null);
+  const inputsRef = useRef({});
+
+  useEffect(() => {
+    if (focoPendiente == null) return;
+    const input = inputsRef.current[focoPendiente];
+    if (input) {
+      input.focus();
+      setFocoPendiente(null);
+    }
+  }, [focoPendiente, tareas]);
 
   useEffect(() => {
     async function cargar() {
@@ -33,14 +44,22 @@ function Checklist({ idTicket }) {
     cargar();
   }, [idTicket]);
 
-  async function handleAgregarItem() {
+  async function handleAgregarItem({ enfocar = false } = {}) {
     try {
       const tarea = await crearTarea(idTicket, DESCRIPCION_INICIAL);
       setTareas((anteriores) => [...anteriores, tarea]);
       setSinEditar((anteriores) => new Set(anteriores).add(tarea.id));
+      if (enfocar) setFocoPendiente(tarea.id);
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  function handleKeyDownTexto(event, tarea) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    handleGuardarTexto(tarea);
+    handleAgregarItem({ enfocar: true });
   }
 
   function handleTextoLocal(id, descripcion) {
@@ -63,7 +82,6 @@ function Checklist({ idTicket }) {
   }
 
   async function handleCompletar(tarea) {
-    if (tarea.completada) return;
     try {
       const tareaActualizada = await completarTarea(tarea.id);
       setTareas((anteriores) => anteriores.map((item) => (item.id === tarea.id ? tareaActualizada : item)));
@@ -111,10 +129,12 @@ function Checklist({ idTicket }) {
                 <input
                   type="checkbox"
                   checked={tarea.completada}
-                  disabled={tarea.completada}
                   onChange={() => handleCompletar(tarea)}
                 />
                 <input
+                  ref={(el) => {
+                    inputsRef.current[tarea.id] = el;
+                  }}
                   type="text"
                   className={`checklist-item-texto ${tarea.completada ? 'completada' : ''}`}
                   value={sinEditar.has(tarea.id) ? '' : tarea.descripcion}
@@ -122,6 +142,7 @@ function Checklist({ idTicket }) {
                   disabled={tarea.completada}
                   onChange={(event) => handleTextoLocal(tarea.id, event.target.value)}
                   onBlur={() => handleGuardarTexto(tarea)}
+                  onKeyDown={(event) => handleKeyDownTexto(event, tarea)}
                 />
                 <button
                   type="button"
