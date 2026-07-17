@@ -43,14 +43,7 @@ export async function registrarUsuario({ nombre, apellido, correo, password, idR
   const usuario = await usuariosModel.create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector });
 
   try {
-    const tokenActivacion = generarTokenAleatorio();
-    await tokensVerificacionModel.create({
-      idUsuario: usuario.id,
-      tokenHash: hashearToken(tokenActivacion),
-      tipo: 'ACTIVACION',
-      fechaExpiracion: horasDesdeAhora(HORAS_EXPIRACION_ACTIVACION),
-    });
-    await enviarMailActivacion({ correo: usuario.correo, nombre: usuario.nombre, token: tokenActivacion });
+    await crearYEnviarTokenActivacion(usuario);
   } catch (error) {
     await usuariosModel.deleteById(usuario.id);
     throw crearError('No se pudo enviar el mail de activación. Intentá registrarte de nuevo en unos minutos.', 500);
@@ -63,6 +56,46 @@ export async function registrarUsuario({ nombre, apellido, correo, password, idR
   });
 
   return usuario;
+}
+
+async function crearYEnviarTokenActivacion(usuario) {
+  const tokenActivacion = generarTokenAleatorio();
+  await tokensVerificacionModel.create({
+    idUsuario: usuario.id,
+    tokenHash: hashearToken(tokenActivacion),
+    tipo: 'ACTIVACION',
+    fechaExpiracion: horasDesdeAhora(HORAS_EXPIRACION_ACTIVACION),
+  });
+  await enviarMailActivacion({ correo: usuario.correo, nombre: usuario.nombre, token: tokenActivacion });
+}
+
+export async function reenviarActivacion(correo) {
+  const usuario = await usuariosModel.findByCorreo(correo);
+  if (!usuario) {
+    throw crearError('No existe una cuenta registrada con ese correo', 404);
+  }
+  if (usuario.email_verificado) {
+    throw crearError('Esta cuenta ya está activada', 400);
+  }
+  if (usuario.activacion_reenviada) {
+    throw crearError('El correo de activación ya fue reenviado. Contactá a un administrador si seguís sin poder activar la cuenta.', 400);
+  }
+
+  await tokensVerificacionModel.invalidarPendientes(usuario.id, 'ACTIVACION');
+
+  try {
+    await crearYEnviarTokenActivacion(usuario);
+  } catch (error) {
+    throw crearError('No se pudo reenviar el mail de activación. Intentá de nuevo en unos minutos.', 500);
+  }
+
+  await usuariosModel.marcarReenvioActivacion(usuario.id);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: usuario.id,
+    accion: 'REENVIO_ACTIVACION',
+    detalle: `Reenvío de mail de activación (${usuario.correo})`,
+  });
 }
 
 export async function activarCuenta(token) {

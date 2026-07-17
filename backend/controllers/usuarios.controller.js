@@ -39,6 +39,16 @@ export async function register(req, res) {
   }
 }
 
+export async function reenviarActivacion(req, res) {
+  try {
+    const { correo } = req.body;
+    await usuariosService.reenviarActivacion(correo);
+    res.json({ message: 'Te reenviamos el correo de activación' });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo reenviar el correo de activación' });
+  }
+}
+
 export async function getPerfil(req, res) {
   try {
     const usuario = await usuariosService.getUsuarioById(req.usuario.id);

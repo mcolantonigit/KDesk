@@ -6,10 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
+    allowedHosts: ['kdesk', 'kdesk.kalop.com.ar'],
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'https://localhost:443',
         changeOrigin: true,
+        secure: false, // certificado de la CA interna de KDesk, no de una CA pública
       },
     },
   },

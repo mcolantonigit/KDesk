@@ -1,7 +1,7 @@
 import { pool } from '../config/db.js';
 
 const CAMPOS_PUBLICOS =
-  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado';
+  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado, activacion_reenviada';
 
 export async function findAll() {
   const result = await pool.query(`SELECT ${CAMPOS_PUBLICOS} FROM usuarios ORDER BY id`);
@@ -37,6 +37,14 @@ export async function deleteById(id) {
 export async function marcarEmailVerificado(id) {
   const result = await pool.query(
     `UPDATE usuarios SET email_verificado = TRUE WHERE id = $1 RETURNING ${CAMPOS_PUBLICOS}`,
+    [id]
+  );
+  return result.rows[0];
+}
+
+export async function marcarReenvioActivacion(id) {
+  const result = await pool.query(
+    `UPDATE usuarios SET activacion_reenviada = TRUE WHERE id = $1 RETURNING ${CAMPOS_PUBLICOS}`,
     [id]
   );
   return result.rows[0];

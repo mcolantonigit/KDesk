@@ -74,6 +74,7 @@ CREATE TABLE usuarios (
     fecha_registro  TIMESTAMP NOT NULL DEFAULT NOW(),
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
     email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
+    activacion_reenviada BOOLEAN NOT NULL DEFAULT FALSE,
 
     CONSTRAINT chk_correo_kalop CHECK (
         correo LIKE '%@kalop.com.ar' OR correo LIKE '%@ergoscables.com.ar' OR correo LIKE '%@kalop.cl'

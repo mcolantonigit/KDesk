@@ -48,7 +48,7 @@ const carpetaFrontend = path.join(__dirname, '../frontend/dist');
 
 if (fs.existsSync(carpetaFrontend)) {
   app.use(express.static(carpetaFrontend));
-  app.get('*', (req, res) => {
+  app.get('/*splat', (req, res) => {
     res.sendFile(path.join(carpetaFrontend, 'index.html'));
   });
 }

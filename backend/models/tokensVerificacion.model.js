@@ -22,3 +22,10 @@ export async function findByTokenHash(tokenHash, tipo) {
 export async function marcarUsado(id) {
   await pool.query('UPDATE tokens_verificacion SET usado = TRUE WHERE id = $1', [id]);
 }
+
+export async function invalidarPendientes(idUsuario, tipo) {
+  await pool.query(
+    'UPDATE tokens_verificacion SET usado = TRUE WHERE id_usuario = $1 AND tipo = $2 AND usado = FALSE',
+    [idUsuario, tipo]
+  );
+}

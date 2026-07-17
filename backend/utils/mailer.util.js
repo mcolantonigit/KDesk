@@ -2,6 +2,11 @@ import nodemailer from 'nodemailer';
 
 let transportador;
 
+function construirUrl(path) {
+  const base = process.env.FRONTEND_URL.replace(/\/+$/, '');
+  return `${base}${path}`;
+}
+
 function obtenerTransportador() {
   if (!transportador) {
     transportador = nodemailer.createTransport({
@@ -47,7 +52,7 @@ function plantillaBase({ titulo, mensaje, textoBoton, url }) {
 }
 
 export async function enviarMailActivacion({ correo, nombre, token }) {
-  const url = `${process.env.FRONTEND_URL}/activar-cuenta?token=${token}`;
+  const url = construirUrl(`/activar-cuenta?token=${token}`);
   await enviarMail({
     para: correo,
     asunto: 'Activá tu cuenta de KDesk',
@@ -63,7 +68,7 @@ export async function enviarMailActivacion({ correo, nombre, token }) {
 }
 
 export async function enviarMailResetPassword({ correo, nombre, token }) {
-  const url = `${process.env.FRONTEND_URL}/resetear-contrasena?token=${token}`;
+  const url = construirUrl(`/resetear-contrasena?token=${token}`);
   await enviarMail({
     para: correo,
     asunto: 'Recuperar tu contraseña de KDesk',

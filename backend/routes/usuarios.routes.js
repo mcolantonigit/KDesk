@@ -6,6 +6,7 @@ const router = Router();
 
 router.post('/usuarios/register', usuariosController.register);
 router.post('/usuarios/activar', usuariosController.activarCuenta);
+router.post('/usuarios/reenviar-activacion', usuariosController.reenviarActivacion);
 router.post('/usuarios/recuperar-password', usuariosController.solicitarResetPassword);
 router.post('/usuarios/resetear-password', usuariosController.resetearPassword);
 router.post('/usuarios/login', usuariosController.login);

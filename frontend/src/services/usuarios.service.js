@@ -47,6 +47,22 @@ export async function activarCuenta(token) {
   return data;
 }
 
+export async function reenviarActivacion(correo) {
+  const response = await fetch('/api/usuarios/reenviar-activacion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correo }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo reenviar el correo de activación');
+  }
+
+  return data;
+}
+
 export async function solicitarResetPassword(correo) {
   const response = await fetch('/api/usuarios/recuperar-password', {
     method: 'POST',

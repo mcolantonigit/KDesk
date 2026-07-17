@@ -6,6 +6,7 @@ import { getSectores } from '../services/sectores.service';
 import AuthLayout from '../components/AuthLayout';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
+import ModalActivacionEnviada from '../components/ModalActivacionEnviada';
 import '../styles/Registro.css';
 
 const ROL_USUARIO = 1;
@@ -21,6 +22,7 @@ function Registro() {
   const [sucursales, setSucursales] = useState([]);
   const [sectores, setSectores] = useState([]);
   const [error, setError] = useState('');
+  const [mostrarModalActivacion, setMostrarModalActivacion] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,87 +50,93 @@ function Registro() {
         idSucursal,
         idSector,
       });
-      navigate('/login');
+      setMostrarModalActivacion(true);
     } catch (err) {
       setError(err.message);
     }
   }
 
   return (
-    <AuthLayout title="Crear cuenta" onSubmit={handleSubmit} className="auth-card-registro">
-      <div className="registro-campos">
-        <FormField
-          id="nombre"
-          label="Nombre"
-          value={nombre}
-          onChange={(event) => setNombre(event.target.value)}
-          required
-        />
+    <>
+      <AuthLayout title="Crear cuenta" onSubmit={handleSubmit} className="auth-card-registro">
+        <div className="registro-campos">
+          <FormField
+            id="nombre"
+            label="Nombre"
+            value={nombre}
+            onChange={(event) => setNombre(event.target.value)}
+            required
+          />
 
-        <FormField
-          id="apellido"
-          label="Apellido"
-          value={apellido}
-          onChange={(event) => setApellido(event.target.value)}
-          required
-        />
+          <FormField
+            id="apellido"
+            label="Apellido"
+            value={apellido}
+            onChange={(event) => setApellido(event.target.value)}
+            required
+          />
 
-        <FormField
-          id="correo"
-          label="Correo electrónico"
-          type="email"
-          placeholder="nombre@kalop.com.ar"
-          value={correo}
-          onChange={(event) => setCorreo(event.target.value)}
-          className="registro-campo-completo"
-          required
-        />
+          <FormField
+            id="correo"
+            label="Correo electrónico"
+            type="email"
+            placeholder="nombre@kalop.com.ar"
+            value={correo}
+            onChange={(event) => setCorreo(event.target.value)}
+            className="registro-campo-completo"
+            required
+          />
 
-        <FormField
-          id="password"
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
+          <FormField
+            id="password"
+            label="Contraseña"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
 
-        <FormField
-          id="confirmacion"
-          label="Confirmar contraseña"
-          type="password"
-          value={confirmacion}
-          onChange={(event) => setConfirmacion(event.target.value)}
-          required
-        />
+          <FormField
+            id="confirmacion"
+            label="Confirmar contraseña"
+            type="password"
+            value={confirmacion}
+            onChange={(event) => setConfirmacion(event.target.value)}
+            required
+          />
 
-        <FormField
-          id="idSucursal"
-          label="Sucursal"
-          value={idSucursal}
-          onChange={(event) => setIdSucursal(event.target.value)}
-          options={sucursales}
-          required
-        />
+          <FormField
+            id="idSucursal"
+            label="Sucursal"
+            value={idSucursal}
+            onChange={(event) => setIdSucursal(event.target.value)}
+            options={sucursales}
+            required
+          />
 
-        <FormField
-          id="idSector"
-          label="Sector"
-          value={idSector}
-          onChange={(event) => setIdSector(event.target.value)}
-          options={sectores}
-          required
-        />
-      </div>
+          <FormField
+            id="idSector"
+            label="Sector"
+            value={idSector}
+            onChange={(event) => setIdSector(event.target.value)}
+            options={sectores}
+            required
+          />
+        </div>
 
-      <Button type="submit">Registrarse</Button>
+        <Button type="submit">Registrarse</Button>
 
-      {error && <p className="auth-error">{error}</p>}
+        {error && <p className="auth-error">{error}</p>}
 
-      <div className="auth-links registro-links">
-        <Link to="/login">¿Ya tenés cuenta? Iniciar sesión</Link>
-      </div>
-    </AuthLayout>
+        <div className="auth-links registro-links">
+          <Link to="/login">¿Ya tenés cuenta? Iniciar sesión</Link>
+        </div>
+      </AuthLayout>
+
+      {mostrarModalActivacion && (
+        <ModalActivacionEnviada correo={correo} onClose={() => navigate('/login')} />
+      )}
+    </>
   );
 }
 

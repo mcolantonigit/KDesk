@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "service:install": "powershell -ExecutionPolicy Bypass -File scripts/install-service.ps1",
+    "service:uninstall": "powershell -ExecutionPolicy Bypass -File scripts/uninstall-service.ps1"
   },
   "keywords": [],
   "author": "",
