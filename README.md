@@ -57,6 +57,23 @@ El backend levanta en `http://localhost:4000` y el frontend (Vite) en
 dominios de correo pueden registrarse; ajustar también el `CHECK` de la
 tabla `usuarios` en `database/schema.sql` para que coincida.
 
+## Alcance y decisiones de seguridad
+
+KDesk se diseñó para correr en la red interna de una empresa (intranet),
+detrás de su propio firewall y sin exposición directa a internet. Eso
+condicionó a propósito algunas decisiones:
+
+- **Sin rate limiting** en login/reset de contraseña: el universo de
+  usuarios es acotado y conocido (empleados con correo corporativo), y
+  el riesgo de fuerza bruta desde la propia red interna es bajo.
+- **Sin `helmet`** ni headers de seguridad adicionales: el tráfico no
+  pasa por navegadores fuera de la red de la empresa ni convive con
+  contenido de terceros.
+
+Si este proyecto (o uno derivado) se fuera a exponer a internet, estas
+dos cosas dejan de ser opcionales y habría que sumarlas antes de
+desplegar.
+
 ## Documentación
 
 El proyecto se desarrolló siguiendo un flujo documentado en `docs/`:
