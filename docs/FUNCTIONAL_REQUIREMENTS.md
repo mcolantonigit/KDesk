@@ -18,7 +18,7 @@ Su finalidad es servir como referencia durante todo el desarrollo del proyecto, 
 
 # RF-001 - Autenticación
 
-El sistema permitirá acceder únicamente a colaboradores de Kalop mediante su correo corporativo.
+El sistema permitirá acceder únicamente a colaboradores de la empresa mediante su correo corporativo.
 
 ## Requisitos
 
@@ -31,11 +31,11 @@ El sistema permitirá acceder únicamente a colaboradores de Kalop mediante su c
 
 - Solo se permitirán correos pertenecientes a alguno de estos dominios
   (decisión de producto 2026-07-14: se suman los dos últimos a la lista
-  original que solo tenía @kalop.com.ar):
+  original que solo tenía @tuempresa.com):
 
-@kalop.com.ar
-@ergoscables.com.ar
-@kalop.cl
+@tuempresa.com
+@otraempresa.com
+@tuempresa.cl
 
 No se permitirá el registro con dominios externos a esta lista.
 
@@ -417,7 +417,7 @@ Cada funcionalidad estará protegida según el rol correspondiente.
 ## Usuario maestro
 
 El rol Administrador (rol 3) queda reservado exclusivamente para el
-usuario maestro `sistemas@kalop.com.ar`. Ese usuario no se crea por el
+usuario maestro `sistemas@tuempresa.com`. Ese usuario no se crea por el
 flujo de registro público: se da de alta y se le asigna el rol 3
 manualmente (por ejemplo, directamente en la base de datos). Ningún
 otro usuario podrá tener el rol 3.
@@ -475,5 +475,5 @@ El rol Administrador dispondrá de un panel exclusivo para la administración ge
 - Todas las acciones realizadas desde este panel deberán quedar registradas en la auditoría (ver RF-022).
 - El blanqueo de credenciales no expondrá la contraseña anterior del usuario.
 - El cambio de rol nunca podrá asignar el rol 3 (Administrador): ese
-  rol queda reservado al usuario maestro `sistemas@kalop.com.ar` (ver
+  rol queda reservado al usuario maestro `sistemas@tuempresa.com` (ver
   RF-021).

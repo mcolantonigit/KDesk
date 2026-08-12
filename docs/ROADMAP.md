@@ -31,7 +31,7 @@ de como una etapa propia al final.
 
 # 2. Autenticación y registro (RF-001, RF-002)
 
-- [x] Registro de usuarios: validación de dominio @kalop.com.ar, correo
+- [x] Registro de usuarios: validación de dominio @tuempresa.com, correo
       duplicado y hasheo de contraseña
 - [x] Auditoría: registrar alta de usuario (registro)
 - [x] Login con JWT en cookie httpOnly
@@ -56,7 +56,7 @@ de como una etapa propia al final.
       sin eso Office 365 rechazaba el login (error 535) aunque la
       contraseña fuera correcta, porque el tenant exige TLS antes de
       autenticar. Probado con un registro real: el mail sale
-      correctamente (`prueba.mailreal@kalop.com.ar`, `email_verificado: false`
+      correctamente (`prueba.mailreal@tuempresa.com`, `email_verificado: false`
       hasta que se activa desde el link del mail)
 - [x] Tabla `tokens_verificacion` (un solo uso, con expiración, tipo
       ACTIVACION/RESET_PASSWORD, `ON DELETE CASCADE` contra usuarios).
@@ -324,10 +324,10 @@ puntual.
 - [x] Reemplazar textos por íconos en el nav: "Administrar" → ícono de
       engranaje, "Cerrar sesión" → ícono de puerta con flecha (ambos
       con `title`/`aria-label` para no perder accesibilidad)
-- [x] Registro: permitir también los dominios @ergoscables.com.ar y
-      @kalop.cl (antes solo @kalop.com.ar). Había DOS validaciones que
+- [x] Registro: permitir también los dominios @otraempresa.com y
+      @tuempresa.cl (antes solo @tuempresa.com). Había DOS validaciones que
       actualizar: la del servicio (`usuarios.service.js`) y una
-      restricción `CHECK` a nivel de base de datos (`chk_correo_kalop`)
+      restricción `CHECK` a nivel de base de datos (`chk_correo_dominio`)
       que no se había detectado al principio y también hacía falta
       alterar; probado registrando un usuario con cada uno de los 3
       dominios y confirmando que un dominio ajeno sigue rechazado

@@ -76,8 +76,9 @@ CREATE TABLE usuarios (
     email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
     activacion_reenviada BOOLEAN NOT NULL DEFAULT FALSE,
 
-    CONSTRAINT chk_correo_kalop CHECK (
-        correo LIKE '%@kalop.com.ar' OR correo LIKE '%@ergoscables.com.ar' OR correo LIKE '%@kalop.cl'
+    -- Ajustar al mismo listado que ALLOWED_EMAIL_DOMAINS en backend/.env
+    CONSTRAINT chk_correo_dominio CHECK (
+        correo LIKE '%@tuempresa.com'
     )
 );
 
@@ -283,7 +284,7 @@ INSERT INTO tipos_ticket (nombre) VALUES
     ('Otro');
 
 -- Sucursales y sectores de ejemplo, para poder practicar cargando
--- usuarios y tickets. Ajustar/completar con los reales de Kalop.
+-- usuarios y tickets. Ajustar/completar con los reales de la empresa.
 
 INSERT INTO sucursales (nombre) VALUES
     ('Casa Central');

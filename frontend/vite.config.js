@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ['kdesk', 'kdesk.kalop.com.ar'],
+    allowedHosts: ['kdesk'], // agregar acá el hostname de tu red interna si hace falta
     proxy: {
       '/api': {
         target: 'https://localhost:443',
