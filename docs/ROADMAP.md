@@ -506,3 +506,86 @@ del header junto a Estadísticas/Auditoría.
       (1876 líneas), restauración del mismo dump sobre la propia base
       (`--clean --if-exists`) y verificación de que los datos siguieron
       intactos (15 usuarios, 14 tickets) después del ciclo completo
+
+---
+
+# 12. Entorno de desarrollo y tests
+
+Branch `develop`: backend sin TLS en `localhost:4000`, base `kdesk_dev`
+(clon de producción) en el server de la red, y todo mail redirigido a
+`MAIL_REDIRECT_TO`. Al hacer merge a `main`, el `.env` del server sigue
+siendo el de producción (con TLS, `COOKIE_SECURE=true` y sin
+`MAIL_REDIRECT_TO`).
+
+- [x] Backend: HTTP plano si `TLS_PFX_PATH` está vacío; `MAIL_REDIRECT_TO`
+      en el mailer; `.gitignore` con `.env*`
+- [x] Frontend: proxy de Vite configurable con `VITE_API_TARGET`
+      (`frontend/.env.development`)
+- [x] `database/clone-to-dev.ps1` (clona `kdesk` en `kdesk_dev`) y
+      `backend/scripts/db.js` (SQL contra dev/test; se niega a correr
+      contra `kdesk`)
+- [x] Tests de frontend: Vitest + Testing Library (`npm test` en `frontend/`)
+- [x] Tests de backend: Vitest + Supertest sobre la base `kdesk_test`
+      (`npm run test:db` la recrea desde `schema.sql`; `npm test` en
+      `backend/`). Primer cubrimiento: comentarios
+- [x] `npm audit fix` en frontend y backend; `nodemailer` subido a 10.2.1.
+      Quedan 3 avisos de `nodemon`/`braces`/`chokidar` (solo desarrollo;
+      el arreglo obliga a bajar nodemon a una versión vieja)
+
+# 13. Mejoras de UI/UX (pendientes, en `develop`)
+
+Se trabajan en este orden; cada bloque se prueba en `localhost:5173`, se
+aprueba y se commitea por separado.
+
+**Bloque 1 — Base visual**
+- [ ] Botón "volver" (`detalle-ticket-volver` y los demás botones de
+      atrás del sistema): rediseño acorde a la estética de KDesk, con ícono SVG
+- [ ] `btn btn-secondary`: corregir padding (se ve feo); además más chico en el Tablero
+- [ ] Componente de subida de archivos (hoy `<input type="file">` crudo en
+      nuevo ticket, comentarios, cierre de ticket y restaurar backup):
+      zona de arrastrar/soltar con ícono SVG, nombre del archivo elegido y
+      botón para quitarlo
+
+**Bloque 2 — Componente `Combobox`**
+- [ ] Input escribible que reemplaza a los `<select>` de nuevo ticket: sugiere
+      la opción más cercana a lo escrito, y no deja guardar un valor que no
+      esté en el listado
+- [ ] Todos los listados de opciones ordenados alfabéticamente
+
+**Bloque 3 — Modal de nuevo ticket**
+- [ ] Reemplazar la página `/tickets/nuevo` por una ventana modal que se abre
+      desde "Nuevo ticket"
+- [ ] Acomodar los campos en columnas (evaluar 2) para pantallas 16:9 sin tanto scroll
+
+**Bloque 4 — Modal de motivo de cierre**
+- [ ] "Cerrar ticket" abre el motivo de cierre como modal por encima del
+      detalle (hoy se abre inline y se pierde entre la info)
+
+**Bloque 5 — Detalle de ticket en 16:9**
+- [ ] Reordenar la info del detalle (`/tickets/:id`) en columnas y más
+      compacta para reducir el scroll en escritorio
+- [ ] Mostrar quién cargó cada comentario (`comentarios.id_autor` ya existe
+      en la base; falta traer nombre/apellido en la consulta). Test primero (TDD)
+
+**Bloque 6 — Aside lateral de ticket**
+- [ ] Click en una fila de la tabla de tickets abre un aside a la derecha con
+      una versión acotada del detalle, con animación que entra de derecha a
+      izquierda (hoy navega a `/tickets/:id`)
+
+**Bloque 7 — Tabla de tickets**
+- [ ] Encabezados con ancho ajustable arrastrando el borde, para evitar
+      el scroll horizontal innecesario
+
+**Bloque 8 — Tablero**
+- [ ] Sacar el H1 de `/dashboard/tablero` y subir `tablero-toolbar`
+- [ ] Botones `btn-secondary` del Tablero más chicos
+
+**Bloque 9 — Novedades**
+- [ ] Rediseñar la vista de Novedades como un panel más útil, con la
+      información más importante para cada técnico (a definir con Matías
+      antes de implementar)
+
+**Pendientes técnicos**
+- [ ] Merge de `develop` a `main` y deploy: build del frontend en el server
+      (`dist` no está en git), reinicio de la tarea "KDesk Backend" y
+      verificar que el `.env` del server no tenga valores de dev
