@@ -24,10 +24,14 @@ function obtenerTransportador() {
 }
 
 async function enviarMail({ para, asunto, html }) {
+  // Entorno de desarrollo: si MAIL_REDIRECT_TO está definido, TODO mail
+  // sale a esa casilla en vez de al destinatario real (la base de dev es
+  // un clon de producción, con correos de empleados reales).
+  const redirigir = process.env.MAIL_REDIRECT_TO;
   await obtenerTransportador().sendMail({
     from: process.env.SMTP_FROM,
-    to: para,
-    subject: asunto,
+    to: redirigir || para,
+    subject: redirigir ? `[DEV → ${para}] ${asunto}` : asunto,
     html,
   });
 }
