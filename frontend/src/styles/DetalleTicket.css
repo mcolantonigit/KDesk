@@ -6,25 +6,6 @@
   margin: 0 auto;
 }
 
-.detalle-ticket-volver {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 0;
-  transition: color var(--transition);
-}
-
-.detalle-ticket-volver:hover {
-  color: var(--text);
-}
-
 .detalle-ticket-header {
   display: flex;
   justify-content: space-between;

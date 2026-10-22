@@ -22,6 +22,8 @@ import {
 import { getHistorial } from '../services/historial.service';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
+import FileInput from '../components/FileInput';
+import BackButton from '../components/BackButton';
 import Checklist from '../components/Checklist';
 import '../styles/DetalleTicket.css';
 
@@ -201,9 +203,7 @@ function DetalleTicket() {
 
   return (
     <div className="detalle-ticket">
-      <button type="button" className="detalle-ticket-volver" onClick={() => navigate(-1)}>
-        ← Atrás
-      </button>
+      <BackButton onClick={() => navigate(-1)}>Atrás</BackButton>
 
       <div className="detalle-ticket-header">
         <h1>{ticket.numero} — {ticket.titulo}</h1>
@@ -287,14 +287,7 @@ function DetalleTicket() {
             onChange={(event) => setComentarioCierre(event.target.value)}
             required
           />
-          <div className="form-field">
-            <label htmlFor="adjuntoCierre">Adjunto (opcional)</label>
-            <input
-              id="adjuntoCierre"
-              type="file"
-              onChange={(event) => setAdjuntoCierre(event.target.files[0] ?? null)}
-            />
-          </div>
+          <FileInput id="adjuntoCierre" label="Adjunto (opcional)" value={adjuntoCierre} onChange={setAdjuntoCierre} />
           <div className="detalle-ticket-cierre-acciones">
             <Button type="submit" disabled={cerrando}>
               {cerrando ? 'Cerrando...' : 'Confirmar cierre'}
@@ -352,14 +345,7 @@ function DetalleTicket() {
               onChange={(event) => setNuevoComentario(event.target.value)}
               required
             />
-            <div className="form-field">
-              <label htmlFor="adjuntoComentario">Adjunto (opcional)</label>
-              <input
-                id="adjuntoComentario"
-                type="file"
-                onChange={(event) => setAdjuntoComentario(event.target.files[0] ?? null)}
-              />
-            </div>
+            <FileInput id="adjuntoComentario" label="Adjunto (opcional)" value={adjuntoComentario} onChange={setAdjuntoComentario} />
             <Button type="submit" disabled={enviandoComentario}>
               {enviandoComentario ? 'Enviando...' : 'Comentar'}
             </Button>

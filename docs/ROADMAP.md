@@ -538,10 +538,10 @@ Se trabajan en este orden; cada bloque se prueba en `localhost:5173`, se
 aprueba y se commitea por separado.
 
 **Bloque 1 — Base visual**
-- [ ] Botón "volver" (`detalle-ticket-volver` y los demás botones de
+- [x] Botón "volver" (`detalle-ticket-volver` y los demás botones de
       atrás del sistema): rediseño acorde a la estética de KDesk, con ícono SVG
-- [ ] `btn btn-secondary`: corregir padding (se ve feo); además más chico en el Tablero
-- [ ] Componente de subida de archivos (hoy `<input type="file">` crudo en
+- [x] `btn btn-secondary`: corregir padding (se ve feo); además más chico en el Tablero
+- [x] Componente de subida de archivos (hoy `<input type="file">` crudo en
       nuevo ticket, comentarios, cierre de ticket y restaurar backup):
       zona de arrastrar/soltar con ícono SVG, nombre del archivo elegido y
       botón para quitarlo

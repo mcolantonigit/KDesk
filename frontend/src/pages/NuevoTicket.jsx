@@ -10,6 +10,7 @@ import { getUsuarios } from '../services/usuarios.service';
 import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
+import FileInput from '../components/FileInput';
 import '../styles/TicketForm.css';
 
 const TITULO_LONGITUD_MAXIMA = 35;
@@ -151,10 +152,7 @@ function NuevoTicket() {
           required
         />
 
-        <div className="form-field">
-          <label htmlFor="adjunto">Adjunto (opcional)</label>
-          <input id="adjunto" type="file" onChange={(event) => setAdjunto(event.target.files[0] ?? null)} />
-        </div>
+        <FileInput id="adjunto" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
 
         <Button type="submit" disabled={enviando}>
           {enviando ? 'Creando...' : 'Crear ticket'}

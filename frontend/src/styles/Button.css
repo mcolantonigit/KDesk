@@ -1,11 +1,30 @@
 .btn {
-  height: 48px;
-  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
   font: inherit;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   border-radius: 12px;
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.btn-sm {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -14,7 +33,7 @@
   border: none;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   transform: translateY(-1px);
 }
@@ -25,6 +44,7 @@
   border: 1px solid var(--border);
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.16);
 }
