@@ -9,6 +9,10 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    test: {
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.js',
+    },
     server: {
       host: true,
       allowedHosts: ['kdesk'], // agregar acá el hostname de tu red interna si hace falta
