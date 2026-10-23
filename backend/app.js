@@ -18,6 +18,7 @@ import historialRoutes from './routes/historial.routes.js';
 import adjuntosRoutes from './routes/adjuntos.routes.js';
 import auditoriaRoutes from './routes/auditoria.routes.js';
 import backupsRoutes from './routes/backups.routes.js';
+import notificacionesRoutes from './routes/notificaciones.routes.js';
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api', historialRoutes);
 app.use('/api', adjuntosRoutes);
 app.use('/api', auditoriaRoutes);
 app.use('/api', backupsRoutes);
+app.use('/api', notificacionesRoutes);
 
 // Producción: Express sirve el build del frontend (npm run build en
 // frontend/). En desarrollo esta carpeta no existe (se usa el servidor

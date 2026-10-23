@@ -43,7 +43,7 @@ export async function crearTicket(creador) {
     `INSERT INTO tickets (titulo, descripcion, nombre_descriptivo, id_tipo, id_prioridad_sugerida, id_estado,
                           id_usuario_creador, id_sucursal, id_sector)
      VALUES ('Ticket de prueba', 'Descripción', 'Ticket de prueba', $1, $2, $3, $4, $5, $6)
-     RETURNING id`,
+     RETURNING id, numero, titulo`,
     [
       await primerId('tipos_ticket'),
       await primerId('prioridades'),
@@ -52,6 +52,20 @@ export async function crearTicket(creador) {
       await primerId('sucursales'),
       await primerId('sectores'),
     ]
+  );
+  return res.rows[0];
+}
+
+export async function asignarTecnico(ticket, tecnico) {
+  await pool.query('UPDATE tickets SET id_tecnico_responsable = $1 WHERE id = $2', [tecnico.id, ticket.id]);
+}
+
+// Registra un evento en el historial, como hacen los servicios de tickets.
+export async function registrarEvento(ticket, usuario, evento, detalle) {
+  const res = await pool.query(
+    `INSERT INTO historial_ticket (id_ticket, id_usuario, evento, detalle)
+     VALUES ($1, $2, $3, $4) RETURNING id`,
+    [ticket.id, usuario.id, evento, detalle]
   );
   return res.rows[0];
 }

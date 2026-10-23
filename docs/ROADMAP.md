@@ -589,3 +589,28 @@ aprueba y se commitea por separado.
 - [ ] Merge de `develop` a `main` y deploy: build del frontend en el server
       (`dist` no está en git), reinicio de la tarea "KDesk Backend" y
       verificar que el `.env` del server no tenga valores de dev
+
+# 14. Notificaciones y alertas
+
+Popups tipo Windows (abajo a la derecha) con sonido y lectura por voz (TTS
+del navegador), y lista "Notificaciones" en Novedades. Preferencias por tipo
+en una página "Alertas" del menú de configuración. Se guardan en el
+navegador (las voces cambian según navegador y PC).
+
+Tipos de notificación: ticket nuevo (técnicos), asignado a mí, comentario
+nuevo y cambio de estado o cierre (para creador y responsable). Nunca se
+notifica una acción propia.
+
+- [x] Etapa 1 — Backend: `GET /api/notificaciones?despuesDe=&limite=`, armado
+      desde `historial_ticket` (sin tablas nuevas), con cursor `ultimoId`,
+      texto en pantalla y texto para leer en voz alta (`mensajeVoz`)
+- [ ] Etapa 2 — Popups (apilados, se cierran solos, clic abre el ticket),
+      sonido (Web Audio) y TTS; consulta cada 20 s y al volver a la pestaña
+- [ ] Etapa 3 — Página "Alertas" (`/configuracion/alertas`): interruptor
+      general, volumen, popup/sonido/voz por tipo, selector de voz con
+      "Escuchar prueba". Voz por defecto: Edge "Microsoft Gonzalo Online
+      (Natural)"; Chrome "Google español de Estados Unidos"
+- [ ] Etapa 4 — Novedades: "Requieren atención" pasa a "Notificaciones" y
+      mezcla el feed con las alertas actuales (alta/crítica y sin movimiento)
+- Limitaciones: solo avisa con KDesk abierto en una pestaña; el navegador no
+  deja sonar ni hablar antes del primer clic en la página
