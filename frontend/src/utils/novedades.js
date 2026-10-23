@@ -11,6 +11,16 @@ export function diasDesde(fecha, ahora = new Date()) {
   return Math.max(0, Math.floor((ahora - new Date(fecha)) / MS_POR_DIA));
 }
 
+// Hoy muestra la hora; antes de hoy, "hace N días".
+export function cuando(fecha, ahora = new Date()) {
+  const momento = new Date(fecha);
+  const dias = diasDesde(fecha, ahora);
+  if (dias === 0 && momento.toDateString() === ahora.toDateString()) {
+    return momento.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+  return textoHace(Math.max(dias, 1));
+}
+
 export function textoHace(dias) {
   if (dias === 0) return 'hoy';
   return dias === 1 ? 'hace 1 día' : `hace ${dias} días`;

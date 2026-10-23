@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calcularNovedades, diasDesde, textoHace, DIAS_ESTANCADO } from './novedades';
+import { calcularNovedades, cuando, diasDesde, textoHace, DIAS_ESTANCADO } from './novedades';
 
 const ahora = new Date('2026-10-23T12:00:00');
 const hace = (dias) => new Date(ahora.getTime() - dias * 24 * 60 * 60 * 1000).toISOString();
@@ -127,5 +127,16 @@ describe('calcularNovedades', () => {
     const r = calcular([ticket(1, { fecha_actualizacion: hace(4) })]);
 
     expect(r.sinAsignar[0].diasSinActividad).toBe(4);
+  });
+});
+
+describe('cuando', () => {
+  it('hoy muestra la hora, otro día dice hace cuánto', () => {
+    const ahoraLocal = new Date(2026, 9, 23, 15, 0, 0);
+    const haceHoras = (h) => new Date(ahoraLocal.getTime() - h * 60 * 60 * 1000).toISOString();
+
+    expect(cuando(haceHoras(1), ahoraLocal)).toMatch(/14[:.]00/);
+    expect(cuando(haceHoras(30), ahoraLocal)).toBe('hace 1 día');
+    expect(cuando(haceHoras(24 * 5 + 1), ahoraLocal)).toBe('hace 5 días');
   });
 });

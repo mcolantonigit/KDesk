@@ -5,9 +5,13 @@ import { MemoryRouter } from 'react-router-dom';
 import Novedades from './Novedades';
 
 const abrirTicket = vi.fn();
+const marcarVistas = vi.fn();
+let notificaciones = { eventos: [], ultimoVisto: 0, marcarVistas };
+
 vi.mock('../context/AsideTicketContext', () => ({ useAsideTicket: () => ({ abrirTicket }) }));
 vi.mock('../context/NuevoTicketContext', () => ({ useNuevoTicket: () => ({ abrir: vi.fn() }) }));
 vi.mock('../context/AuthContext', () => ({ useAuth: () => ({ usuario: { id: 10, nombre: 'Luis' } }) }));
+vi.mock('../context/NotificacionesContext', () => ({ useNotificaciones: () => notificaciones }));
 vi.mock('../services/tickets.service', () => ({ getTickets: vi.fn(), asignarResponsable: vi.fn() }));
 vi.mock('../services/estados.service', () => ({
   getEstados: vi.fn().mockResolvedValue([
@@ -46,8 +50,10 @@ const datos = [
   ticket(4, 'Ya cerrado', { id_estado: 6 }),
 ];
 
+const evento = (id, tipo, mensaje, idTicket) => ({ id, tipo, mensaje, idTicket, titulo: mensaje, fecha: new Date().toISOString() });
+
 function abrir() {
-  render(
+  return render(
     <MemoryRouter>
       <Novedades />
     </MemoryRouter>
@@ -61,6 +67,7 @@ describe('Novedades', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getTickets.mockResolvedValue(datos);
+    notificaciones = { eventos: [], ultimoVisto: 0, marcarVistas };
   });
 
   it('saluda al técnico y muestra los indicadores', async () => {
@@ -72,17 +79,60 @@ describe('Novedades', () => {
     expect(indicador('Abiertos en total')).toHaveTextContent('3');
   });
 
-  it('arma las tres listas', async () => {
+  it('arma las listas: mi cola, sin asignar y notificaciones (con las alertas actuales)', async () => {
     abrir();
     await screen.findByText(/Luis!/);
 
     expect(lista('Mi cola').getByText('Mío abierto')).toBeInTheDocument();
     expect(lista('Sin asignar').getByText('Libre y urgente')).toBeInTheDocument();
-    const atencion = lista('Requieren atención');
-    expect(atencion.getByText('Libre y urgente')).toBeInTheDocument();
-    expect(atencion.getByText('Olvidado hace rato')).toBeInTheDocument();
-    expect(atencion.getByText('Sin movimiento 7 d')).toBeInTheDocument();
+    const notifs = lista('Notificaciones');
+    expect(notifs.getByText('Libre y urgente')).toBeInTheDocument();
+    expect(notifs.getByText('Olvidado hace rato')).toBeInTheDocument();
+    expect(notifs.getByText('Sin movimiento 7 d')).toBeInTheDocument();
     expect(screen.queryByText('Ya cerrado')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Requieren atención' })).not.toBeInTheDocument();
+  });
+
+  it('en Notificaciones los eventos van primero, con los no vistos marcados', async () => {
+    notificaciones = {
+      eventos: [
+        evento(12, 'comentario', 'Ana Pérez comentó en el ticket TK-5: No imprime', 5),
+        evento(11, 'asignado', 'Ana Pérez te asignó el ticket TK-6: Mouse', 6),
+        evento(3, 'estado', 'Ana Pérez cerró el ticket TK-7: Viejo', 7),
+      ],
+      ultimoVisto: 10,
+      marcarVistas,
+    };
+    abrir();
+    await screen.findByText(/Luis!/);
+
+    const notifs = lista('Notificaciones');
+    expect(notifs.getByText('2 nuevas')).toBeInTheDocument();
+    const filas = notifs.getAllByText(/Ana Pérez/).map((el) => el.closest('button'));
+    expect(filas.map((fila) => fila.classList.contains('nueva'))).toEqual([true, true, false]);
+    expect(notifs.getByText('Últimos eventos')).toBeInTheDocument();
+  });
+
+  it('al hacer clic en un evento abre el ticket en el panel lateral', async () => {
+    notificaciones = { eventos: [evento(12, 'comentario', 'Ana comentó en TK-5', 5)], ultimoVisto: 0, marcarVistas };
+    abrir();
+    await screen.findByText(/Luis!/);
+
+    await userEvent.click(lista('Notificaciones').getByText('Ana comentó en TK-5'));
+
+    expect(abrirTicket).toHaveBeenCalledWith(5);
+  });
+
+  it('se pueden marcar como vistas, y al salir de Novedades se marcan solas', async () => {
+    notificaciones = { eventos: [evento(12, 'comentario', 'Ana comentó en TK-5', 5)], ultimoVisto: 0, marcarVistas };
+    const { unmount } = abrir();
+    await screen.findByText(/Luis!/);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Marcar como vistas' }));
+    expect(marcarVistas).toHaveBeenCalledTimes(1);
+
+    unmount();
+    expect(marcarVistas).toHaveBeenCalledTimes(2);
   });
 
   it('al hacer clic en un ticket abre el panel lateral', async () => {

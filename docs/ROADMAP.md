@@ -606,11 +606,11 @@ notifica una acción propia.
       texto en pantalla y texto para leer en voz alta (`mensajeVoz`)
 - [x] Etapa 2 — Popups (apilados, se cierran solos, clic abre el ticket),
       sonido (Web Audio) y TTS; consulta cada 20 s y al volver a la pestaña
-- [ ] Etapa 3 — Página "Alertas" (`/configuracion/alertas`): interruptor
+- [x] Etapa 3 — Página "Alertas" (`/configuracion/alertas`): interruptor
       general, volumen, popup/sonido/voz por tipo, selector de voz con
       "Escuchar prueba". Voz por defecto: Edge "Microsoft Gonzalo Online
-      (Natural)"; Chrome "Google español de Estados Unidos"
-- [ ] Etapa 4 — Novedades: "Requieren atención" pasa a "Notificaciones" y
+      (Natural)"; Chrome "Google español" (en línea)
+- [x] Etapa 4 — Novedades: "Requieren atención" pasa a "Notificaciones" y
       mezcla el feed con las alertas actuales (alta/crítica y sin movimiento)
 - Limitaciones: solo avisa con KDesk abierto en una pestaña; el navegador no
   deja sonar ni hablar antes del primer clic en la página

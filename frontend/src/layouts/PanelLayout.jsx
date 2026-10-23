@@ -101,6 +101,7 @@ function PanelLayoutContenido() {
                   Cambiar contraseña
                 </button>
               )}
+              <NavLink to="/configuracion/alertas">Alertas</NavLink>
               {esAdministrador && <NavLink to="/administrar/usuarios">Usuarios y permisos</NavLink>}
               {esAdministrador && <NavLink to="/administrar/parametros">Parámetros</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/estadisticas">Estadísticas</NavLink>}

@@ -67,7 +67,7 @@ describe('NotificacionesProvider', () => {
 
     await montar();
 
-    expect(screen.getByTestId('resumen')).toHaveTextContent('2 en la lista, 2 sin ver');
+    expect(screen.getByTestId('resumen')).toHaveTextContent('2 en la lista, 0 sin ver');
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(reproducirSonidoNotificacion).not.toHaveBeenCalled();
     expect(window.localStorage.getItem('kdesk:notificaciones:cursor:7')).toBe('5');

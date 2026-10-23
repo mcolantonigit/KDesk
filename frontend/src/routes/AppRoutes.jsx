@@ -14,6 +14,7 @@ import Parametros from '../pages/Parametros';
 import Estadisticas from '../pages/Estadisticas';
 import Auditoria from '../pages/Auditoria';
 import Backups from '../pages/Backups';
+import Alertas from '../pages/Alertas';
 import PanelLayout from '../layouts/PanelLayout';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
@@ -38,6 +39,7 @@ function AppRoutes() {
           <Route path="/tickets/activos" element={<ListaTickets soloCerrados={false} />} />
           <Route path="/tickets/cerrados" element={<ListaTickets soloCerrados />} />
           <Route path="/tickets/:id" element={<DetalleTicket />} />
+          <Route path="/configuracion/alertas" element={<Alertas />} />
 
           <Route element={<RutaTecnico />}>
             <Route path="/dashboard/novedades" element={<Novedades />} />

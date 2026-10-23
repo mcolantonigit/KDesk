@@ -49,19 +49,24 @@ export function NotificacionesProvider({ children }) {
   const [popups, setPopups] = useState([]);
   const [ultimoVisto, setUltimoVisto] = usePersistentState(`kdesk:notificaciones:visto:${idUsuario}`, 0);
 
-  // Siempre las preferencias vigentes, sin reiniciar la consulta cada vez que cambian.
+  // Siempre lo vigente, sin reiniciar la consulta cada vez que cambia (las funciones de
+  // usePersistentState se crean de nuevo en cada render).
   const preferenciasRef = useRef(preferencias);
+  const setUltimoVistoRef = useRef(setUltimoVisto);
   useEffect(() => {
     preferenciasRef.current = preferencias;
-  }, [preferencias]);
+    setUltimoVistoRef.current = setUltimoVisto;
+  });
 
   // Sonido y voz se encolan para no pisarse: cada aviso espera a que termine el anterior.
   const colaAudio = useRef({ turno: Promise.resolve(), pendientes: 0 });
 
-  const alertar = useCallback((evento) => {
+  // `forzar` es para la notificación de prueba: ignora el interruptor general y las
+  // opciones del tipo, pero respeta el volumen y la voz elegidos.
+  const alertar = useCallback((evento, forzar = false) => {
     const prefs = preferenciasRef.current;
-    const opciones = prefs.tipos[evento.tipo];
-    if (!prefs.activas || !opciones) return;
+    const opciones = forzar ? { popup: true, sonido: true, voz: true } : prefs.tipos[evento.tipo];
+    if (!forzar && (!prefs.activas || !opciones)) return;
 
     if (opciones.popup) {
       setPopups((anteriores) =>
@@ -107,6 +112,9 @@ export function NotificacionesProvider({ children }) {
       if (anterior !== null) {
         const nuevos = eventos.filter((evento) => evento.id > anterior).reverse();
         nuevos.slice(-MAXIMO_AL_RETOMAR).forEach(alertar);
+      } else {
+        // Primera vez en este navegador: lo que ya había no cuenta como "nuevo".
+        setUltimoVistoRef.current(ultimoId);
       }
     }
 
@@ -157,20 +165,36 @@ export function NotificacionesProvider({ children }) {
 
   const abrirDesdePopup = useCallback(
     (evento) => {
-      abrirTicket(evento.idTicket);
+      if (evento.idTicket != null) abrirTicket(evento.idTicket);
       cerrarPopup(evento.id);
     },
     [abrirTicket, cerrarPopup]
   );
 
+  // Muestra, suena y lee una notificación de ejemplo, para probar la configuración.
+  const probar = useCallback(() => {
+    alertar(
+      {
+        id: -Date.now(),
+        tipo: 'comentario',
+        idTicket: null,
+        titulo: 'Notificación de prueba',
+        mensaje: 'Así se ven y suenan tus alertas de KDesk.',
+        mensajeVoz: 'Esta es una notificación de prueba de KDesk.',
+      },
+      true
+    );
+  }, [alertar]);
+
   const valor = useMemo(
     () => ({
+      probar,
       eventos: feed,
       noVistas: feed.filter((evento) => evento.id > ultimoVisto).length,
       ultimoVisto,
       marcarVistas: () => setUltimoVisto(feed.reduce((maximo, evento) => Math.max(maximo, evento.id), ultimoVisto)),
     }),
-    [feed, ultimoVisto, setUltimoVisto]
+    [feed, ultimoVisto, setUltimoVisto, probar]
   );
 
   return (
