@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAsideTicket } from '../context/AsideTicketContext';
 import Button from './Button';
 import '../styles/TarjetasTickets.css';
 
@@ -13,7 +13,7 @@ function TarjetasTickets({
   onCambiarPrioridad,
   onAsignarResponsable,
 }) {
-  const navigate = useNavigate();
+  const { abrirTicket } = useAsideTicket();
 
   if (tickets.length === 0) {
     return <p className="tarjetas-tickets-vacio">No hay tickets para mostrar</p>;
@@ -22,7 +22,7 @@ function TarjetasTickets({
   return (
     <div className="tarjetas-tickets">
       {tickets.map((ticket) => (
-        <div key={ticket.id} className="tarjeta-ticket" onClick={() => navigate(`/tickets/${ticket.id}`)}>
+        <div key={ticket.id} className="tarjeta-ticket" onClick={() => abrirTicket(ticket.id)}>
           <div className="tarjeta-ticket-header">
             <span className="tarjeta-ticket-numero">{ticket.numero}</span>
             <select

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAsideTicket } from '../context/AsideTicketContext';
 import Button from './Button';
 import '../styles/TablaTickets.css';
 
@@ -27,7 +27,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
   const [columnasVisibles, setColumnasVisibles] = useState(() =>
     Object.fromEntries(COLUMNAS.map((columna) => [columna.key, columna.visiblePorDefecto]))
   );
-  const navigate = useNavigate();
+  const { abrirTicket } = useAsideTicket();
 
   const columnasActivas = COLUMNAS.filter((columna) => columnasVisibles[columna.key]);
 
@@ -163,7 +163,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
           </thead>
           <tbody>
             {ticketsOrdenados.map((ticket) => (
-              <tr key={ticket.id} onClick={() => navigate(`/tickets/${ticket.id}`)}>
+              <tr key={ticket.id} onClick={() => abrirTicket(ticket.id)}>
                 {columnasActivas.map((columna) => (
                   <td key={columna.key}>{renderCelda(ticket, columna.key)}</td>
                 ))}

@@ -568,7 +568,7 @@ aprueba y se commitea por separado.
       en la base; falta traer nombre/apellido en la consulta). Test primero (TDD)
 
 **Bloque 6 — Aside lateral de ticket**
-- [ ] Click en una fila de la tabla de tickets abre un aside a la derecha con
+- [x] Click en una fila de la tabla de tickets abre un aside a la derecha con
       una versión acotada del detalle, con animación que entra de derecha a
       izquierda (hoy navega a `/tickets/:id`)
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAsideTicket } from '../context/AsideTicketContext';
 import '../styles/TablaTickets.css';
 
 const COLUMNAS = [
@@ -13,7 +13,7 @@ const COLUMNAS = [
 function TablaTickets({ tickets }) {
   const [ordenPor, setOrdenPor] = useState('fecha_creacion');
   const [ordenAsc, setOrdenAsc] = useState(false);
-  const navigate = useNavigate();
+  const { abrirTicket } = useAsideTicket();
 
   const ticketsOrdenados = useMemo(() => {
     const copia = [...tickets];
@@ -51,7 +51,7 @@ function TablaTickets({ tickets }) {
         </thead>
         <tbody>
           {ticketsOrdenados.map((ticket) => (
-            <tr key={ticket.id} onClick={() => navigate(`/tickets/${ticket.id}`)}>
+            <tr key={ticket.id} onClick={() => abrirTicket(ticket.id)}>
               <td>{ticket.numero}</td>
               <td>{ticket.prioridad}</td>
               <td className="tabla-tickets-detalle">{ticket.titulo}</td>
