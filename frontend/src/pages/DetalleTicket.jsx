@@ -6,7 +6,6 @@ import {
   getComentarios,
   crearComentario,
   eliminarComentario,
-  cerrarTicket,
 } from '../services/tickets.service';
 import { getEstados } from '../services/estados.service';
 import { getPrioridades } from '../services/prioridades.service';
@@ -23,6 +22,7 @@ import { getHistorial } from '../services/historial.service';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
 import FileInput from '../components/FileInput';
+import ModalCerrarTicket from '../components/ModalCerrarTicket';
 import BackButton from '../components/BackButton';
 import Checklist from '../components/Checklist';
 import '../styles/DetalleTicket.css';
@@ -58,10 +58,6 @@ function DetalleTicket() {
   const [historialVisibles, setHistorialVisibles] = useState(10);
 
   const [mostrarCierre, setMostrarCierre] = useState(false);
-  const [comentarioCierre, setComentarioCierre] = useState('');
-  const [adjuntoCierre, setAdjuntoCierre] = useState(null);
-  const [cerrando, setCerrando] = useState(false);
-  const [errorCierre, setErrorCierre] = useState('');
 
   async function cargarTicket() {
     const [ticketData, comentariosData, adjuntosData, historialData] = await Promise.all([
@@ -153,26 +149,9 @@ function DetalleTicket() {
     }
   }
 
-  async function handleCerrarTicket(event) {
-    event.preventDefault();
-    setCerrando(true);
-    setErrorCierre('');
-    try {
-      await cerrarTicket(id, comentarioCierre);
-      if (adjuntoCierre) {
-        const comentariosActualizados = await getComentarios(id);
-        const comentarioDeCierre = comentariosActualizados[comentariosActualizados.length - 1];
-        await subirAdjuntoDeComentario(comentarioDeCierre.id, adjuntoCierre);
-      }
-      setMostrarCierre(false);
-      setComentarioCierre('');
-      setAdjuntoCierre(null);
-      await cargarTicket();
-    } catch (err) {
-      setErrorCierre(err.message);
-    } finally {
-      setCerrando(false);
-    }
+  async function handleTicketCerrado() {
+    setMostrarCierre(false);
+    await cargarTicket();
   }
 
   if (cargando) return <p>Cargando...</p>;
@@ -278,26 +257,7 @@ function DetalleTicket() {
       </div>
 
       {mostrarCierre && (
-        <form className="detalle-ticket-cierre" onSubmit={handleCerrarTicket}>
-          <FormField
-            id="comentarioCierre"
-            label="Motivo de cierre"
-            type="textarea"
-            value={comentarioCierre}
-            onChange={(event) => setComentarioCierre(event.target.value)}
-            required
-          />
-          <FileInput id="adjuntoCierre" label="Adjunto (opcional)" value={adjuntoCierre} onChange={setAdjuntoCierre} />
-          <div className="detalle-ticket-cierre-acciones">
-            <Button type="submit" disabled={cerrando}>
-              {cerrando ? 'Cerrando...' : 'Confirmar cierre'}
-            </Button>
-            <Button type="button" variant="secondary" onClick={() => setMostrarCierre(false)}>
-              Cancelar
-            </Button>
-          </div>
-          {errorCierre && <p className="ticket-form-error">{errorCierre}</p>}
-        </form>
+        <ModalCerrarTicket ticket={ticket} onClose={() => setMostrarCierre(false)} onCerrado={handleTicketCerrado} />
       )}
 
       <div className="detalle-ticket-comentarios">

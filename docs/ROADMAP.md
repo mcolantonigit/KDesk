@@ -558,7 +558,7 @@ aprueba y se commitea por separado.
 - [x] Acomodar los campos en columnas (evaluar 2) para pantallas 16:9 sin tanto scroll
 
 **Bloque 4 — Modal de motivo de cierre**
-- [ ] "Cerrar ticket" abre el motivo de cierre como modal por encima del
+- [x] "Cerrar ticket" abre el motivo de cierre como modal por encima del
       detalle (hoy se abre inline y se pierde entre la info)
 
 **Bloque 5 — Detalle de ticket en 16:9**

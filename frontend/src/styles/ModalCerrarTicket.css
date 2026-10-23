@@ -64,3 +64,13 @@
   color: var(--accent-hover);
   text-decoration: underline;
 }
+
+.modal-cerrar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-cerrar-form .modal-cerrar-acciones {
+  justify-content: flex-end;
+}
