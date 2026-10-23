@@ -253,7 +253,7 @@ function Tablero() {
   if (error) return <p className="ticket-form-error">{error}</p>;
 
   return (
-    <div className="tablero">
+    <div className={vista === 'lista' ? 'tablero tablero-con-tabla' : 'tablero'}>
       <h1>Tablero</h1>
 
       <div className="tablero-toolbar no-imprimir">

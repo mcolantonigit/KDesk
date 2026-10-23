@@ -573,7 +573,7 @@ aprueba y se commitea por separado.
       izquierda (hoy navega a `/tickets/:id`)
 
 **Bloque 7 — Tabla de tickets**
-- [ ] Encabezados con ancho ajustable arrastrando el borde, para evitar
+- [x] Encabezados con ancho ajustable arrastrando el borde, para evitar
       el scroll horizontal innecesario
 
 **Bloque 8 — Tablero**

@@ -103,7 +103,7 @@ function TarjetasTickets({
 
           {ticket.estado !== ESTADO_CERRADO && (
             <div className="tarjeta-ticket-acciones no-imprimir" onClick={(event) => event.stopPropagation()}>
-              <Button variant="secondary" onClick={() => onCerrar(ticket)}>
+              <Button variant="secondary" size="sm" onClick={() => onCerrar(ticket)}>
                 Cerrar
               </Button>
             </div>

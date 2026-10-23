@@ -46,7 +46,7 @@ function ListaTickets({ soloCerrados }) {
   }, [soloCerrados]);
 
   return (
-    <div className="tablero">
+    <div className="tablero tablero-con-tabla">
       <h1>{soloCerrados ? 'Tickets cerrados' : 'Tickets activos'}</h1>
 
       {error && <p className="ticket-form-error">{error}</p>}

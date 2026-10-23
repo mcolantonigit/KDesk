@@ -16,10 +16,10 @@
 }
 
 .btn-sm {
-  height: 36px;
-  padding: 0 16px;
-  font-size: 14px;
-  border-radius: 10px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  border-radius: 999px;
 }
 
 .btn:disabled {
@@ -39,12 +39,13 @@
 }
 
 .btn-secondary {
-  color: var(--text);
-  background: transparent;
+  color: var(--text-secondary);
+  background: var(--card-bg);
   border: 1px solid var(--border);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  background: var(--hover-bg);
   border-color: rgba(255, 255, 255, 0.16);
 }
