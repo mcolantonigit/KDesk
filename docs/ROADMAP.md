@@ -547,10 +547,10 @@ aprueba y se commitea por separado.
       botón para quitarlo
 
 **Bloque 2 — Componente `Combobox`**
-- [ ] Input escribible que reemplaza a los `<select>` de nuevo ticket: sugiere
+- [x] Input escribible que reemplaza a los `<select>` de nuevo ticket: sugiere
       la opción más cercana a lo escrito, y no deja guardar un valor que no
       esté en el listado
-- [ ] Todos los listados de opciones ordenados alfabéticamente
+- [x] Todos los listados de opciones ordenados alfabéticamente
 
 **Bloque 3 — Modal de nuevo ticket**
 - [ ] Reemplazar la página `/tickets/nuevo` por una ventana modal que se abre

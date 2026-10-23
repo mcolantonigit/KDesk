@@ -9,6 +9,7 @@ import { getSectores } from '../services/sectores.service';
 import { getUsuarios } from '../services/usuarios.service';
 import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
 import FormField from '../components/FormField';
+import Combobox from '../components/Combobox';
 import Button from '../components/Button';
 import FileInput from '../components/FileInput';
 import '../styles/TicketForm.css';
@@ -86,48 +87,48 @@ function NuevoTicket() {
       <h1>Nuevo ticket</h1>
 
       <form className="ticket-form" onSubmit={handleSubmit}>
-        <FormField
+        <Combobox
           id="idTipo"
           label="Tipo de ticket"
           value={idTipo}
-          onChange={(event) => setIdTipo(event.target.value)}
+          onChange={setIdTipo}
           options={tipos}
           required
         />
 
-        <FormField
+        <Combobox
           id="idPrioridadSugerida"
           label="Prioridad sugerida"
           value={idPrioridadSugerida}
-          onChange={(event) => setIdPrioridadSugerida(event.target.value)}
+          onChange={setIdPrioridadSugerida}
           options={prioridades}
           required
         />
 
         {esTecnico && (
           <>
-            <FormField
+            <Combobox
               id="idUsuarioCreador"
               label="Usuario que crea el ticket (opcional)"
               value={idUsuarioCreador}
-              onChange={(event) => setIdUsuarioCreador(event.target.value)}
+              onChange={setIdUsuarioCreador}
               options={usuarios}
             />
 
-            <FormField
+            <Combobox
               id="idSucursal"
               label="Sucursal"
               value={idSucursal}
-              onChange={(event) => setIdSucursal(event.target.value)}
+              onChange={setIdSucursal}
               options={sucursales}
               required
             />
 
-            <FormField
+            <Combobox
               id="idSector"
               label="Sector"
               value={idSector}
-              onChange={(event) => setIdSector(event.target.value)}
+              onChange={setIdSector}
               options={sectores}
               required
             />
