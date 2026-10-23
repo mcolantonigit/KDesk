@@ -58,6 +58,7 @@ function DetalleTicket() {
   const [historialVisibles, setHistorialVisibles] = useState(10);
 
   const [mostrarCierre, setMostrarCierre] = useState(false);
+  const [pestana, setPestana] = useState('comentarios');
 
   async function cargarTicket() {
     const [ticketData, comentariosData, adjuntosData, historialData] = await Promise.all([
@@ -180,160 +181,174 @@ function DetalleTicket() {
   const puedeCerrar = esCreador || esTecnico;
   const yaCerrado = nombreEstado === ESTADO_CERRADO;
 
+  const dato = (etiqueta, valor) => (
+    <div>
+      <dt>{etiqueta}</dt>
+      <dd>{valor}</dd>
+    </div>
+  );
+
   return (
     <div className="detalle-ticket">
-      <BackButton onClick={() => navigate(-1)}>Atrás</BackButton>
-
-      <div className="detalle-ticket-header">
-        <h1>{ticket.numero} — {ticket.titulo}</h1>
+      <div className="detalle-ticket-cabecera">
+        <BackButton onClick={() => navigate(-1)}>Atrás</BackButton>
+        <h1>
+          {ticket.numero} — {ticket.titulo}
+        </h1>
         {puedeCerrar && !yaCerrado && (
-          <Button variant="secondary" onClick={() => setMostrarCierre(true)}>
+          <Button variant="secondary" size="sm" onClick={() => setMostrarCierre(true)}>
             Cerrar ticket
           </Button>
         )}
       </div>
 
       <dl className="detalle-ticket-datos">
-        <div>
-          <dt>Estado</dt>
-          <dd>{nombreEstado}</dd>
-        </div>
-        <div>
-          <dt>Tipo</dt>
-          <dd>{nombreTipo}</dd>
-        </div>
-        <div>
-          <dt>Prioridad</dt>
-          <dd>{nombrePrioridad ?? `${nombrePrioridadSugerida ?? '—'} (sugerida)`}</dd>
-        </div>
-        <div>
-          <dt>Creado por</dt>
-          <dd>{nombreCreador}</dd>
-        </div>
-        <div>
-          <dt>Sucursal</dt>
-          <dd>{nombreSucursal}</dd>
-        </div>
-        <div>
-          <dt>Sector</dt>
-          <dd>{nombreSector}</dd>
-        </div>
-        <div>
-          <dt>Fecha de creación</dt>
-          <dd>{new Date(ticket.fecha_creacion).toLocaleString()}</dd>
-        </div>
-        <div>
-          <dt>Última actualización</dt>
-          <dd>{new Date(ticket.fecha_actualizacion).toLocaleString()}</dd>
-        </div>
-        {ticket.fecha_cierre && (
-          <div>
-            <dt>Fecha de cierre</dt>
-            <dd>{new Date(ticket.fecha_cierre).toLocaleString()}</dd>
-          </div>
-        )}
+        {dato('Estado', nombreEstado)}
+        {dato('Tipo', nombreTipo)}
+        {dato('Prioridad', nombrePrioridad ?? `${nombrePrioridadSugerida ?? '—'} (sugerida)`)}
+        {dato('Creado por', nombreCreador)}
+        {dato('Sucursal', nombreSucursal)}
+        {dato('Sector', nombreSector)}
+        {dato('Creación', new Date(ticket.fecha_creacion).toLocaleString())}
+        {dato('Última actualización', new Date(ticket.fecha_actualizacion).toLocaleString())}
+        {ticket.fecha_cierre && dato('Cierre', new Date(ticket.fecha_cierre).toLocaleString())}
       </dl>
 
-      <div className="detalle-ticket-descripcion">
-        <h2>Descripción</h2>
-        <p>{ticket.descripcion}</p>
-      </div>
+      <div className="detalle-ticket-cuerpo">
+        <div className="detalle-ticket-principal">
+          <section className="detalle-ticket-descripcion">
+            <h2>Descripción</h2>
+            <p>{ticket.descripcion}</p>
+          </section>
 
-      {esTecnico && <Checklist idTicket={id} />}
+          {esTecnico && <Checklist idTicket={id} />}
 
-      <div className="detalle-ticket-adjuntos">
-        <h2>Adjuntos</h2>
-        {adjuntosTicket.length === 0 ? (
-          <p className="detalle-ticket-comentarios-vacio">Sin adjuntos</p>
-        ) : (
-          <ul className="detalle-ticket-adjuntos-lista">
-            {adjuntosTicket.map((adjunto) => (
-              <li key={adjunto.id}>
-                <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
-              </li>
-            ))}
-          </ul>
-        )}
+          <section className="detalle-ticket-adjuntos">
+            <h2>Adjuntos</h2>
+            {adjuntosTicket.length === 0 ? (
+              <p className="detalle-ticket-comentarios-vacio">Sin adjuntos</p>
+            ) : (
+              <ul className="detalle-ticket-adjuntos-lista">
+                {adjuntosTicket.map((adjunto) => (
+                  <li key={adjunto.id}>
+                    <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+
+        <aside className="detalle-ticket-actividad">
+          <div className="detalle-ticket-pestanas" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={pestana === 'comentarios'}
+              className={pestana === 'comentarios' ? 'activa' : ''}
+              onClick={() => setPestana('comentarios')}
+            >
+              Comentarios ({comentarios.length})
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={pestana === 'historial'}
+              className={pestana === 'historial' ? 'activa' : ''}
+              onClick={() => setPestana('historial')}
+            >
+              Historial
+            </button>
+          </div>
+
+          {pestana === 'comentarios' ? (
+            <div className="detalle-ticket-comentarios" role="tabpanel">
+              <ul className="detalle-ticket-comentarios-lista">
+                {comentarios.map((comentario) => (
+                  <li key={comentario.id}>
+                    <div className="detalle-ticket-comentario-cabecera">
+                      <strong>
+                        {comentario.autor_nombre} {comentario.autor_apellido}
+                      </strong>
+                      <span>{new Date(comentario.fecha_creacion).toLocaleString()}</span>
+                      {!comentario.eliminado && (comentario.id_autor === usuario?.id || esTecnico) && (
+                        <button
+                          type="button"
+                          className="detalle-ticket-comentario-eliminar"
+                          onClick={() => handleEliminarComentario(comentario)}
+                          aria-label="Eliminar comentario"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                    <p>{comentario.eliminado ? 'Comentario eliminado' : comentario.contenido}</p>
+                    {comentario.adjuntos?.length > 0 && (
+                      <ul className="detalle-ticket-adjuntos-lista">
+                        {comentario.adjuntos.map((adjunto) => (
+                          <li key={adjunto.id}>
+                            <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+                {comentarios.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin comentarios todavía</li>}
+              </ul>
+
+              {!yaCerrado && (
+                <form className="detalle-ticket-nuevo-comentario" onSubmit={handleAgregarComentario}>
+                  <FormField
+                    id="nuevoComentario"
+                    label="Agregar comentario"
+                    type="textarea"
+                    rows={2}
+                    value={nuevoComentario}
+                    onChange={(event) => setNuevoComentario(event.target.value)}
+                    required
+                  />
+                  <FileInput
+                    id="adjuntoComentario"
+                    label="Adjunto (opcional)"
+                    compacto
+                    value={adjuntoComentario}
+                    onChange={setAdjuntoComentario}
+                  />
+                  <Button type="submit" size="sm" disabled={enviandoComentario}>
+                    {enviandoComentario ? 'Enviando...' : 'Comentar'}
+                  </Button>
+                </form>
+              )}
+            </div>
+          ) : (
+            <div className="detalle-ticket-historial" role="tabpanel">
+              <ul className="detalle-ticket-historial-lista">
+                {historialMostrado.map((evento) => (
+                  <li key={evento.id}>
+                    <span className="detalle-ticket-historial-detalle">{evento.detalle}</span>
+                    <span className="detalle-ticket-historial-fecha">{new Date(evento.fecha).toLocaleString()}</span>
+                  </li>
+                ))}
+                {historial.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin eventos registrados</li>}
+              </ul>
+              {historialVisibles < historialOrdenado.length && (
+                <button
+                  type="button"
+                  className="detalle-ticket-historial-cargar-mas"
+                  onClick={() => setHistorialVisibles((anteriores) => anteriores + 10)}
+                >
+                  Cargar 10 más
+                </button>
+              )}
+            </div>
+          )}
+        </aside>
       </div>
 
       {mostrarCierre && (
         <ModalCerrarTicket ticket={ticket} onClose={() => setMostrarCierre(false)} onCerrado={handleTicketCerrado} />
       )}
-
-      <div className="detalle-ticket-comentarios">
-        <h2>Comentarios</h2>
-
-        <ul className="detalle-ticket-comentarios-lista">
-          {comentarios.map((comentario) => (
-            <li key={comentario.id}>
-              <div className="detalle-ticket-comentario-fila">
-                <p>{comentario.eliminado ? 'Comentario eliminado' : comentario.contenido}</p>
-                {!comentario.eliminado && (comentario.id_autor === usuario?.id || esTecnico) && (
-                  <button
-                    type="button"
-                    className="detalle-ticket-comentario-eliminar"
-                    onClick={() => handleEliminarComentario(comentario)}
-                    aria-label="Eliminar comentario"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-              <span>{new Date(comentario.fecha_creacion).toLocaleString()}</span>
-              {comentario.adjuntos?.length > 0 && (
-                <ul className="detalle-ticket-adjuntos-lista">
-                  {comentario.adjuntos.map((adjunto) => (
-                    <li key={adjunto.id}>
-                      <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-          {comentarios.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin comentarios todavía</li>}
-        </ul>
-
-        {!yaCerrado && (
-          <form className="detalle-ticket-nuevo-comentario" onSubmit={handleAgregarComentario}>
-            <FormField
-              id="nuevoComentario"
-              label="Agregar comentario"
-              type="textarea"
-              rows={3}
-              value={nuevoComentario}
-              onChange={(event) => setNuevoComentario(event.target.value)}
-              required
-            />
-            <FileInput id="adjuntoComentario" label="Adjunto (opcional)" value={adjuntoComentario} onChange={setAdjuntoComentario} />
-            <Button type="submit" disabled={enviandoComentario}>
-              {enviandoComentario ? 'Enviando...' : 'Comentar'}
-            </Button>
-          </form>
-        )}
-      </div>
-
-      <div className="detalle-ticket-historial">
-        <h2>Historial</h2>
-        <ul className="detalle-ticket-historial-lista">
-          {historialMostrado.map((evento) => (
-            <li key={evento.id}>
-              <span className="detalle-ticket-historial-detalle">{evento.detalle}</span>
-              <span className="detalle-ticket-historial-fecha">{new Date(evento.fecha).toLocaleString()}</span>
-            </li>
-          ))}
-          {historial.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin eventos registrados</li>}
-        </ul>
-        {historialVisibles < historialOrdenado.length && (
-          <button
-            type="button"
-            className="detalle-ticket-historial-cargar-mas"
-            onClick={() => setHistorialVisibles((anteriores) => anteriores + 10)}
-          >
-            Cargar 10 más
-          </button>
-        )}
-      </div>
     </div>
   );
 }

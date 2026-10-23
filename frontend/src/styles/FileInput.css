@@ -104,3 +104,20 @@
   color: var(--error);
   background: rgba(229, 72, 77, 0.12);
 }
+
+/* Variante de una sola fila, para formularios con poco espacio vertical. */
+.file-input-compacto .file-input-zona {
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.file-input-compacto .file-input-zona svg {
+  width: 20px;
+  height: 20px;
+}
+
+.file-input-compacto .file-input-hint {
+  display: none;
+}

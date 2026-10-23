@@ -28,7 +28,7 @@ function IconoArchivo() {
 
 // Campo para elegir un archivo: zona para arrastrar y soltar (o hacer clic).
 // `value` es el File elegido (o null) y `onChange` recibe el File o null.
-function FileInput({ id, label, value, onChange, accept, hint }) {
+function FileInput({ id, label, value, onChange, accept, hint, compacto = false }) {
   const [arrastrando, setArrastrando] = useState(false);
 
   function handleDrop(event) {
@@ -39,7 +39,7 @@ function FileInput({ id, label, value, onChange, accept, hint }) {
   }
 
   return (
-    <div className="form-field file-input">
+    <div className={compacto ? 'form-field file-input file-input-compacto' : 'form-field file-input'}>
       <label htmlFor={id}>{label}</label>
 
       {value ? (

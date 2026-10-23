@@ -562,9 +562,9 @@ aprueba y se commitea por separado.
       detalle (hoy se abre inline y se pierde entre la info)
 
 **Bloque 5 — Detalle de ticket en 16:9**
-- [ ] Reordenar la info del detalle (`/tickets/:id`) en columnas y más
+- [x] Reordenar la info del detalle (`/tickets/:id`) en columnas y más
       compacta para reducir el scroll en escritorio
-- [ ] Mostrar quién cargó cada comentario (`comentarios.id_autor` ya existe
+- [x] Mostrar quién cargó cada comentario (`comentarios.id_autor` ya existe
       en la base; falta traer nombre/apellido en la consulta). Test primero (TDD)
 
 **Bloque 6 — Aside lateral de ticket**
