@@ -581,7 +581,7 @@ aprueba y se commitea por separado.
 - [x] Botones `btn-secondary` del Tablero más chicos
 
 **Bloque 9 — Novedades**
-- [ ] Rediseñar la vista de Novedades como un panel más útil, con la
+- [x] Rediseñar la vista de Novedades como un panel más útil, con la
       información más importante para cada técnico (a definir con Matías
       antes de implementar)
 
