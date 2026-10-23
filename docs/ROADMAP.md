@@ -604,7 +604,7 @@ notifica una acción propia.
 - [x] Etapa 1 — Backend: `GET /api/notificaciones?despuesDe=&limite=`, armado
       desde `historial_ticket` (sin tablas nuevas), con cursor `ultimoId`,
       texto en pantalla y texto para leer en voz alta (`mensajeVoz`)
-- [ ] Etapa 2 — Popups (apilados, se cierran solos, clic abre el ticket),
+- [x] Etapa 2 — Popups (apilados, se cierran solos, clic abre el ticket),
       sonido (Web Audio) y TTS; consulta cada 20 s y al volver a la pestaña
 - [ ] Etapa 3 — Página "Alertas" (`/configuracion/alertas`): interruptor
       general, volumen, popup/sonido/voz por tipo, selector de voz con

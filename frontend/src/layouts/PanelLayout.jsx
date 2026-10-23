@@ -6,6 +6,7 @@ import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
 import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
 import { AsideTicketProvider } from '../context/AsideTicketContext';
+import { NotificacionesProvider } from '../context/NotificacionesContext';
 import '../styles/PanelLayout.css';
 
 const ROLES_DASHBOARD = [2, 3];
@@ -143,7 +144,9 @@ function PanelLayout() {
   return (
     <NuevoTicketProvider>
       <AsideTicketProvider>
-        <PanelLayoutContenido />
+        <NotificacionesProvider>
+          <PanelLayoutContenido />
+        </NotificacionesProvider>
       </AsideTicketProvider>
     </NuevoTicketProvider>
   );
