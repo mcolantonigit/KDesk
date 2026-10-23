@@ -115,7 +115,16 @@ p {
   }
 }
 
+/* Contenido que solo aparece en la versión impresa (por ejemplo, el título de un reporte). */
+.solo-imprimir {
+  display: none;
+}
+
 @media print {
+  .solo-imprimir {
+    display: block;
+  }
+
   .no-imprimir {
     display: none !important;
   }

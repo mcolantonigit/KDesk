@@ -577,8 +577,8 @@ aprueba y se commitea por separado.
       el scroll horizontal innecesario
 
 **Bloque 8 — Tablero**
-- [ ] Sacar el H1 de `/dashboard/tablero` y subir `tablero-toolbar`
-- [ ] Botones `btn-secondary` del Tablero más chicos
+- [x] Sacar el H1 de `/dashboard/tablero` y subir `tablero-toolbar`
+- [x] Botones `btn-secondary` del Tablero más chicos
 
 **Bloque 9 — Novedades**
 - [ ] Rediseñar la vista de Novedades como un panel más útil, con la

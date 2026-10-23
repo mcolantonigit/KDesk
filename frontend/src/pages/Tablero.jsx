@@ -254,7 +254,7 @@ function Tablero() {
 
   return (
     <div className={vista === 'lista' ? 'tablero tablero-con-tabla' : 'tablero'}>
-      <h1>Tablero</h1>
+      <h1 className="solo-imprimir">Tablero</h1>
 
       <div className="tablero-toolbar no-imprimir">
         <div className="tablero-toolbar-fila">
@@ -275,7 +275,7 @@ function Tablero() {
             </button>
           </div>
 
-          <Button variant="secondary" type="button" onClick={() => setMostrarFiltros(!mostrarFiltros)}>
+          <Button variant="secondary" size="sm" type="button" onClick={() => setMostrarFiltros(!mostrarFiltros)}>
             Filtrar
           </Button>
 
@@ -287,12 +287,12 @@ function Tablero() {
             onChange={(event) => setBusqueda(event.target.value)}
           />
 
-          <Button type="button" onClick={abrirNuevoTicket}>
+          <Button type="button" size="sm" onClick={abrirNuevoTicket}>
             Nuevo ticket
           </Button>
 
           <div className="tablero-reporte">
-            <Button variant="secondary" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
+            <Button variant="secondary" size="sm" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
               Generar reporte
             </Button>
             {mostrarReporte && (
