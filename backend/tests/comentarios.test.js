@@ -58,6 +58,17 @@ describe('comentarios de un ticket', () => {
     expect(res.body.map((c) => c.contenido)).toEqual(['primero', 'segundo']);
   });
 
+  it('el listado incluye el nombre y apellido de quien cargó cada comentario', async () => {
+    await api().post(`/api/tickets/${ticket.id}/comentarios`).set('Cookie', creador.cookie).send({ contenido: 'del creador' });
+    await api().post(`/api/tickets/${ticket.id}/comentarios`).set('Cookie', tecnico.cookie).send({ contenido: 'del técnico' });
+
+    const res = await api().get(`/api/tickets/${ticket.id}/comentarios`).set('Cookie', tecnico.cookie);
+
+    expect(res.status).toBe(200);
+    expect(res.body[0]).toMatchObject({ id_autor: creador.id, autor_nombre: creador.nombre, autor_apellido: creador.apellido });
+    expect(res.body[1]).toMatchObject({ id_autor: tecnico.id, autor_nombre: tecnico.nombre, autor_apellido: tecnico.apellido });
+  });
+
   it('solo el autor o un técnico pueden eliminar un comentario', async () => {
     const creado = await api()
       .post(`/api/tickets/${ticket.id}/comentarios`)
