@@ -17,7 +17,7 @@ export function vocesEnEspanol(voces) {
 
 // La voz que se usa mientras el usuario no elija otra:
 //  - Edge: "Microsoft Gonzalo Online (Natural)".
-//  - Chrome: "Google español de Estados Unidos" (la versión "Natural" si hay varias).
+//  - Chrome: "Google español" (la voz en línea). Si no está, "Google español de Estados Unidos".
 // Si no está instalada, cae en la mejor voz en español disponible.
 export function elegirVozPorDefecto(voces, navegador = detectarNavegador()) {
   const espanolas = vocesEnEspanol(voces);
@@ -27,7 +27,8 @@ export function elegirVozPorDefecto(voces, navegador = detectarNavegador()) {
     navegador === 'edge'
       ? espanolas.find((voz) => nombre(voz).includes('gonzalo'))
       : navegador === 'chrome'
-        ? espanolas.find((voz) => /google.*espanol.*(estados unidos|united states)/.test(nombre(voz)) && esNatural(voz)) ??
+        ? espanolas.find((voz) => nombre(voz) === 'google espanol') ??
+          espanolas.find((voz) => /google.*espanol.*(estados unidos|united states)/.test(nombre(voz)) && esNatural(voz)) ??
           espanolas.find((voz) => /google.*espanol.*(estados unidos|united states)/.test(nombre(voz)))
         : null;
 

@@ -43,9 +43,14 @@ describe('elegirVozPorDefecto', () => {
     expect(elegirVozPorDefecto(vocesEdge, 'edge').name).toBe('Microsoft Gonzalo Online (Natural) - Spanish (Colombia)');
   });
 
-  it('en Chrome elige "Google español de Estados Unidos", la versión Natural si existe', () => {
-    expect(elegirVozPorDefecto(vocesChrome, 'chrome').name).toBe('Google español de Estados Unidos 4 (Natural)');
-    expect(elegirVozPorDefecto(vocesChrome.slice(0, 3), 'chrome').name).toBe('Google español de Estados Unidos');
+  it('en Chrome elige "Google español" (la voz en línea)', () => {
+    expect(elegirVozPorDefecto(vocesChrome, 'chrome').name).toBe('Google español');
+  });
+
+  it('en Chrome, si no está "Google español", usa la de Estados Unidos (la Natural si hay varias)', () => {
+    const sinGoogleEspanol = vocesChrome.filter((v) => v.name !== 'Google español');
+    expect(elegirVozPorDefecto(sinGoogleEspanol, 'chrome').name).toBe('Google español de Estados Unidos 4 (Natural)');
+    expect(elegirVozPorDefecto(sinGoogleEspanol.slice(0, 2), 'chrome').name).toBe('Google español de Estados Unidos');
   });
 
   it('si la recomendada no está instalada, usa una natural en español y después cualquiera en español', () => {
