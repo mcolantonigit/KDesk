@@ -553,9 +553,9 @@ aprueba y se commitea por separado.
 - [x] Todos los listados de opciones ordenados alfabéticamente
 
 **Bloque 3 — Modal de nuevo ticket**
-- [ ] Reemplazar la página `/tickets/nuevo` por una ventana modal que se abre
+- [x] Reemplazar la página `/tickets/nuevo` por una ventana modal que se abre
       desde "Nuevo ticket"
-- [ ] Acomodar los campos en columnas (evaluar 2) para pantallas 16:9 sin tanto scroll
+- [x] Acomodar los campos en columnas (evaluar 2) para pantallas 16:9 sin tanto scroll
 
 **Bloque 4 — Modal de motivo de cierre**
 - [ ] "Cerrar ticket" abre el motivo de cierre como modal por encima del

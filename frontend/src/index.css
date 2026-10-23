@@ -142,3 +142,8 @@ p {
     background: #3987e5 !important;
   }
 }
+
+.ticket-form-error {
+  color: var(--error);
+  font-size: 14px;
+}

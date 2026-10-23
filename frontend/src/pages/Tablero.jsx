@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNuevoTicket } from '../context/NuevoTicketContext';
 import {
   getTickets,
   cambiarEstado,
@@ -66,6 +66,7 @@ const ICONO_TARJETAS = (
 );
 
 function Tablero() {
+  const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const [tickets, setTickets] = useState([]);
   const [catalogos, setCatalogos] = useState({
     estados: [],
@@ -286,9 +287,9 @@ function Tablero() {
             onChange={(event) => setBusqueda(event.target.value)}
           />
 
-          <Link to="/tickets/nuevo">
-            <Button type="button">Nuevo ticket</Button>
-          </Link>
+          <Button type="button" onClick={abrirNuevoTicket}>
+            Nuevo ticket
+          </Button>
 
           <div className="tablero-reporte">
             <Button variant="secondary" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>

@@ -8,16 +8,17 @@ import { getSucursales } from '../services/sucursales.service';
 import { getSectores } from '../services/sectores.service';
 import { getUsuarios } from '../services/usuarios.service';
 import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
-import FormField from '../components/FormField';
-import Combobox from '../components/Combobox';
-import Button from '../components/Button';
-import FileInput from '../components/FileInput';
-import '../styles/TicketForm.css';
+import Modal from './Modal';
+import FormField from './FormField';
+import Combobox from './Combobox';
+import Button from './Button';
+import FileInput from './FileInput';
+import '../styles/ModalNuevoTicket.css';
 
 const TITULO_LONGITUD_MAXIMA = 35;
 const ROLES_TECNICOS = [2, 3];
 
-function NuevoTicket() {
+function ModalNuevoTicket({ onClose }) {
   const { usuario } = useAuth();
   const esTecnico = ROLES_TECNICOS.includes(usuario?.id_rol);
 
@@ -74,95 +75,78 @@ function NuevoTicket() {
       if (adjunto) {
         await subirAdjuntoDeTicket(ticket.id, adjunto);
       }
+      onClose();
       navigate(`/tickets/${ticket.id}`);
     } catch (err) {
       setError(err.message);
-    } finally {
       setEnviando(false);
     }
   }
 
   return (
-    <div className="ticket-form-page">
-      <h1>Nuevo ticket</h1>
-
-      <form className="ticket-form" onSubmit={handleSubmit}>
-        <Combobox
-          id="idTipo"
-          label="Tipo de ticket"
-          value={idTipo}
-          onChange={setIdTipo}
-          options={tipos}
-          required
-        />
-
-        <Combobox
-          id="idPrioridadSugerida"
-          label="Prioridad sugerida"
-          value={idPrioridadSugerida}
-          onChange={setIdPrioridadSugerida}
-          options={prioridades}
-          required
-        />
-
-        {esTecnico && (
-          <>
+    <Modal titulo="Nuevo ticket" size="lg" onClose={onClose}>
+      <form className="nuevo-ticket-form" onSubmit={handleSubmit}>
+        <div className="nuevo-ticket-columnas">
+          <div className="nuevo-ticket-columna">
+            <Combobox id="idTipo" label="Tipo de ticket" value={idTipo} onChange={setIdTipo} options={tipos} required />
             <Combobox
-              id="idUsuarioCreador"
-              label="Usuario que crea el ticket (opcional)"
-              value={idUsuarioCreador}
-              onChange={setIdUsuarioCreador}
-              options={usuarios}
-            />
-
-            <Combobox
-              id="idSucursal"
-              label="Sucursal"
-              value={idSucursal}
-              onChange={setIdSucursal}
-              options={sucursales}
+              id="idPrioridadSugerida"
+              label="Prioridad sugerida"
+              value={idPrioridadSugerida}
+              onChange={setIdPrioridadSugerida}
+              options={prioridades}
               required
             />
+            {esTecnico && (
+              <>
+                <Combobox
+                  id="idUsuarioCreador"
+                  label="Usuario que crea el ticket (opcional)"
+                  value={idUsuarioCreador}
+                  onChange={setIdUsuarioCreador}
+                  options={usuarios}
+                />
+                <Combobox id="idSucursal" label="Sucursal" value={idSucursal} onChange={setIdSucursal} options={sucursales} required />
+                <Combobox id="idSector" label="Sector" value={idSector} onChange={setIdSector} options={sectores} required />
+              </>
+            )}
+          </div>
 
-            <Combobox
-              id="idSector"
-              label="Sector"
-              value={idSector}
-              onChange={setIdSector}
-              options={sectores}
+          <div className="nuevo-ticket-columna">
+            <FormField
+              id="titulo"
+              label="Título"
+              value={titulo}
+              onChange={(event) => setTitulo(event.target.value)}
+              maxLength={TITULO_LONGITUD_MAXIMA}
               required
             />
-          </>
-        )}
-
-        <FormField
-          id="titulo"
-          label="Título"
-          value={titulo}
-          onChange={(event) => setTitulo(event.target.value)}
-          maxLength={TITULO_LONGITUD_MAXIMA}
-          required
-        />
-
-        <FormField
-          id="descripcion"
-          label="Descripción"
-          type="textarea"
-          value={descripcion}
-          onChange={(event) => setDescripcion(event.target.value)}
-          required
-        />
-
-        <FileInput id="adjunto" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
-
-        <Button type="submit" disabled={enviando}>
-          {enviando ? 'Creando...' : 'Crear ticket'}
-        </Button>
+            <FormField
+              id="descripcion"
+              label="Descripción"
+              type="textarea"
+              rows={6}
+              value={descripcion}
+              onChange={(event) => setDescripcion(event.target.value)}
+              required
+            />
+            <FileInput id="adjunto" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
+          </div>
+        </div>
 
         {error && <p className="ticket-form-error">{error}</p>}
+
+        <div className="nuevo-ticket-acciones">
+          <Button type="button" variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={enviando}>
+            {enviando ? 'Creando...' : 'Crear ticket'}
+          </Button>
+        </div>
       </form>
-    </div>
+    </Modal>
   );
 }
 
-export default NuevoTicket;
+export default ModalNuevoTicket;

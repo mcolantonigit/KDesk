@@ -6,7 +6,6 @@ import ResetearContrasena from '../pages/ResetearContrasena';
 import ActivarCuenta from '../pages/ActivarCuenta';
 import Inicio from '../pages/Inicio';
 import Novedades from '../pages/Novedades';
-import NuevoTicket from '../pages/NuevoTicket';
 import ListaTickets from '../pages/ListaTickets';
 import DetalleTicket from '../pages/DetalleTicket';
 import Tablero from '../pages/Tablero';
@@ -36,7 +35,6 @@ function AppRoutes() {
       <Route element={<RutaProtegida />}>
         <Route element={<PanelLayout />}>
           <Route path="/" element={<Inicio />} />
-          <Route path="/tickets/nuevo" element={<NuevoTicket />} />
           <Route path="/tickets/activos" element={<ListaTickets soloCerrados={false} />} />
           <Route path="/tickets/cerrados" element={<ListaTickets soloCerrados />} />
           <Route path="/tickets/:id" element={<DetalleTicket />} />

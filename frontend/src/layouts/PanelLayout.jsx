@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePreferencias } from '../context/PreferenciasContext';
 import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
+import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
 import '../styles/PanelLayout.css';
 
 const ROLES_DASHBOARD = [2, 3];
@@ -31,7 +32,8 @@ const ICONO_CERRAR_SESION = (
   </svg>
 );
 
-function PanelLayout() {
+function PanelLayoutContenido() {
+  const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const { usuario, cerrarSesion } = useAuth();
   const { fondoAnimado, setFondoAnimado } = usePreferencias();
   const navigate = useNavigate();
@@ -58,9 +60,9 @@ function PanelLayout() {
           <div className="panel-nav-item">
             <span className="panel-nav-trigger">Mis tickets</span>
             <div className="panel-nav-submenu">
-              <NavLink to="/tickets/nuevo" className="panel-nav-destacado">
+              <button type="button" className="panel-nav-destacado" onClick={abrirNuevoTicket}>
                 Nuevo Ticket
-              </NavLink>
+              </button>
               <NavLink to="/tickets/activos">Tickets activos</NavLink>
               <NavLink to="/tickets/cerrados">Tickets cerrados</NavLink>
             </div>
@@ -133,6 +135,14 @@ function PanelLayout() {
         <Outlet />
       </main>
     </div>
+  );
+}
+
+function PanelLayout() {
+  return (
+    <NuevoTicketProvider>
+      <PanelLayoutContenido />
+    </NuevoTicketProvider>
   );
 }
 

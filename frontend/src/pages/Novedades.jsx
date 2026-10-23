@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNuevoTicket } from '../context/NuevoTicketContext';
 import { useAuth } from '../context/AuthContext';
 import { getTickets } from '../services/tickets.service';
 import { getEstados } from '../services/estados.service';
@@ -17,6 +18,7 @@ function obtenerSaludo() {
 }
 
 function Novedades() {
+  const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const { usuario } = useAuth();
 
   const [tickets, setTickets] = useState([]);
@@ -103,9 +105,9 @@ function Novedades() {
 
         <div className="inicio-card inicio-accesos">
           <h2>Accesos directos</h2>
-          <Link to="/tickets/nuevo">
-            <Button type="button">Nuevo ticket</Button>
-          </Link>
+          <Button type="button" onClick={abrirNuevoTicket}>
+            Nuevo ticket
+          </Button>
           <Link to="/dashboard/tablero">
             <Button type="button" variant="secondary">
               Ir al Tablero
