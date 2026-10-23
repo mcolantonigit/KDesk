@@ -1,0 +1,267 @@
+/* Fondos de la aplicación. Todos son CSS puro (sin imágenes ni recursos externos) y se
+   animan solo con `transform` y `opacity`, que corren en la GPU: no repintan por
+   cuadro. El fondo es UNA capa fija del tamaño de la pantalla, detrás de todo
+   (`.panel-layout` / `.auth-bg` son transparentes a propósito para que se vea a través).
+
+   Los tamaños se expresan en unidades `--u` y `--celda`: en pantalla completa valen
+   1vmax y 40px; dentro de una vista previa (`.fondo-contenido`) se achican. */
+.fondo {
+  --u: 1vmax;
+  --celda: 40px;
+  --grosor: 2px;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fondo-contenido {
+  --u: 2px;
+  --celda: 10px;
+  --grosor: 1px;
+  position: absolute;
+  z-index: 0;
+}
+
+/* --- Grilla en movimiento (la de siempre) --- */
+.fondo-grilla {
+  inset: -40px;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: var(--celda) var(--celda);
+  animation: fondo-grilla-desplazar 6s linear infinite;
+  will-change: transform;
+}
+
+.fondo-contenido.fondo-grilla {
+  inset: -10px;
+  animation-duration: 3s;
+}
+
+@keyframes fondo-grilla-desplazar {
+  to {
+    transform: translate(var(--celda), var(--celda));
+  }
+}
+
+/* --- Aurora: manchas de color difuminadas que se mueven muy despacio --- */
+.fondo-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: var(--celda) var(--celda);
+}
+
+.fondo-aurora span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(calc(var(--u) * 6));
+  opacity: 0.3;
+  will-change: transform;
+}
+
+.fondo-aurora span:nth-child(1) {
+  width: calc(var(--u) * 55);
+  height: calc(var(--u) * 55);
+  left: calc(var(--u) * -10);
+  top: calc(var(--u) * -18);
+  background: var(--accent);
+  animation: fondo-aurora-1 48s ease-in-out infinite alternate;
+}
+
+.fondo-aurora span:nth-child(2) {
+  width: calc(var(--u) * 50);
+  height: calc(var(--u) * 50);
+  right: calc(var(--u) * -14);
+  top: calc(var(--u) * 6);
+  background: var(--series-1);
+  animation: fondo-aurora-2 62s ease-in-out infinite alternate;
+}
+
+.fondo-aurora span:nth-child(3) {
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  left: calc(var(--u) * 24);
+  bottom: calc(var(--u) * -22);
+  background: #7c5cff;
+  opacity: 0.22;
+  animation: fondo-aurora-3 55s ease-in-out infinite alternate;
+}
+
+@keyframes fondo-aurora-1 {
+  to {
+    transform: translate(calc(var(--u) * 20), calc(var(--u) * 14)) scale(1.15);
+  }
+}
+
+@keyframes fondo-aurora-2 {
+  to {
+    transform: translate(calc(var(--u) * -22), calc(var(--u) * 12)) scale(0.9);
+  }
+}
+
+@keyframes fondo-aurora-3 {
+  to {
+    transform: translate(calc(var(--u) * 16), calc(var(--u) * -14)) scale(1.1);
+  }
+}
+
+/* --- Aurora en la rejilla: la grilla es una máscara y la luz de la aurora solo se ve
+   por sus líneas (finas, de 1px). Las manchas se mueven más rápido que las de la Aurora. --- */
+.fondo-rejilla {
+  --grosor: 1px;
+  -webkit-mask-image:
+    linear-gradient(#000 var(--grosor), transparent var(--grosor)),
+    linear-gradient(90deg, #000 var(--grosor), transparent var(--grosor));
+  -webkit-mask-size: var(--celda) var(--celda);
+  mask-image:
+    linear-gradient(#000 var(--grosor), transparent var(--grosor)),
+    linear-gradient(90deg, #000 var(--grosor), transparent var(--grosor));
+  mask-size: var(--celda) var(--celda);
+}
+
+.fondo-rejilla span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(calc(var(--u) * 5));
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.fondo-rejilla span:nth-child(1) {
+  width: calc(var(--u) * 42);
+  height: calc(var(--u) * 42);
+  left: calc(var(--u) * -6);
+  top: calc(var(--u) * -8);
+  background: var(--accent);
+  animation: fondo-rejilla-1 17s ease-in-out infinite alternate;
+}
+
+.fondo-rejilla span:nth-child(2) {
+  width: calc(var(--u) * 38);
+  height: calc(var(--u) * 38);
+  right: calc(var(--u) * -6);
+  top: calc(var(--u) * 4);
+  background: var(--series-1);
+  animation: fondo-rejilla-2 21s ease-in-out infinite alternate;
+}
+
+.fondo-rejilla span:nth-child(3) {
+  width: calc(var(--u) * 36);
+  height: calc(var(--u) * 36);
+  left: calc(var(--u) * 26);
+  bottom: calc(var(--u) * -12);
+  background: #8b6cff;
+  animation: fondo-rejilla-3 19s ease-in-out infinite alternate;
+}
+
+.fondo-rejilla span:nth-child(4) {
+  width: calc(var(--u) * 26);
+  height: calc(var(--u) * 26);
+  left: calc(var(--u) * 48);
+  top: calc(var(--u) * 14);
+  background: #ff7b3b;
+  animation: fondo-rejilla-4 23s ease-in-out infinite alternate;
+}
+
+@keyframes fondo-rejilla-1 {
+  to {
+    transform: translate(calc(var(--u) * 30), calc(var(--u) * 20)) scale(1.2);
+  }
+}
+
+@keyframes fondo-rejilla-2 {
+  to {
+    transform: translate(calc(var(--u) * -30), calc(var(--u) * 18)) scale(0.9);
+  }
+}
+
+@keyframes fondo-rejilla-3 {
+  to {
+    transform: translate(calc(var(--u) * 24), calc(var(--u) * -22)) scale(1.15);
+  }
+}
+
+@keyframes fondo-rejilla-4 {
+  to {
+    transform: translate(calc(var(--u) * -26), calc(var(--u) * 20)) scale(1.3);
+  }
+}
+
+/* --- Grilla con luz: la grilla queda quieta y un brillo sigue al mouse --- */
+.fondo-luz {
+  --luz-x: 50%;
+  --luz-y: 35%;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: var(--celda) var(--celda);
+}
+
+.fondo-luz::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle calc(var(--u) * 30) at var(--luz-x) var(--luz-y), rgba(242, 101, 34, 0.15), transparent 70%);
+}
+
+/* Las mismas líneas de la grilla, más intensas, visibles solo cerca del cursor. */
+.fondo-luz span {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(242, 101, 34, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 101, 34, 0.45) 1px, transparent 1px);
+  background-size: var(--celda) var(--celda);
+  -webkit-mask-image: radial-gradient(circle calc(var(--u) * 16) at var(--luz-x) var(--luz-y), #000, transparent);
+  mask-image: radial-gradient(circle calc(var(--u) * 16) at var(--luz-x) var(--luz-y), #000, transparent);
+}
+
+/* --- Puntos: malla de puntos que respira, con un brillo que deriva despacio --- */
+.fondo-puntos {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 1.7px);
+  background-size: calc(var(--celda) * 0.7) calc(var(--celda) * 0.7);
+  animation: fondo-puntos-respirar 7s ease-in-out infinite alternate;
+}
+
+.fondo-puntos span {
+  position: absolute;
+  left: 55%;
+  top: 25%;
+  width: calc(var(--u) * 42);
+  height: calc(var(--u) * 42);
+  border-radius: 50%;
+  background: var(--accent);
+  filter: blur(calc(var(--u) * 7));
+  opacity: 0.16;
+  animation: fondo-puntos-derivar 45s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes fondo-puntos-respirar {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fondo-puntos-derivar {
+  to {
+    transform: translate(calc(var(--u) * -30), calc(var(--u) * 16));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fondo,
+  .fondo span {
+    animation: none;
+  }
+}

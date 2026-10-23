@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { usePreferencias } from '../context/PreferenciasContext';
 import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
 import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
@@ -37,7 +36,6 @@ const ICONO_CERRAR_SESION = (
 function PanelLayoutContenido() {
   const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const { usuario, cerrarSesion } = useAuth();
-  const { fondoAnimado, setFondoAnimado } = usePreferencias();
   const navigate = useNavigate();
   const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
@@ -102,19 +100,12 @@ function PanelLayoutContenido() {
                 </button>
               )}
               <NavLink to="/configuracion/alertas">Alertas</NavLink>
+              <NavLink to="/configuracion/apariencia">Apariencia</NavLink>
               {esAdministrador && <NavLink to="/administrar/usuarios">Usuarios y permisos</NavLink>}
               {esAdministrador && <NavLink to="/administrar/parametros">Parámetros</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/estadisticas">Estadísticas</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/auditoria">Auditoría</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/backups">Backups</NavLink>}
-              <label className="panel-nav-submenu-checkbox">
-                <input
-                  type="checkbox"
-                  checked={fondoAnimado}
-                  onChange={(event) => setFondoAnimado(event.target.checked)}
-                />
-                Fondo animado
-              </label>
             </div>
           </div>
 
