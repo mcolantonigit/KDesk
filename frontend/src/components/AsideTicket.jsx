@@ -4,6 +4,7 @@ import { useTicketDetalle } from '../hooks/useTicketDetalle';
 import ActividadTicket from './ActividadTicket';
 import TextoExpandible from './TextoExpandible';
 import '../styles/AsideTicket.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 // Panel lateral con una versión acotada del detalle de un ticket: se abre
 // al hacer clic en una fila de las tablas, sin salir de la pantalla.
@@ -64,8 +65,8 @@ function AsideTicket({ idTicket, onClose }) {
             {dato('Creado por', nombres.creador)}
             {dato('Sucursal', nombres.sucursal)}
             {dato('Sector', nombres.sector)}
-            {dato('Creación', new Date(ticket.fecha_creacion).toLocaleDateString())}
-            {dato('Actualización', new Date(ticket.fecha_actualizacion).toLocaleDateString())}
+            {dato('Creación', formatearFechaHora(ticket.fecha_creacion))}
+            {dato('Actualización', formatearFechaHora(ticket.fecha_actualizacion))}
           </dl>
 
           <section className="aside-ticket-seccion">

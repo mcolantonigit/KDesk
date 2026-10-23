@@ -7,6 +7,7 @@ import BackButton from '../components/BackButton';
 import Checklist from '../components/Checklist';
 import ActividadTicket from '../components/ActividadTicket';
 import '../styles/DetalleTicket.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 function DetalleTicket() {
   const { id } = useParams();
@@ -83,9 +84,9 @@ function DetalleTicket() {
         {dato('Creado por', nombres.creador)}
         {dato('Sucursal', nombres.sucursal)}
         {dato('Sector', nombres.sector)}
-        {dato('Creación', new Date(ticket.fecha_creacion).toLocaleString())}
-        {dato('Última actualización', new Date(ticket.fecha_actualizacion).toLocaleString())}
-        {ticket.fecha_cierre && dato('Cierre', new Date(ticket.fecha_cierre).toLocaleString())}
+        {dato('Creación', formatearFechaHora(ticket.fecha_creacion))}
+        {dato('Última actualización', formatearFechaHora(ticket.fecha_actualizacion))}
+        {ticket.fecha_cierre && dato('Cierre', formatearFechaHora(ticket.fecha_cierre))}
       </dl>
 
       <div className="detalle-ticket-cuerpo">

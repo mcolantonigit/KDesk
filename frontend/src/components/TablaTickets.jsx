@@ -5,6 +5,7 @@ import { useColumnasOrden } from '../hooks/useColumnasOrden';
 import { usePersistentState } from '../hooks/usePersistentState';
 import ThRedimensionable from './ThRedimensionable';
 import '../styles/TablaTickets.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 const CLAVE_TABLA = 'tickets';
 
@@ -16,7 +17,7 @@ const COLUMNAS = [
   {
     key: 'fecha_creacion',
     label: 'Fecha de creación',
-    renderCelda: (ticket) => new Date(ticket.fecha_creacion).toLocaleDateString(),
+    renderCelda: (ticket) => formatearFechaHora(ticket.fecha_creacion),
   },
 ];
 

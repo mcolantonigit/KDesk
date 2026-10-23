@@ -1,6 +1,7 @@
 import { useAsideTicket } from '../context/AsideTicketContext';
 import Button from './Button';
 import '../styles/TarjetasTickets.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 const ESTADO_CERRADO = 'Cerrado';
 
@@ -93,11 +94,11 @@ function TarjetasTickets({
             </div>
             <div>
               <dt>Creado</dt>
-              <dd>{new Date(ticket.fecha_creacion).toLocaleDateString()}</dd>
+              <dd>{formatearFechaHora(ticket.fecha_creacion)}</dd>
             </div>
             <div>
               <dt>Cierre</dt>
-              <dd>{ticket.fecha_cierre ? new Date(ticket.fecha_cierre).toLocaleDateString() : '—'}</dd>
+              <dd>{formatearFechaHora(ticket.fecha_cierre)}</dd>
             </div>
           </dl>
 

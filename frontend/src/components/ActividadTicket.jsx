@@ -3,6 +3,7 @@ import FormField from './FormField';
 import FileInput from './FileInput';
 import Button from './Button';
 import '../styles/DetalleTicket.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 // Panel con pestañas Comentarios / Historial de un ticket. Es el mismo en la
 // página de detalle y en el panel lateral. `conHistorial` en false oculta la
@@ -70,7 +71,7 @@ function ActividadTicket({
                   <strong>
                     {comentario.autor_nombre} {comentario.autor_apellido}
                   </strong>
-                  <span>{new Date(comentario.fecha_creacion).toLocaleString()}</span>
+                  <span>{formatearFechaHora(comentario.fecha_creacion)}</span>
                   {!comentario.eliminado && (comentario.id_autor === usuario?.id || esTecnico) && (
                     <button
                       type="button"
@@ -128,7 +129,7 @@ function ActividadTicket({
             {historialMostrado.map((evento) => (
               <li key={evento.id}>
                 <span className="detalle-ticket-historial-detalle">{evento.detalle}</span>
-                <span className="detalle-ticket-historial-fecha">{new Date(evento.fecha).toLocaleString()}</span>
+                <span className="detalle-ticket-historial-fecha">{formatearFechaHora(evento.fecha)}</span>
               </li>
             ))}
             {historial.length === 0 && <li className="detalle-ticket-comentarios-vacio">Sin eventos registrados</li>}

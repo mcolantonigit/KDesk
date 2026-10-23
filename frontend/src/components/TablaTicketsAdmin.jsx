@@ -6,6 +6,7 @@ import { usePersistentState } from '../hooks/usePersistentState';
 import ThRedimensionable from './ThRedimensionable';
 import Button from './Button';
 import '../styles/TablaTickets.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 const COLUMNAS = [
   { key: 'numero', label: 'ID', visiblePorDefecto: true },
@@ -150,11 +151,11 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
       case 'sector':
         return ticket.sector;
       case 'fecha_creacion':
-        return new Date(ticket.fecha_creacion).toLocaleDateString();
+        return formatearFechaHora(ticket.fecha_creacion);
       case 'fecha_actualizacion':
-        return new Date(ticket.fecha_actualizacion).toLocaleDateString();
+        return formatearFechaHora(ticket.fecha_actualizacion);
       case 'fecha_cierre':
-        return ticket.fecha_cierre ? new Date(ticket.fecha_cierre).toLocaleDateString() : '—';
+        return formatearFechaHora(ticket.fecha_cierre);
       default:
         return null;
     }
