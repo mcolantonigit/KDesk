@@ -6,6 +6,7 @@ import { TIPOS_NOTIFICACION } from '../utils/alertas';
 import { elegirVozPorDefecto, vocesEnEspanol, detectarNavegador } from '../utils/voces';
 import { hablar, vocesDisponibles, cancelarLectura } from '../utils/voz';
 import Button from '../components/Button';
+import Selector from '../components/Selector';
 import '../styles/Alertas.css';
 
 const ROLES_TECNICOS = [2, 3];
@@ -132,7 +133,7 @@ function Alertas() {
             <div className="alertas-fila">
               <label className="alertas-voz">
                 <span>Voz que lee las alertas</span>
-                <select value={preferencias.voz} onChange={(event) => setVoz(event.target.value)}>
+                <Selector aria-label="Voz que lee las alertas" value={preferencias.voz} onChange={(event) => setVoz(event.target.value)}>
                   <option value="">
                     Recomendada para {NOMBRES_NAVEGADOR[navegador]}
                     {recomendada ? ` — ${recomendada.name}` : ''}
@@ -142,7 +143,7 @@ function Alertas() {
                       {nombreConOrigen(voz)}
                     </option>
                   ))}
-                </select>
+                </Selector>
               </label>
               <Button type="button" variant="secondary" size="sm" onClick={handleEscuchar} disabled={hablando}>
                 {hablando ? 'Leyendo...' : 'Escuchar prueba'}

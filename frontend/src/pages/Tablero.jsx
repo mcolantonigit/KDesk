@@ -17,6 +17,7 @@ import TablaTicketsAdmin from '../components/TablaTicketsAdmin';
 import TarjetasTickets from '../components/TarjetasTickets';
 import ModalCerrarTicket from '../components/ModalCerrarTicket';
 import Button from '../components/Button';
+import Selector from '../components/Selector';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { descargarCSV, filasACSV } from '../utils/exportar';
 import '../styles/Tablero.css';
@@ -316,31 +317,31 @@ function Tablero() {
           <div className="tablero-filtros">
             <label className="tablero-campo">
               <span>Sucursal</span>
-              <select value={filtros.idSucursal} onChange={(event) => handleFiltroChange('idSucursal', event.target.value)}>
+              <Selector aria-label="Sucursal" value={filtros.idSucursal} onChange={(event) => handleFiltroChange('idSucursal', event.target.value)}>
                 <option value="">Todas</option>
                 {catalogos.sucursales.map((sucursal) => (
                   <option key={sucursal.id} value={sucursal.id}>
                     {sucursal.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Sector</span>
-              <select value={filtros.idSector} onChange={(event) => handleFiltroChange('idSector', event.target.value)}>
+              <Selector aria-label="Sector" value={filtros.idSector} onChange={(event) => handleFiltroChange('idSector', event.target.value)}>
                 <option value="">Todos</option>
                 {catalogos.sectores.map((sector) => (
                   <option key={sector.id} value={sector.id}>
                     {sector.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Estado</span>
-              <select value={filtros.idEstado} onChange={(event) => handleFiltroChange('idEstado', event.target.value)}>
+              <Selector aria-label="Estado" value={filtros.idEstado} onChange={(event) => handleFiltroChange('idEstado', event.target.value)}>
                 <option value="">Activos</option>
                 <option value="todos">Todos</option>
                 {catalogos.estados.map((estado) => (
@@ -348,24 +349,24 @@ function Tablero() {
                     {estado.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Prioridad</span>
-              <select value={filtros.idPrioridad} onChange={(event) => handleFiltroChange('idPrioridad', event.target.value)}>
+              <Selector aria-label="Prioridad" value={filtros.idPrioridad} onChange={(event) => handleFiltroChange('idPrioridad', event.target.value)}>
                 <option value="">Todas</option>
                 {catalogos.prioridades.map((prioridad) => (
                   <option key={prioridad.id} value={prioridad.id}>
                     {prioridad.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Responsable</span>
-              <select value={filtros.idTecnico} onChange={(event) => handleFiltroChange('idTecnico', event.target.value)}>
+              <Selector aria-label="Responsable" value={filtros.idTecnico} onChange={(event) => handleFiltroChange('idTecnico', event.target.value)}>
                 <option value="">Todos</option>
                 <option value="sin-asignar">Sin asignar</option>
                 {tecnicos.map((tecnico) => (
@@ -373,7 +374,7 @@ function Tablero() {
                     {tecnico.nombre} {tecnico.apellido}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">

@@ -140,6 +140,7 @@
     padding: 0 16px 4px;
     overflow-x: auto;
     scroll-snap-type: x proximity;
+    scroll-padding-left: 16px;
     scrollbar-width: none;
   }
 
@@ -186,6 +187,93 @@
     min-height: 0;
   }
 
+  /* --- Ventanas: pantallas completas que suben desde abajo --- */
+
+  /* Modales (nuevo ticket, cierre de ticket): una hoja pegada al borde de abajo. */
+  .modal-fondo {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: 92dvh;
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    gap: 16px;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    animation: modal-hoja-entrada 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .modal-lg {
+    height: 92dvh;
+  }
+
+  /* El título y la X quedan fijos arriba mientras se scrollea el formulario. */
+  .modal-cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 16px 0 8px;
+    background: #121722;
+  }
+
+  .modal-cerrar-x {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Los botones de acción quedan siempre a la vista, abajo. */
+  .nuevo-ticket-acciones,
+  .modal-cerrar-form .modal-cerrar-acciones {
+    position: sticky;
+    bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
+    padding: 12px 0 calc(16px + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
+    background: #121722;
+    border-top: 1px solid var(--border);
+  }
+
+  .nuevo-ticket-acciones .btn,
+  .modal-cerrar-form .modal-cerrar-acciones .btn {
+    flex: 1;
+  }
+
+  /* Panel del ticket (al tocar una tarjeta): pantalla completa, por encima de la barra inferior. */
+  .aside-ticket {
+    top: 0;
+    width: 100%;
+    z-index: 80;
+    border-left: none;
+    animation: aside-ticket-subir 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .aside-ticket-cabecera {
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  }
+
+  .aside-ticket-cabecera .modal-cerrar-x {
+    flex-shrink: 0;
+  }
+
+  .aside-ticket-cuerpo {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Notificaciones emergentes: a lo ancho, por encima de la barra inferior. */
+  .popups-notificaciones {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    bottom: calc(var(--barra-inferior) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* Alertas y Apariencia: el título ya está en la barra superior. */
+  .alertas > h1,
+  .apariencia > h1 {
+    display: none;
+  }
+
   /* 16px en los campos evita que iPhone haga zoom al tocarlos. */
   body .form-field input,
   body .form-field select,
@@ -207,5 +295,17 @@
   body .form-field input:not([type='checkbox']):not([type='range']),
   body .form-field select {
     min-height: 48px;
+  }
+}
+
+@keyframes modal-hoja-entrada {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes aside-ticket-subir {
+  from {
+    transform: translateY(100%);
   }
 }

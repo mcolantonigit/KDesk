@@ -1,4 +1,5 @@
 import { formatearFechaHora } from '../utils/fechas';
+import Selector from './Selector';
 import '../styles/ListaTicketsMovil.css';
 
 // Lista de tickets del celular: una tarjeta por ticket, en lugar de la tabla.
@@ -8,13 +9,13 @@ function ListaTicketsMovil({ tickets, ordenPor, ordenAsc, opcionesOrden, onOrden
       <div className="lista-movil-orden">
         <label>
           <span>Ordenar por</span>
-          <select value={ordenPor} onChange={(evento) => onOrdenar(evento.target.value)}>
+          <Selector aria-label="Ordenar por" value={ordenPor} onChange={(evento) => onOrdenar(evento.target.value)}>
             {opcionesOrden.map((opcion) => (
               <option key={opcion.clave} value={opcion.clave}>
                 {opcion.etiqueta}
               </option>
             ))}
-          </select>
+          </Selector>
         </label>
         <button
           type="button"

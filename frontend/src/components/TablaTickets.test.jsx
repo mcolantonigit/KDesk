@@ -103,7 +103,9 @@ describe('TablaTickets', () => {
     it('cambiar el orden reordena las tarjetas', async () => {
       render(<TablaTickets tickets={tickets} />);
 
-      await userEvent.selectOptions(screen.getByLabelText('Ordenar por'), 'numero');
+      // en el celular el selector abre una hoja con las opciones
+      await userEvent.click(screen.getByRole('button', { name: /Ordenar por/ }));
+      await userEvent.click(screen.getByRole('option', { name: 'ID' }));
 
       const tarjetas = screen.getAllByRole('button', { name: /TK-/ });
       expect(tarjetas[0]).toHaveTextContent('TK-000001');

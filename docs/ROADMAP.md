@@ -624,7 +624,8 @@ tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
 - [x] Tanda 1 — Estructura: barra superior compacta, barra inferior con menú
       "Más", márgenes, controles táctiles (44px, campos de 16px), login
 - [x] Tanda 2 — Novedades, Tickets y Tablero como tarjetas; detalle del ticket
-- [ ] Tanda 3 — Nuevo ticket, cierre y panel del ticket como pantallas
-      completas; popups de notificación
+- [x] Tanda 3 — Nuevo ticket, cierre y panel del ticket como pantallas
+      completas; popups de notificación; selector propio para reemplazar la
+      lista nativa de los <select> (hoja con filas cómodas y buscador)
 - [ ] Después — Alertas, Apariencia y administración (Estadísticas, Auditoría,
       Backups, Usuarios, Parámetros)

@@ -6,6 +6,7 @@ import { getSectores } from '../services/sectores.service';
 import ModalBlanquearPassword from '../components/ModalBlanquearPassword';
 import Button from '../components/Button';
 import '../styles/TablaTickets.css';
+import Selector from '../components/Selector';
 import '../styles/Tablero.css';
 
 const ROL_ADMINISTRADOR = 3;
@@ -174,13 +175,13 @@ function UsuariosPermisos() {
         return usuario.id_rol === ROL_ADMINISTRADOR ? (
           rolesPorId[usuario.id_rol] ?? '—'
         ) : (
-          <select value={usuario.id_rol} onChange={(event) => handleCambiarRol(usuario, Number(event.target.value))}>
+          <Selector aria-label="Rol" value={usuario.id_rol} onChange={(event) => handleCambiarRol(usuario, Number(event.target.value))}>
             {ROLES_ASIGNABLES.map((idRol) => (
               <option key={idRol} value={idRol}>
                 {rolesPorId[idRol] ?? idRol}
               </option>
             ))}
-          </select>
+          </Selector>
         );
       case 'sucursal':
         return sucursalesPorId[usuario.id_sucursal] ?? '—';

@@ -1,5 +1,6 @@
 import { useAsideTicket } from '../context/AsideTicketContext';
 import Button from './Button';
+import Selector from './Selector';
 import '../styles/TarjetasTickets.css';
 import { formatearFechaHora } from '../utils/fechas';
 
@@ -26,7 +27,9 @@ function TarjetasTickets({
         <div key={ticket.id} className="tarjeta-ticket" onClick={() => abrirTicket(ticket.id)}>
           <div className="tarjeta-ticket-header">
             <span className="tarjeta-ticket-numero">{ticket.numero}</span>
-            <select
+            <Selector
+              aria-label="Estado"
+              enLinea
               value={ticket.id_estado}
               onClick={(event) => event.stopPropagation()}
               onChange={(event) => onCambiarEstado(ticket, Number(event.target.value))}
@@ -36,7 +39,7 @@ function TarjetasTickets({
                   {estado.nombre}
                 </option>
               ))}
-            </select>
+            </Selector>
           </div>
 
           <h3 className="tarjeta-ticket-titulo">{ticket.titulo}</h3>
@@ -50,7 +53,8 @@ function TarjetasTickets({
             <div onClick={(event) => event.stopPropagation()}>
               <dt>Prioridad</dt>
               <dd>
-                <select
+                <Selector
+                  aria-label="Prioridad"
                   value={ticket.idPrioridadEfectiva ?? ''}
                   onChange={(event) => onCambiarPrioridad(ticket, Number(event.target.value))}
                 >
@@ -59,7 +63,7 @@ function TarjetasTickets({
                       {prioridad.nombre}
                     </option>
                   ))}
-                </select>
+                </Selector>
               </dd>
             </div>
             <div>
@@ -69,7 +73,8 @@ function TarjetasTickets({
             <div onClick={(event) => event.stopPropagation()}>
               <dt>Responsable</dt>
               <dd>
-                <select
+                <Selector
+                  aria-label="Responsable"
                   value={ticket.id_tecnico_responsable ?? ''}
                   onChange={(event) => onAsignarResponsable(ticket, Number(event.target.value))}
                 >
@@ -81,7 +86,7 @@ function TarjetasTickets({
                       {tecnico.nombre} {tecnico.apellido}
                     </option>
                   ))}
-                </select>
+                </Selector>
               </dd>
             </div>
             <div>
