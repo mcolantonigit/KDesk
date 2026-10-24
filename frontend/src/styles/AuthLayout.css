@@ -1,3 +1,13 @@
+@media (max-width: 480px) {
+  .auth-bg {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 28px 22px;
+  }
+}
+
 .auth-bg {
   display: flex;
   justify-content: center;

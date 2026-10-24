@@ -614,3 +614,17 @@ notifica una acción propia.
       mezcla el feed con las alertas actuales (alta/crítica y sin movimiento)
 - Limitaciones: solo avisa con KDesk abierto en una pestaña; el navegador no
   deja sonar ni hablar antes del primer clic en la página
+
+# 15. Versión móvil (celular, hasta 768px)
+
+Se trabaja en tandas, con un commit por tanda. Navegación: barra inferior
+(Novedades/Inicio, Tickets, "+", Tablero/Cerrados, Más). En el celular las
+tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
+
+- [x] Tanda 1 — Estructura: barra superior compacta, barra inferior con menú
+      "Más", márgenes, controles táctiles (44px, campos de 16px), login
+- [ ] Tanda 2 — Novedades, Tickets y Tablero como tarjetas; detalle del ticket
+- [ ] Tanda 3 — Nuevo ticket, cierre y panel del ticket como pantallas
+      completas; popups de notificación
+- [ ] Después — Alertas, Apariencia y administración (Estadísticas, Auditoría,
+      Backups, Usuarios, Parámetros)

@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
 import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
 import { AsideTicketProvider } from '../context/AsideTicketContext';
 import { NotificacionesProvider } from '../context/NotificacionesContext';
+import { useEsMovil } from '../hooks/useEsMovil';
+import { tituloDeRuta } from '../utils/rutas';
+import NavegacionMovil from '../components/NavegacionMovil';
 import '../styles/PanelLayout.css';
 
 const ROLES_DASHBOARD = [2, 3];
@@ -37,6 +40,8 @@ function PanelLayoutContenido() {
   const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const { usuario, cerrarSesion } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const esMovil = useEsMovil();
   const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esTecnicoOAdministrador = ROLES_DASHBOARD.includes(usuario?.id_rol);
@@ -55,6 +60,7 @@ function PanelLayoutContenido() {
           <img src="/favicon.svg" alt="" className="panel-logo" />
           KDesk
         </Link>
+        <span className="panel-titulo-movil">{tituloDeRuta(pathname)}</span>
 
         <nav className="panel-nav">
           <div className="panel-nav-item">
@@ -109,10 +115,6 @@ function PanelLayoutContenido() {
             </div>
           </div>
 
-          {modalPasswordAbierto && (
-            <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />
-          )}
-
           <Button
             variant="secondary"
             className="panel-logout-btn"
@@ -125,9 +127,15 @@ function PanelLayoutContenido() {
         </div>
       </header>
 
+      {modalPasswordAbierto && <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />}
+
       <main className="panel-content">
         <Outlet />
       </main>
+
+      {esMovil && (
+        <NavegacionMovil usuario={usuario} onCambiarPassword={() => setModalPasswordAbierto(true)} onCerrarSesion={handleLogout} />
+      )}
     </div>
   );
 }

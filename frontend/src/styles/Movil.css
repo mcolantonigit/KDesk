@@ -1,0 +1,66 @@
+/* Ajustes para el celular (pantallas de hasta 768px). Se carga al final (ver main.jsx)
+   para que gane sobre los estilos de cada componente. La estructura cambia con
+   `useEsMovil` (barra inferior, listas de tarjetas); acá van las medidas. */
+:root {
+  --barra-inferior: 64px;
+}
+
+.panel-titulo-movil {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --panel-header-height: 56px;
+  }
+
+  /* Barra superior: solo el logo y el título de la pantalla (la navegación está abajo). */
+  .panel-header {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .panel-nav,
+  .panel-header-derecha {
+    display: none;
+  }
+
+  .panel-titulo-movil {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .panel-content {
+    padding: 16px 16px calc(var(--barra-inferior) + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
+  /* 16px en los campos evita que iPhone haga zoom al tocarlos. */
+  body .form-field input,
+  body .form-field select,
+  body .form-field textarea {
+    font-size: 16px;
+  }
+}
+
+/* Pantallas táctiles: los controles miden al menos 44px, el mínimo cómodo para un dedo. */
+@media (pointer: coarse) {
+  body .btn {
+    min-height: 44px;
+  }
+
+  body .btn-sm {
+    height: 40px;
+  }
+
+  body .form-field input:not([type='checkbox']):not([type='range']),
+  body .form-field select {
+    min-height: 48px;
+  }
+}
