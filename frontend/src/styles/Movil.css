@@ -41,6 +41,151 @@
     padding: 16px 16px calc(var(--barra-inferior) + env(safe-area-inset-bottom, 0px) + 24px);
   }
 
+  /* El título ya está en la barra superior. */
+  .tablero > h1 {
+    display: none;
+  }
+
+  /* Tablero: la barra de herramientas deja de ser fija y se compacta. El buscador va
+     primero y a lo ancho; el "+" de la barra inferior reemplaza al botón de nuevo ticket. */
+  .tablero-toolbar {
+    position: static;
+    padding: 12px;
+  }
+
+  .tablero-vista-toggle,
+  .tablero-toolbar-fila .btn-primary {
+    display: none;
+  }
+
+  .tablero-busqueda {
+    order: -1;
+    flex: 1 1 100%;
+    min-width: 0;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .tablero-toolbar-fila .btn {
+    height: 44px;
+  }
+
+  .tablero-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tablero-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tablero-campo {
+    min-width: 0;
+  }
+
+  .tablero-campo select,
+  .tablero-campo input[type='date'] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tablero-busqueda {
+    text-overflow: ellipsis;
+  }
+
+  /* Backups: la columna se ajustaba al contenido (max-content) y ensanchaba toda la pantalla. */
+  .backups-contenido {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Ningún bloque de la pantalla puede ser más ancho que ella. */
+  .panel-content > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .tablero-campo select,
+  .tablero-campo input[type='date'] {
+    font-size: 16px;
+  }
+
+  /* Tarjetas de tickets: una por fila. */
+  .tarjetas-tickets {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .tarjeta-ticket {
+    padding: 16px;
+  }
+
+  /* Tickets activos/cerrados: la lista fluye con la página (sin altura fija ni scroll interno). */
+  .tablero-con-tabla {
+    height: auto;
+    min-height: 0;
+  }
+
+  /* Novedades: indicadores en una tira que se desliza de costado, listas una debajo de otra. */
+  .novedades-cabecera h1 {
+    font-size: 22px;
+  }
+
+  .novedades-acciones .btn-primary {
+    display: none;
+  }
+
+  .novedades-kpis {
+    display: flex;
+    gap: 10px;
+    margin: 0 -16px;
+    padding: 0 16px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .novedades-kpis::-webkit-scrollbar {
+    display: none;
+  }
+
+  .novedades-kpi {
+    flex: 0 0 132px;
+    padding: 12px 14px;
+    scroll-snap-align: start;
+  }
+
+  .novedades-kpi-valor {
+    font-size: 26px;
+  }
+
+  /* Detalle del ticket: una sola columna, sin paneles fijos. */
+  .detalle-ticket-cabecera {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .detalle-ticket-cabecera h1 {
+    order: 3;
+    flex: 1 1 100%;
+    font-size: 19px;
+    white-space: normal;
+  }
+
+  .detalle-ticket-datos {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 14px;
+  }
+
+  .detalle-ticket-actividad {
+    position: static;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .detalle-ticket-comentarios-lista {
+    min-height: 0;
+  }
+
   /* 16px en los campos evita que iPhone haga zoom al tocarlos. */
   body .form-field input,
   body .form-field select,

@@ -3,7 +3,9 @@ import { useAsideTicket } from '../context/AsideTicketContext';
 import { useColumnasAnchos } from '../hooks/useColumnasAnchos';
 import { useColumnasOrden } from '../hooks/useColumnasOrden';
 import { usePersistentState } from '../hooks/usePersistentState';
+import { useEsMovil } from '../hooks/useEsMovil';
 import ThRedimensionable from './ThRedimensionable';
+import ListaTicketsMovil from './ListaTicketsMovil';
 import '../styles/TablaTickets.css';
 import { formatearFechaHora } from '../utils/fechas';
 
@@ -26,6 +28,7 @@ const ANCHOS_POR_DEFECTO = { numero: 120, prioridad: 130, titulo: 420, estado: 1
 const ORDEN_FILAS_POR_DEFECTO = { por: 'fecha_creacion', asc: false };
 
 function TablaTickets({ tickets }) {
+  const esMovil = useEsMovil();
   const { abrirTicket } = useAsideTicket();
   const { anchos, cambiarAncho, resetearAncho } = useColumnasAnchos(CLAVE_TABLA, ANCHOS_POR_DEFECTO);
   const { orden, moverColumna } = useColumnasOrden(CLAVE_TABLA, CLAVES);
@@ -50,6 +53,19 @@ function TablaTickets({ tickets }) {
 
   function handleOrdenar(clave) {
     setOrdenFilas(clave === ordenPor ? { por: clave, asc: !ordenAsc } : { por: clave, asc: true });
+  }
+
+  if (esMovil) {
+    return (
+      <ListaTicketsMovil
+        tickets={ticketsOrdenados}
+        ordenPor={ordenPor}
+        ordenAsc={ordenAsc}
+        opcionesOrden={COLUMNAS.map((columna) => ({ clave: columna.key, etiqueta: columna.label }))}
+        onOrdenar={handleOrdenar}
+        onAbrir={abrirTicket}
+      />
+    );
   }
 
   return (

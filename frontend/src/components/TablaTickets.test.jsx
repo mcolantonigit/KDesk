@@ -4,7 +4,9 @@ import userEvent from '@testing-library/user-event';
 import TablaTickets from './TablaTickets';
 
 const abrirTicket = vi.fn();
+let esMovil = false;
 vi.mock('../context/AsideTicketContext', () => ({ useAsideTicket: () => ({ abrirTicket }) }));
+vi.mock('../hooks/useEsMovil', () => ({ useEsMovil: () => esMovil }));
 
 const tickets = [
   { id: 1, numero: 'TK-000001', prioridad: 'Alta', titulo: 'No imprime', estado: 'Abierto', fecha_creacion: '2026-10-01T10:00:00' },
@@ -26,6 +28,7 @@ describe('TablaTickets', () => {
   beforeEach(() => {
     window.localStorage.clear();
     abrirTicket.mockClear();
+    esMovil = false;
   });
 
   it('al hacer clic en una fila abre el panel lateral de ese ticket', async () => {
@@ -67,5 +70,43 @@ describe('TablaTickets', () => {
     expect(anchoDe('Detalle')).toBe('432');
     expect(screen.getAllByRole('row')[1]).toHaveTextContent('TK-000001'); // Alta antes que Baja
     expect(screen.getByText('Prioridad').closest('th')).toHaveTextContent('▲');
+  });
+
+  describe('en el celular', () => {
+    beforeEach(() => {
+      esMovil = true;
+    });
+
+    it('muestra tarjetas en lugar de la tabla', () => {
+      render(<TablaTickets tickets={tickets} />);
+
+      expect(screen.queryByRole('table')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /No imprime/ })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Mouse roto/ })).toBeInTheDocument();
+    });
+
+    it('al tocar una tarjeta abre el ticket', async () => {
+      render(<TablaTickets tickets={tickets} />);
+
+      await userEvent.click(screen.getByRole('button', { name: /Mouse roto/ }));
+
+      expect(abrirTicket).toHaveBeenCalledWith(2);
+    });
+
+    it('las tarjetas vienen por fecha de creación, la más nueva primero', () => {
+      render(<TablaTickets tickets={tickets} />);
+
+      const titulos = screen.getAllByRole('button', { name: /TK-/ }).map((tarjeta) => tarjeta.textContent);
+      expect(titulos[0]).toContain('Mouse roto');
+    });
+
+    it('cambiar el orden reordena las tarjetas', async () => {
+      render(<TablaTickets tickets={tickets} />);
+
+      await userEvent.selectOptions(screen.getByLabelText('Ordenar por'), 'numero');
+
+      const tarjetas = screen.getAllByRole('button', { name: /TK-/ });
+      expect(tarjetas[0]).toHaveTextContent('TK-000001');
+    });
   });
 });

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNuevoTicket } from '../context/NuevoTicketContext';
+import { useEsMovil } from '../hooks/useEsMovil';
 import {
   getTickets,
   cambiarEstado,
@@ -67,6 +68,7 @@ const ICONO_TARJETAS = (
 
 function Tablero() {
   const { abrir: abrirNuevoTicket } = useNuevoTicket();
+  const esMovil = useEsMovil();
   const [tickets, setTickets] = useState([]);
   const [catalogos, setCatalogos] = useState({
     estados: [],
@@ -80,6 +82,8 @@ function Tablero() {
   const [error, setError] = useState('');
 
   const [vista, setVista] = usePersistentState('kdesk:tablero:vista', 'lista');
+  // En el celular la tabla no entra: siempre se muestran las tarjetas (la elección guardada se respeta en la PC).
+  const vistaMostrada = esMovil ? 'tarjetas' : vista;
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [filtros, setFiltros] = usePersistentState('kdesk:tablero:filtros', FILTROS_INICIALES);
   const [busqueda, setBusqueda] = usePersistentState('kdesk:tablero:busqueda', '');
@@ -253,7 +257,7 @@ function Tablero() {
   if (error) return <p className="ticket-form-error">{error}</p>;
 
   return (
-    <div className={vista === 'lista' ? 'tablero tablero-con-tabla' : 'tablero'}>
+    <div className={vistaMostrada === 'lista' ? 'tablero tablero-con-tabla' : 'tablero'}>
       <h1 className="solo-imprimir">Tablero</h1>
 
       <div className="tablero-toolbar no-imprimir">
@@ -282,7 +286,7 @@ function Tablero() {
           <input
             className="tablero-busqueda"
             type="text"
-            placeholder="Buscar por número, usuario, título, contenido o responsable..."
+            placeholder={esMovil ? 'Buscar tickets...' : 'Buscar por número, usuario, título, contenido o responsable...'}
             value={busqueda}
             onChange={(event) => setBusqueda(event.target.value)}
           />
@@ -395,7 +399,7 @@ function Tablero() {
         )}
       </div>
 
-      {vista === 'lista' ? (
+      {vistaMostrada === 'lista' ? (
         <TablaTicketsAdmin
           tickets={ticketsFiltrados}
           catalogos={catalogos}
