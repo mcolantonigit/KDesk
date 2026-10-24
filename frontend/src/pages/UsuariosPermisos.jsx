@@ -244,7 +244,7 @@ function UsuariosPermisos() {
         </div>
 
         <div className="tabla-tickets-scroll">
-          <table className="tabla-tickets">
+          <table className="tabla-tickets tabla-apilada tabla-usuarios">
             <thead>
               <tr>
                 {columnasActivas.map((columna) => (
@@ -264,14 +264,16 @@ function UsuariosPermisos() {
               {usuariosOrdenados.map((usuario) => (
                 <tr key={usuario.id}>
                   {columnasActivas.map((columna) => (
-                    <td key={columna.key}>{renderCelda(usuario, columna.key)}</td>
+                    <td key={columna.key} data-label={columna.label}>
+                      {renderCelda(usuario, columna.key)}
+                    </td>
                   ))}
-                  <td>
+                  <td data-label="">
                     <Button variant="secondary" onClick={() => handleToggleActivo(usuario)}>
                       {usuario.activo ? 'Deshabilitar' : 'Habilitar'}
                     </Button>
                   </td>
-                  <td>
+                  <td data-label="">
                     <Button variant="secondary" onClick={() => setUsuarioParaPassword(usuario)}>
                       Cambiar contraseña
                     </Button>

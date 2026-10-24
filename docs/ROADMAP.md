@@ -627,5 +627,7 @@ tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
 - [x] Tanda 3 — Nuevo ticket, cierre y panel del ticket como pantallas
       completas; popups de notificación; selector propio para reemplazar la
       lista nativa de los <select> (hoja con filas cómodas y buscador)
-- [ ] Después — Alertas, Apariencia y administración (Estadísticas, Auditoría,
-      Backups, Usuarios, Parámetros)
+- [x] Pantallas de administración: Auditoría, Backups y Usuarios pasan a tarjetas
+      (cada celda trae su data-label); Estadísticas, Parámetros, Alertas y
+      Apariencia ya entraban bien. Sin desbordes en ninguna pantalla (se
+      revisó con un detector sobre un celular emulado de 390px)

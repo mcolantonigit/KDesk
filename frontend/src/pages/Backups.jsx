@@ -243,7 +243,7 @@ function Backups() {
         <div className="backups-seccion">
           <h2>Backups existentes</h2>
           <div className="tabla-tickets-scroll">
-            <table className="tabla-tickets">
+            <table className="tabla-tickets tabla-apilada">
               <thead>
                 <tr>
                   <th>Nombre</th>
@@ -255,10 +255,10 @@ function Backups() {
               <tbody>
                 {backups.map((backup) => (
                   <tr key={backup.nombreArchivo}>
-                    <td>{backup.nombreArchivo}</td>
-                    <td>{new Date(backup.fecha).toLocaleString()}</td>
-                    <td>{formatearTamano(backup.tamanoBytes)}</td>
-                    <td className="backups-acciones">
+                    <td data-label="Nombre">{backup.nombreArchivo}</td>
+                    <td data-label="Fecha">{new Date(backup.fecha).toLocaleString()}</td>
+                    <td data-label="Tamaño">{formatearTamano(backup.tamanoBytes)}</td>
+                    <td className="backups-acciones" data-label="">
                       <a href={urlDescargaBackup(backup.nombreArchivo)}>
                         <Button type="button" variant="secondary">
                           Descargar
