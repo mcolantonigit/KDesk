@@ -102,6 +102,22 @@ describe('NotificacionesProvider', () => {
     expect(hablar).toHaveBeenCalledWith('Voz 6', { nombreVoz: '', volumen: 0.7 });
   });
 
+  it('tras restaurar un backup anterior (ids más bajos) lo nuevo vuelve a contar como no visto', async () => {
+    window.localStorage.setItem('kdesk:notificaciones:cursor:7', '100');
+    window.localStorage.setItem('kdesk:notificaciones:visto:7', '100');
+    getNotificaciones.mockResolvedValueOnce({ eventos: [evento(20)], ultimoId: 20 });
+    await montar();
+
+    expect(screen.getByTestId('resumen')).toHaveTextContent('1 en la lista, 0 sin ver');
+    expect(window.localStorage.getItem('kdesk:notificaciones:visto:7')).toBe('20');
+
+    getNotificaciones.mockResolvedValueOnce({ eventos: [evento(21)], ultimoId: 21 });
+    await avanzar(20000);
+
+    expect(getNotificaciones).toHaveBeenLastCalledWith({ despuesDe: 20, limite: 50 });
+    expect(screen.getByTestId('resumen')).toHaveTextContent('2 en la lista, 1 sin ver');
+  });
+
   it('respeta las preferencias de cada tipo', async () => {
     window.localStorage.setItem(
       'kdesk:alertas:preferencias',

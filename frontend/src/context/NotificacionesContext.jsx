@@ -98,6 +98,12 @@ export function NotificacionesProvider({ children }) {
     let consultando = false;
     let cursor = null;
 
+    // Si se restauró un backup anterior, el historial vuelve a ids más bajos: lo
+    // "visto" no puede quedar por encima del último id, o lo nuevo saldría como visto.
+    function acotarUltimoVisto(ultimoId) {
+      setUltimoVistoRef.current((visto) => (visto > ultimoId ? ultimoId : visto));
+    }
+
     // Primera consulta: arma la lista y, si ya se había usado KDesk antes en este
     // navegador, avisa de lo que pasó desde la última vez (sin inundar de popups).
     async function cargarInicial() {
@@ -110,6 +116,7 @@ export function NotificacionesProvider({ children }) {
       setFeed(eventos);
 
       if (anterior !== null) {
+        acotarUltimoVisto(ultimoId);
         const nuevos = eventos.filter((evento) => evento.id > anterior).reverse();
         nuevos.slice(-MAXIMO_AL_RETOMAR).forEach(alertar);
       } else {
@@ -124,6 +131,7 @@ export function NotificacionesProvider({ children }) {
 
       cursor = ultimoId;
       guardarCursor(idUsuario, ultimoId);
+      acotarUltimoVisto(ultimoId);
       if (eventos.length === 0) return;
 
       setFeed((anteriores) =>
