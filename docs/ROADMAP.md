@@ -586,7 +586,7 @@ aprueba y se commitea por separado.
       antes de implementar)
 
 **Pendientes técnicos**
-- [ ] Merge de `develop` a `main` y deploy: build del frontend en el server
+- [x] Merge de `develop` a `main` y deploy: build del frontend en el server
       (`dist` no está en git), reinicio de la tarea "KDesk Backend" y
       verificar que el `.env` del server no tenga valores de dev
 
@@ -631,3 +631,24 @@ tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
       (cada celda trae su data-label); Estadísticas, Parámetros, Alertas y
       Apariencia ya entraban bien. Sin desbordes en ninguna pantalla (se
       revisó con un detector sobre un celular emulado de 390px)
+
+# 16. Versión 1.3 (ideas, sin empezar)
+
+Numeración de versiones: 1.0 fue la primera puesta en producción; 1.2 es lo
+de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
+1.3, todavía sin diseño ni orden definido.
+
+- [ ] Perfil: que cada usuario pueda cambiar su nombre y apellido
+- [ ] Frontend en Cloudflare Pages y backend en el server local: definir qué
+      puertos abrir (idealmente ninguno, con Cloudflare Tunnel) y las medidas
+      para que el backend no quede expuesto (CORS cerrado al dominio del
+      frontend, WAF/rate limiting en Cloudflare, cookies entre subdominios)
+- [ ] Dominio: subdominio `kdesk.kalop.com.ar` (el dominio hoy tiene la web
+      de la empresa en Hostinger, WordPress + Elementor). Pendiente decidir si
+      el DNS pasa a Cloudflare o queda en Hostinger
+- [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
+      solo cuentas de `kalop.com.ar` y `kalop.cl`
+- [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
+- [ ] Sector Mantenimiento: rol nuevo "mantenimiento" con su propio tablero de
+      tickets. Mantenimiento puede derivar un ticket a Sistemas y los técnicos
+      de Sistemas pueden derivar uno a Mantenimiento
