@@ -1,0 +1,451 @@
+/* Ajustes para el celular (pantallas de hasta 768px). Se carga al final (ver main.jsx)
+   para que gane sobre los estilos de cada componente. La estructura cambia con
+   `useEsMovil` (barra inferior, listas de tarjetas); acá van las medidas. */
+:root {
+  --barra-inferior: 64px;
+}
+
+.panel-titulo-movil {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --panel-header-height: 56px;
+  }
+
+  /* Barra superior: solo el logo y el título de la pantalla (la navegación está abajo). */
+  .panel-header {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .panel-nav,
+  .panel-header-derecha {
+    display: none;
+  }
+
+  .panel-titulo-movil {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .panel-content {
+    padding: 16px 16px calc(var(--barra-inferior) + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
+  /* El título ya está en la barra superior. */
+  .tablero > h1 {
+    display: none;
+  }
+
+  /* Tablero: la barra de herramientas deja de ser fija y se compacta. El buscador va
+     primero y a lo ancho; el "+" de la barra inferior reemplaza al botón de nuevo ticket. */
+  .tablero-toolbar {
+    position: static;
+    padding: 12px;
+  }
+
+  .tablero-vista-toggle,
+  .tablero-toolbar-fila .btn-primary {
+    display: none;
+  }
+
+  .tablero-busqueda {
+    order: -1;
+    flex: 1 1 100%;
+    min-width: 0;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .tablero-toolbar-fila .btn {
+    height: 44px;
+  }
+
+  .tablero-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tablero-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tablero-campo {
+    min-width: 0;
+  }
+
+  .tablero-campo select,
+  .tablero-campo input[type='date'] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tablero-busqueda {
+    text-overflow: ellipsis;
+  }
+
+  /* Backups: la columna se ajustaba al contenido (max-content) y ensanchaba toda la pantalla. */
+  .backups-contenido {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Ningún bloque de la pantalla puede ser más ancho que ella. */
+  .panel-content > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .tablero-campo select,
+  .tablero-campo input[type='date'] {
+    font-size: 16px;
+  }
+
+  /* Tarjetas de tickets: una por fila. */
+  .tarjetas-tickets {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .tarjeta-ticket {
+    padding: 16px;
+  }
+
+  /* Tickets activos/cerrados: la lista fluye con la página (sin altura fija ni scroll interno). */
+  .tablero-con-tabla {
+    height: auto;
+    min-height: 0;
+  }
+
+  /* Novedades: indicadores en una tira que se desliza de costado, listas una debajo de otra. */
+  .novedades-cabecera h1 {
+    font-size: 22px;
+  }
+
+  .novedades-acciones .btn-primary {
+    display: none;
+  }
+
+  .novedades-kpis {
+    display: flex;
+    gap: 10px;
+    margin: 0 -16px;
+    padding: 0 16px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 16px;
+    scrollbar-width: none;
+  }
+
+  .novedades-kpis::-webkit-scrollbar {
+    display: none;
+  }
+
+  .novedades-kpi {
+    flex: 0 0 132px;
+    padding: 12px 14px;
+    scroll-snap-align: start;
+  }
+
+  .novedades-kpi-valor {
+    font-size: 26px;
+  }
+
+  /* Detalle del ticket: una sola columna, sin paneles fijos. */
+  .detalle-ticket-cabecera {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .detalle-ticket-cabecera h1 {
+    order: 3;
+    flex: 1 1 100%;
+    font-size: 19px;
+    white-space: normal;
+  }
+
+  .detalle-ticket-datos {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 14px;
+  }
+
+  .detalle-ticket-actividad {
+    position: static;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .detalle-ticket-comentarios-lista {
+    min-height: 0;
+  }
+
+  /* --- Ventanas: pantallas completas que suben desde abajo --- */
+
+  /* Modales (nuevo ticket, cierre de ticket): una hoja pegada al borde de abajo. */
+  .modal-fondo {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: 92dvh;
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    gap: 16px;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    animation: modal-hoja-entrada 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .modal-lg {
+    height: 92dvh;
+  }
+
+  /* El título y la X quedan fijos arriba mientras se scrollea el formulario. */
+  .modal-cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 16px 0 8px;
+    background: #121722;
+  }
+
+  .modal-cerrar-x {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Los botones de acción quedan siempre a la vista, abajo. */
+  .nuevo-ticket-acciones,
+  .modal-cerrar-form .modal-cerrar-acciones {
+    position: sticky;
+    bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
+    padding: 12px 0 calc(16px + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
+    background: #121722;
+    border-top: 1px solid var(--border);
+  }
+
+  .nuevo-ticket-acciones .btn,
+  .modal-cerrar-form .modal-cerrar-acciones .btn {
+    flex: 1;
+  }
+
+  /* Panel del ticket (al tocar una tarjeta): pantalla completa, por encima de la barra inferior. */
+  .aside-ticket {
+    top: 0;
+    width: 100%;
+    z-index: 80;
+    border-left: none;
+    animation: aside-ticket-subir 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .aside-ticket-cabecera {
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  }
+
+  .aside-ticket-cabecera .modal-cerrar-x {
+    flex-shrink: 0;
+  }
+
+  .aside-ticket-cuerpo {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Notificaciones emergentes: a lo ancho, por encima de la barra inferior. */
+  .popups-notificaciones {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    bottom: calc(var(--barra-inferior) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* Alertas y Apariencia: el título ya está en la barra superior. */
+  .alertas > h1,
+  .apariencia > h1 {
+    display: none;
+  }
+
+  /* --- Tablas de administración: cada fila pasa a ser una tarjeta (Usuarios, Auditoría, Backups) ---
+     Cada celda trae su nombre de columna en data-label y se muestra al lado del dato. */
+  .tabla-tickets-scroll:has(> .tabla-apilada) {
+    overflow: visible;
+    background: none;
+    border: none;
+  }
+
+  .tabla-apilada,
+  .tabla-apilada tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-apilada thead {
+    display: none;
+  }
+
+  .tabla-apilada tbody tr,
+  .tabla-apilada tbody tr:hover {
+    display: block;
+    margin-bottom: 10px;
+    padding: 8px 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    cursor: default;
+  }
+
+  .tabla-apilada td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+    border: none;
+  }
+
+  .tabla-apilada td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 12px;
+    text-align: left;
+    color: var(--text-secondary);
+  }
+
+  /* Las celdas con botones (sin nombre de columna) ocupan todo el ancho. */
+  .tabla-apilada td[data-label=''] {
+    padding-top: 8px;
+  }
+
+  .tabla-apilada td[data-label='']::before {
+    display: none;
+  }
+
+  .tabla-apilada td[data-label=''] .btn {
+    width: 100%;
+  }
+
+  .tabla-apilada .backups-acciones > a,
+  .tabla-apilada .backups-acciones > .btn {
+    flex: 1;
+  }
+
+  .tabla-apilada td .selector-envoltorio {
+    width: auto;
+    max-width: 65%;
+  }
+
+  .tabla-apilada .tabla-tickets-vacio {
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Usuarios: tarjeta compacta (128 usuarios con un renglón por dato serían kilómetros de pantalla).
+     Nombre y apellido juntos como título, el correo debajo, sucursal y sector lado a lado y los dos botones en una fila. */
+  .tabla-usuarios tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+
+  .tabla-usuarios td {
+    flex: 0 0 100%;
+  }
+
+  .tabla-usuarios td[data-label='Nombre'],
+  .tabla-usuarios td[data-label='Apellido'] {
+    flex: 0 0 auto;
+    padding-bottom: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .tabla-usuarios td[data-label='Nombre']::before,
+  .tabla-usuarios td[data-label='Apellido']::before,
+  .tabla-usuarios td[data-label='Correo']::before {
+    display: none;
+  }
+
+  .tabla-usuarios td[data-label='Correo'] {
+    justify-content: flex-start;
+    padding-top: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: left;
+  }
+
+  .tabla-usuarios td[data-label='Sucursal'],
+  .tabla-usuarios td[data-label='Sector'] {
+    flex: 1 1 calc(50% - 4px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .tabla-usuarios td[data-label=''] {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
+
+  .tabla-usuarios td[data-label=''] .btn {
+    padding: 0 8px;
+    font-size: 13px;
+  }
+
+  /* Ventanas chicas (blanquear contraseña, limpiar logs...): el campo se achica en lugar de empujar el botón fuera de la caja. */
+  .modal-password-fila input {
+    min-width: 0;
+  }
+
+  .modal-password-fila .btn {
+    flex-shrink: 0;
+  }
+
+  /* 16px en los campos evita que iPhone haga zoom al tocarlos. */
+  body .form-field input,
+  body .form-field select,
+  body .form-field textarea {
+    font-size: 16px;
+  }
+}
+
+/* Pantallas táctiles: los controles miden al menos 44px, el mínimo cómodo para un dedo. */
+@media (pointer: coarse) {
+  body .btn {
+    min-height: 44px;
+  }
+
+  body .btn-sm {
+    height: 40px;
+  }
+
+  body .form-field input:not([type='checkbox']):not([type='range']),
+  body .form-field select {
+    min-height: 48px;
+  }
+}
+
+@keyframes modal-hoja-entrada {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes aside-ticket-subir {
+  from {
+    transform: translateY(100%);
+  }
+}

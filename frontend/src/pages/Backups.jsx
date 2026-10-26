@@ -10,6 +10,7 @@ import {
 } from '../services/backups.service';
 import FormField from '../components/FormField';
 import Button from '../components/Button';
+import FileInput from '../components/FileInput';
 import '../styles/Tablero.css';
 import '../styles/TablaTickets.css';
 import '../styles/Backups.css';
@@ -226,15 +227,13 @@ function Backups() {
         <div className="backups-seccion">
           <h2>Restaurar desde un archivo</h2>
           <form onSubmit={handleRestaurarDesdeArchivo} className="backups-config">
-            <div className="form-field">
-              <label htmlFor="archivoRestaurar">Archivo de backup (.sql)</label>
-              <input
-                id="archivoRestaurar"
-                type="file"
-                accept=".sql"
-                onChange={(event) => setArchivoRestaurar(event.target.files[0] ?? null)}
-              />
-            </div>
+            <FileInput
+              id="archivoRestaurar"
+              label="Archivo de backup (.sql)"
+              accept=".sql"
+              value={archivoRestaurar}
+              onChange={setArchivoRestaurar}
+            />
             <Button type="submit" variant="secondary" disabled={!archivoRestaurar || restaurandoArchivo}>
               {restaurandoArchivo ? 'Restaurando...' : 'Restaurar desde este archivo'}
             </Button>
@@ -244,7 +243,7 @@ function Backups() {
         <div className="backups-seccion">
           <h2>Backups existentes</h2>
           <div className="tabla-tickets-scroll">
-            <table className="tabla-tickets">
+            <table className="tabla-tickets tabla-apilada">
               <thead>
                 <tr>
                   <th>Nombre</th>
@@ -256,10 +255,10 @@ function Backups() {
               <tbody>
                 {backups.map((backup) => (
                   <tr key={backup.nombreArchivo}>
-                    <td>{backup.nombreArchivo}</td>
-                    <td>{new Date(backup.fecha).toLocaleString()}</td>
-                    <td>{formatearTamano(backup.tamanoBytes)}</td>
-                    <td className="backups-acciones">
+                    <td data-label="Nombre">{backup.nombreArchivo}</td>
+                    <td data-label="Fecha">{new Date(backup.fecha).toLocaleString()}</td>
+                    <td data-label="Tamaño">{formatearTamano(backup.tamanoBytes)}</td>
+                    <td className="backups-acciones" data-label="">
                       <a href={urlDescargaBackup(backup.nombreArchivo)}>
                         <Button type="button" variant="secondary">
                           Descargar

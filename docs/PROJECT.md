@@ -2,7 +2,7 @@
 
 # KDesk
 
-## Sistema de Gestión de Tickets Interno - Kalop
+## Sistema de Gestión de Tickets Interno
 
 **Versión:** 1.0  
 **Estado:** En planificación
@@ -11,7 +11,7 @@
 
 # Descripción
 
-KDesk es un sistema interno de gestión de tickets desarrollado para el Departamento de Sistemas de Kalop.
+KDesk es un sistema interno de gestión de tickets desarrollado para el Departamento de Sistemas de una empresa.
 
 Su objetivo es centralizar todas las solicitudes de soporte técnico realizadas por los colaboradores de la empresa, eliminando la dependencia del correo electrónico, WhatsApp o llamados telefónicos como medio principal de comunicación.
 
@@ -40,7 +40,7 @@ KDesk deberá permitir:
 
 ## Usuario
 
-Corresponde a cualquier colaborador de Kalop que posea una cuenta de correo corporativa **@kalop.com.ar**.
+Corresponde a cualquier colaborador de la empresa que posea una cuenta de correo corporativa **@tuempresa.com**.
 
 Podrá:
 
@@ -117,7 +117,7 @@ Esto permitirá ampliar el alcance del sistema en futuras versiones sin modifica
 
 KDesk no busca replicar herramientas como Jira, GLPI o Microsoft Planner.
 
-Su objetivo es convertirse en la herramienta diaria del Departamento de Sistemas de Kalop.
+Su objetivo es convertirse en la herramienta diaria del Departamento de Sistemas.
 
 El sistema deberá priorizar:
 

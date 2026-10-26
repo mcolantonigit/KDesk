@@ -1,11 +1,30 @@
 .btn {
-  height: 48px;
-  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
   font: inherit;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   border-radius: 12px;
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  border-radius: 999px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -14,17 +33,19 @@
   border: none;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  color: var(--text);
-  background: transparent;
+  color: var(--text-secondary);
+  background: var(--card-bg);
   border: 1px solid var(--border);
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.04);
+.btn-secondary:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--hover-bg);
+  border-color: rgba(255, 255, 255, 0.16);
 }

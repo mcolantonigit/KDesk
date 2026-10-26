@@ -1,0 +1,174 @@
+:root {
+  --aside-ancho: 480px;
+}
+
+.aside-ticket {
+  position: fixed;
+  z-index: 40;
+  top: var(--panel-header-height);
+  right: 0;
+  bottom: 0;
+  width: min(var(--aside-ancho), 100vw);
+  display: flex;
+  flex-direction: column;
+  background: #121722;
+  border-left: 1px solid var(--border);
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.35);
+  animation: aside-ticket-entrada 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes aside-ticket-entrada {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+/* Con el panel abierto la página deja de scrollear sola: el contenido pasa a
+   scrollear dentro de su propia área, que se achica para dejar lugar al panel.
+   Así hay una sola barra por zona y la de la página queda pegada al panel. */
+body.aside-abierto {
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  body.aside-abierto .panel-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 0;
+  }
+
+  body.aside-abierto .panel-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-right: var(--aside-ancho);
+  }
+}
+
+.panel-content {
+  transition: margin-right 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.aside-ticket-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.aside-ticket-cabecera h2 {
+  min-width: 0;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Única barra de scroll del panel: todo lo de adentro crece con su contenido. */
+.aside-ticket-cuerpo {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 16px 0;
+  overflow-y: auto;
+}
+
+.aside-ticket-mensaje {
+  padding: 16px;
+}
+
+.aside-ticket-completo {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.aside-ticket-completo:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.aside-ticket-datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 12px;
+  margin: 0;
+}
+
+.aside-ticket-datos dt {
+  margin-bottom: 1px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.aside-ticket-datos dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Mismo estilo que las etiquetas (dt) de los datos, para que se lea como un conjunto. */
+.aside-ticket-seccion h3 {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Comentarios dentro del panel: sin altura fija ni scroll propio. La lista
+   crece con su contenido y el formulario queda pegado al borde inferior del
+   panel, siempre al alcance.
+   Los dos contenedores intermedios se "disuelven" (display: contents) para
+   que la lista y el formulario sean hijos directos del cuerpo del panel: un
+   elemento sticky solo se mueve dentro de la caja de su padre, y si el padre
+   fuera el bloque de comentarios el formulario quedaría cortado cuando el
+   scroll está arriba. */
+.aside-ticket .detalle-ticket-actividad,
+.aside-ticket .detalle-ticket-comentarios {
+  display: contents;
+}
+
+.aside-ticket .detalle-ticket-comentarios-lista {
+  flex: none;
+  min-height: 200px;
+  overflow: visible;
+  padding: 0;
+}
+
+/* En el panel el formulario es más compacto: las etiquetas se ocultan a la vista
+   (siguen disponibles para lectores de pantalla) y el campo tiene su placeholder. */
+.aside-ticket .detalle-ticket-nuevo-comentario .form-field > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.aside-ticket .detalle-ticket-nuevo-comentario {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: 0 -16px;
+  padding: 12px 16px 16px;
+  background: #121722;
+}
+
+@media (max-width: 600px) {
+  .aside-ticket-datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

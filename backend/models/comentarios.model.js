@@ -14,7 +14,12 @@ export async function create({ idTicket, idAutor, contenido }) {
 
 export async function findAllByTicket(idTicket) {
   const result = await pool.query(
-    `SELECT ${CAMPOS} FROM comentarios WHERE id_ticket = $1 ORDER BY fecha_creacion`,
+    `SELECT c.id, c.id_ticket, c.id_autor, c.contenido, c.fecha_creacion, c.eliminado, c.fecha_eliminacion,
+            u.nombre AS autor_nombre, u.apellido AS autor_apellido
+     FROM comentarios c
+     JOIN usuarios u ON u.id = c.id_autor
+     WHERE c.id_ticket = $1
+     ORDER BY c.fecha_creacion`,
     [idTicket]
   );
   return result.rows;

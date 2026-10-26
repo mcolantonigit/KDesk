@@ -1,0 +1,138 @@
+/* Tabla de anchos fijos: cada columna mide lo que dice su <col>, y el
+   contenido que no entra se corta con "…" en lugar de ensanchar la tabla. */
+.tabla-tickets-fija {
+  table-layout: fixed;
+}
+
+.tabla-tickets-fija th,
+.tabla-tickets-fija td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabla-tickets-fija .tabla-tickets-detalle {
+  max-width: none;
+}
+
+.tabla-tickets-fija td select {
+  max-width: 100%;
+}
+
+.tabla-tickets th {
+  position: relative;
+}
+
+.th-redimensionar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.th-redimensionar::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  right: 5px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--border);
+  transition: background var(--transition);
+}
+
+.tabla-tickets th:hover .th-redimensionar::after {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.th-redimensionar:hover::after,
+.th-redimensionar:focus-visible::after {
+  background: var(--accent);
+}
+
+.th-redimensionar:focus-visible {
+  outline: none;
+}
+
+body.redimensionando-columna {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* La columna de acciones muestra sus botones completos, sin cortarlos con "…". */
+.tabla-tickets-fija .tabla-tickets-acciones {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Tablas de tickets: la tabla ocupa el alto que queda en la pantalla y
+   scrollea por dentro, en los dos sentidos. Así la barra de scroll horizontal
+   queda siempre a la vista (abajo de la tabla) y el encabezado se queda fijo
+   arriba mientras se baja por las filas. */
+.tablero-con-tabla {
+  height: calc(100vh - var(--panel-header-height) - 64px);
+  min-height: 420px;
+}
+
+.tablero-con-tabla > .tabla-tickets-contenedor {
+  flex: 1;
+  min-height: 0;
+}
+
+.tablero-con-tabla .tabla-tickets-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.tablero-con-tabla .tabla-tickets-fija th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #121722;
+  /* Con border-collapse el borde no acompaña al encabezado fijo: se dibuja con una sombra. */
+  border-bottom: none;
+  box-shadow: inset 0 -1px 0 var(--border);
+}
+
+@media print {
+  .tablero-con-tabla {
+    height: auto;
+  }
+
+  .tablero-con-tabla .tabla-tickets-scroll {
+    overflow: visible;
+  }
+}
+
+/* Reordenar columnas arrastrando el encabezado. */
+.tabla-tickets th[draggable='true'] {
+  cursor: grab;
+}
+
+.th-arrastrando {
+  opacity: 0.45;
+}
+
+.th-soltar-antes::before,
+.th-soltar-despues::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  z-index: 3;
+}
+
+.th-soltar-antes::before {
+  left: 0;
+}
+
+.th-soltar-despues::before {
+  right: 0;
+}

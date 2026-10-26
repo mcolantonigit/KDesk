@@ -80,7 +80,7 @@ function Registro() {
             id="correo"
             label="Correo electrónico"
             type="email"
-            placeholder="nombre@kalop.com.ar"
+            placeholder="nombre@tuempresa.com"
             value={correo}
             onChange={(event) => setCorreo(event.target.value)}
             className="registro-campo-completo"

@@ -1,6 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { useAsideTicket } from '../context/AsideTicketContext';
 import Button from './Button';
+import Selector from './Selector';
 import '../styles/TarjetasTickets.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 const ESTADO_CERRADO = 'Cerrado';
 
@@ -13,7 +15,7 @@ function TarjetasTickets({
   onCambiarPrioridad,
   onAsignarResponsable,
 }) {
-  const navigate = useNavigate();
+  const { abrirTicket } = useAsideTicket();
 
   if (tickets.length === 0) {
     return <p className="tarjetas-tickets-vacio">No hay tickets para mostrar</p>;
@@ -22,10 +24,12 @@ function TarjetasTickets({
   return (
     <div className="tarjetas-tickets">
       {tickets.map((ticket) => (
-        <div key={ticket.id} className="tarjeta-ticket" onClick={() => navigate(`/tickets/${ticket.id}`)}>
+        <div key={ticket.id} className="tarjeta-ticket" onClick={() => abrirTicket(ticket.id)}>
           <div className="tarjeta-ticket-header">
             <span className="tarjeta-ticket-numero">{ticket.numero}</span>
-            <select
+            <Selector
+              aria-label="Estado"
+              enLinea
               value={ticket.id_estado}
               onClick={(event) => event.stopPropagation()}
               onChange={(event) => onCambiarEstado(ticket, Number(event.target.value))}
@@ -35,7 +39,7 @@ function TarjetasTickets({
                   {estado.nombre}
                 </option>
               ))}
-            </select>
+            </Selector>
           </div>
 
           <h3 className="tarjeta-ticket-titulo">{ticket.titulo}</h3>
@@ -49,7 +53,8 @@ function TarjetasTickets({
             <div onClick={(event) => event.stopPropagation()}>
               <dt>Prioridad</dt>
               <dd>
-                <select
+                <Selector
+                  aria-label="Prioridad"
                   value={ticket.idPrioridadEfectiva ?? ''}
                   onChange={(event) => onCambiarPrioridad(ticket, Number(event.target.value))}
                 >
@@ -58,7 +63,7 @@ function TarjetasTickets({
                       {prioridad.nombre}
                     </option>
                   ))}
-                </select>
+                </Selector>
               </dd>
             </div>
             <div>
@@ -68,7 +73,8 @@ function TarjetasTickets({
             <div onClick={(event) => event.stopPropagation()}>
               <dt>Responsable</dt>
               <dd>
-                <select
+                <Selector
+                  aria-label="Responsable"
                   value={ticket.id_tecnico_responsable ?? ''}
                   onChange={(event) => onAsignarResponsable(ticket, Number(event.target.value))}
                 >
@@ -80,7 +86,7 @@ function TarjetasTickets({
                       {tecnico.nombre} {tecnico.apellido}
                     </option>
                   ))}
-                </select>
+                </Selector>
               </dd>
             </div>
             <div>
@@ -93,17 +99,17 @@ function TarjetasTickets({
             </div>
             <div>
               <dt>Creado</dt>
-              <dd>{new Date(ticket.fecha_creacion).toLocaleDateString()}</dd>
+              <dd>{formatearFechaHora(ticket.fecha_creacion)}</dd>
             </div>
             <div>
               <dt>Cierre</dt>
-              <dd>{ticket.fecha_cierre ? new Date(ticket.fecha_cierre).toLocaleDateString() : '—'}</dd>
+              <dd>{formatearFechaHora(ticket.fecha_cierre)}</dd>
             </div>
           </dl>
 
           {ticket.estado !== ESTADO_CERRADO && (
             <div className="tarjeta-ticket-acciones no-imprimir" onClick={(event) => event.stopPropagation()}>
-              <Button variant="secondary" onClick={() => onCerrar(ticket)}>
+              <Button variant="secondary" size="sm" onClick={() => onCerrar(ticket)}>
                 Cerrar
               </Button>
             </div>

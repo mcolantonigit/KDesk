@@ -1,0 +1,139 @@
+/* En el celular el <select> queda como "cuerpo" visual del campo y una capa transparente
+   encima recibe el toque para abrir la hoja de opciones. */
+.selector-envoltorio {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.selector-envoltorio.selector-en-linea {
+  display: inline-block;
+  width: auto;
+}
+
+.selector-envoltorio select {
+  width: 100%;
+  pointer-events: none;
+}
+
+.selector-capa {
+  position: absolute;
+  inset: 0;
+}
+
+/* Hoja de opciones */
+.selector-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(0, 0, 0, 0.6);
+  animation: selector-fondo-entrada 160ms ease;
+}
+
+.selector-hoja {
+  width: 100%;
+  max-height: 70dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: #121722;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  animation: selector-hoja-entrada 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.selector-agarre {
+  align-self: center;
+  width: 40px;
+  height: 4px;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.selector-titulo {
+  padding: 4px 8px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+.selector-buscador {
+  height: 44px;
+  margin: 0 4px 8px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+}
+
+.selector-buscador:focus {
+  border-color: var(--border-active);
+}
+
+.selector-hoja ul {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selector-hoja li button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.selector-hoja li button:active {
+  background: var(--hover-bg);
+}
+
+.selector-hoja li button.elegida {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.selector-hoja li button:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.selector-vacio {
+  padding: 16px 12px;
+  color: var(--text-secondary);
+}
+
+@keyframes selector-fondo-entrada {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes selector-hoja-entrada {
+  from {
+    transform: translateY(100%);
+  }
+}

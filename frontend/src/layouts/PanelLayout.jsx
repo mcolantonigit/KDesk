@@ -1,9 +1,14 @@
 import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { usePreferencias } from '../context/PreferenciasContext';
 import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
+import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
+import { AsideTicketProvider } from '../context/AsideTicketContext';
+import { NotificacionesProvider } from '../context/NotificacionesContext';
+import { useEsMovil } from '../hooks/useEsMovil';
+import { tituloDeRuta } from '../utils/rutas';
+import NavegacionMovil from '../components/NavegacionMovil';
 import '../styles/PanelLayout.css';
 
 const ROLES_DASHBOARD = [2, 3];
@@ -31,10 +36,12 @@ const ICONO_CERRAR_SESION = (
   </svg>
 );
 
-function PanelLayout() {
+function PanelLayoutContenido() {
+  const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const { usuario, cerrarSesion } = useAuth();
-  const { fondoAnimado, setFondoAnimado } = usePreferencias();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const esMovil = useEsMovil();
   const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esTecnicoOAdministrador = ROLES_DASHBOARD.includes(usuario?.id_rol);
@@ -53,14 +60,15 @@ function PanelLayout() {
           <img src="/favicon.svg" alt="" className="panel-logo" />
           KDesk
         </Link>
+        <span className="panel-titulo-movil">{tituloDeRuta(pathname)}</span>
 
         <nav className="panel-nav">
           <div className="panel-nav-item">
             <span className="panel-nav-trigger">Mis tickets</span>
             <div className="panel-nav-submenu">
-              <NavLink to="/tickets/nuevo" className="panel-nav-destacado">
+              <button type="button" className="panel-nav-destacado" onClick={abrirNuevoTicket}>
                 Nuevo Ticket
-              </NavLink>
+              </button>
               <NavLink to="/tickets/activos">Tickets activos</NavLink>
               <NavLink to="/tickets/cerrados">Tickets cerrados</NavLink>
             </div>
@@ -97,25 +105,15 @@ function PanelLayout() {
                   Cambiar contraseña
                 </button>
               )}
+              <NavLink to="/configuracion/alertas">Alertas</NavLink>
+              <NavLink to="/configuracion/apariencia">Apariencia</NavLink>
               {esAdministrador && <NavLink to="/administrar/usuarios">Usuarios y permisos</NavLink>}
               {esAdministrador && <NavLink to="/administrar/parametros">Parámetros</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/estadisticas">Estadísticas</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/auditoria">Auditoría</NavLink>}
               {esTecnicoOAdministrador && <NavLink to="/administrar/backups">Backups</NavLink>}
-              <label className="panel-nav-submenu-checkbox">
-                <input
-                  type="checkbox"
-                  checked={fondoAnimado}
-                  onChange={(event) => setFondoAnimado(event.target.checked)}
-                />
-                Fondo animado
-              </label>
             </div>
           </div>
-
-          {modalPasswordAbierto && (
-            <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />
-          )}
 
           <Button
             variant="secondary"
@@ -129,10 +127,28 @@ function PanelLayout() {
         </div>
       </header>
 
+      {modalPasswordAbierto && <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />}
+
       <main className="panel-content">
         <Outlet />
       </main>
+
+      {esMovil && (
+        <NavegacionMovil usuario={usuario} onCambiarPassword={() => setModalPasswordAbierto(true)} onCerrarSesion={handleLogout} />
+      )}
     </div>
+  );
+}
+
+function PanelLayout() {
+  return (
+    <NuevoTicketProvider>
+      <AsideTicketProvider>
+        <NotificacionesProvider>
+          <PanelLayoutContenido />
+        </NotificacionesProvider>
+      </AsideTicketProvider>
+    </NuevoTicketProvider>
   );
 }
 

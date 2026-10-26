@@ -1,75 +1,85 @@
 .detalle-ticket {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  max-width: 720px;
+  gap: 16px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-.detalle-ticket-volver {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 0;
-  transition: color var(--transition);
-}
-
-.detalle-ticket-volver:hover {
-  color: var(--text);
-}
-
-.detalle-ticket-header {
+.detalle-ticket-cabecera {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
 }
 
+.detalle-ticket-cabecera h1 {
+  flex: 1;
+  min-width: 0;
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Datos del ticket: una franja compacta en vez de una tarjeta alta. */
 .detalle-ticket-datos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px 20px;
   margin: 0;
-  padding: 20px;
+  padding: 14px 18px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
 
 .detalle-ticket-datos dt {
-  font-size: 13px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  margin-bottom: 4px;
 }
 
 .detalle-ticket-datos dd {
   margin: 0;
+  font-size: 14px;
   font-weight: 600;
 }
 
+/* Dos columnas: lo estático a la izquierda, la actividad a la derecha. */
+.detalle-ticket-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(360px, 2fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.detalle-ticket-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .detalle-ticket-descripcion,
-.detalle-ticket-adjuntos,
-.detalle-ticket-comentarios,
-.detalle-ticket-historial {
-  padding: 20px;
+.detalle-ticket-adjuntos {
+  padding: 16px 18px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
 
 .detalle-ticket-descripcion h2,
-.detalle-ticket-adjuntos h2,
-.detalle-ticket-comentarios h2,
-.detalle-ticket-historial h2 {
-  font-size: 18px;
-  margin-bottom: 12px;
+.detalle-ticket-adjuntos h2 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.detalle-ticket-descripcion p {
+  white-space: pre-wrap;
+  font-size: 14px;
+  color: var(--text);
 }
 
 .detalle-ticket-adjuntos-lista {
@@ -78,7 +88,8 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  font-size: 14px;
 }
 
 .detalle-ticket-adjuntos-lista a {
@@ -90,47 +101,103 @@
   text-decoration: underline;
 }
 
-.detalle-ticket-descripcion p {
-  white-space: pre-wrap;
-  color: var(--text);
-}
-
-.detalle-ticket-cierre {
+/* Panel de actividad: queda a la vista mientras se scrollea y tiene su
+   propio scroll interno, así el ticket no crece sin límite. */
+.detalle-ticket-actividad {
+  position: sticky;
+  top: calc(var(--panel-header-height) + 16px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-active);
-  border-radius: 12px;
-}
-
-.detalle-ticket-cierre-acciones {
-  display: flex;
-  gap: 12px;
-}
-
-.detalle-ticket-comentarios-lista {
-  list-style: none;
-  margin: 0 0 20px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.detalle-ticket-comentarios-lista li {
-  padding: 12px 16px;
+  height: calc(100vh - var(--panel-header-height) - 32px);
+  min-height: 480px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
+  overflow: hidden;
 }
 
-.detalle-ticket-comentario-fila {
+.detalle-ticket-pestanas {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detalle-ticket-pestanas button {
+  flex: 1;
+  height: 42px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.detalle-ticket-pestanas button:hover {
+  color: var(--text);
+}
+
+.detalle-ticket-pestanas button.activa {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.detalle-ticket-comentarios,
+.detalle-ticket-historial {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-ticket-comentarios-lista,
+.detalle-ticket-historial-lista {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* La lista de comentarios nunca queda aplastada por el formulario de abajo. */
+.detalle-ticket-comentarios-lista {
+  min-height: 220px;
+}
+
+.detalle-ticket-comentarios-lista > li {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.detalle-ticket-comentario-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.detalle-ticket-comentario-cabecera strong {
+  font-size: 13px;
+}
+
+.detalle-ticket-comentario-cabecera span {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.detalle-ticket-comentarios-lista p {
+  font-size: 14px;
+  white-space: pre-wrap;
 }
 
 .detalle-ticket-comentario-eliminar {
@@ -155,42 +222,39 @@
   color: var(--error);
 }
 
-.detalle-ticket-comentarios-lista li span {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
 .detalle-ticket-comentarios-vacio {
   color: var(--text-secondary);
+  font-size: 14px;
   background: none !important;
   border: none !important;
   padding: 0 !important;
 }
 
+/* El formulario queda fijo al pie del panel; la lista scrollea arriba. */
 .detalle-ticket-nuevo-comentario {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.detalle-ticket-nuevo-comentario .btn {
+  align-self: flex-end;
 }
 
 .detalle-ticket-historial-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  gap: 0;
 }
 
 .detalle-ticket-historial-lista li {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 0;
+  padding: 9px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .detalle-ticket-historial-detalle {
@@ -203,9 +267,11 @@
 }
 
 .detalle-ticket-historial-cargar-mas {
-  margin-top: 12px;
-  height: 36px;
-  padding: 0 16px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin: 0 16px 14px;
+  height: 32px;
+  padding: 0 14px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -220,4 +286,17 @@
 .detalle-ticket-historial-cargar-mas:hover {
   background: var(--hover-bg);
   border-color: var(--border-active);
+}
+
+/* Pantallas angostas: una sola columna y el panel de actividad deja de ser fijo. */
+@media (max-width: 1000px) {
+  .detalle-ticket-cuerpo {
+    grid-template-columns: 1fr;
+  }
+
+  .detalle-ticket-actividad {
+    position: static;
+    height: auto;
+    max-height: 600px;
+  }
 }

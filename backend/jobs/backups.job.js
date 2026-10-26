@@ -39,6 +39,12 @@ async function chequearYEjecutar() {
   }
 }
 
+// En desarrollo (BACKUP_AUTOMATICO=off en el .env) no se programa nunca, aunque
+// la configuración de la base, clonada de producción, lo tenga activado.
 export function programarBackupAutomatico() {
+  if (process.env.BACKUP_AUTOMATICO === 'off') {
+    console.log('Backup automático desactivado por BACKUP_AUTOMATICO=off');
+    return;
+  }
   setInterval(chequearYEjecutar, INTERVALO_CHEQUEO_MS);
 }

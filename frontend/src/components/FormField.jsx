@@ -1,4 +1,5 @@
 import '../styles/FormField.css';
+import Selector from './Selector';
 
 function FormField({
   id,
@@ -17,7 +18,7 @@ function FormField({
     <div className={className ? `form-field ${className}` : 'form-field'}>
       <label htmlFor={id}>{label}</label>
       {options ? (
-        <select id={id} value={value} onChange={onChange} required={required}>
+        <Selector id={id} aria-label={label} value={value} onChange={onChange} required={required}>
           <option value="" disabled>
             Seleccionar...
           </option>
@@ -26,7 +27,7 @@ function FormField({
               {option.nombre}
             </option>
           ))}
-        </select>
+        </Selector>
       ) : type === 'textarea' ? (
         <textarea
           id={id}

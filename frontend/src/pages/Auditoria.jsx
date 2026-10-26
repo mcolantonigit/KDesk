@@ -172,7 +172,7 @@ function Auditoria() {
       </div>
 
       <div className="tabla-tickets-scroll">
-        <table className="tabla-tickets tabla-catalogo">
+        <table className="tabla-tickets tabla-catalogo tabla-apilada">
           <thead>
             <tr>
               {COLUMNAS.map((columna) => (
@@ -186,10 +186,10 @@ function Auditoria() {
           <tbody>
             {eventosPagina.map((evento) => (
               <tr key={evento.id}>
-                <td>{new Date(evento.fecha).toLocaleString()}</td>
-                <td>{evento.usuario}</td>
-                <td>{evento.accion}</td>
-                <td>{evento.detalle}</td>
+                <td data-label="Fecha">{new Date(evento.fecha).toLocaleString()}</td>
+                <td data-label="Usuario">{evento.usuario}</td>
+                <td data-label="Acción">{evento.accion}</td>
+                <td data-label="Detalle">{evento.detalle}</td>
               </tr>
             ))}
             {eventosPagina.length === 0 && (

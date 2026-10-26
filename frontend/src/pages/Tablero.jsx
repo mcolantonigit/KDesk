@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNuevoTicket } from '../context/NuevoTicketContext';
+import { useEsMovil } from '../hooks/useEsMovil';
 import {
   getTickets,
   cambiarEstado,
@@ -16,6 +17,7 @@ import TablaTicketsAdmin from '../components/TablaTicketsAdmin';
 import TarjetasTickets from '../components/TarjetasTickets';
 import ModalCerrarTicket from '../components/ModalCerrarTicket';
 import Button from '../components/Button';
+import Selector from '../components/Selector';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { descargarCSV, filasACSV } from '../utils/exportar';
 import '../styles/Tablero.css';
@@ -66,6 +68,8 @@ const ICONO_TARJETAS = (
 );
 
 function Tablero() {
+  const { abrir: abrirNuevoTicket } = useNuevoTicket();
+  const esMovil = useEsMovil();
   const [tickets, setTickets] = useState([]);
   const [catalogos, setCatalogos] = useState({
     estados: [],
@@ -79,6 +83,8 @@ function Tablero() {
   const [error, setError] = useState('');
 
   const [vista, setVista] = usePersistentState('kdesk:tablero:vista', 'lista');
+  // En el celular la tabla no entra: siempre se muestran las tarjetas (la elección guardada se respeta en la PC).
+  const vistaMostrada = esMovil ? 'tarjetas' : vista;
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [filtros, setFiltros] = usePersistentState('kdesk:tablero:filtros', FILTROS_INICIALES);
   const [busqueda, setBusqueda] = usePersistentState('kdesk:tablero:busqueda', '');
@@ -252,8 +258,8 @@ function Tablero() {
   if (error) return <p className="ticket-form-error">{error}</p>;
 
   return (
-    <div className="tablero">
-      <h1>Tablero</h1>
+    <div className={vistaMostrada === 'lista' ? 'tablero tablero-con-tabla' : 'tablero'}>
+      <h1 className="solo-imprimir">Tablero</h1>
 
       <div className="tablero-toolbar no-imprimir">
         <div className="tablero-toolbar-fila">
@@ -274,24 +280,24 @@ function Tablero() {
             </button>
           </div>
 
-          <Button variant="secondary" type="button" onClick={() => setMostrarFiltros(!mostrarFiltros)}>
+          <Button variant="secondary" size="sm" type="button" onClick={() => setMostrarFiltros(!mostrarFiltros)}>
             Filtrar
           </Button>
 
           <input
             className="tablero-busqueda"
             type="text"
-            placeholder="Buscar por número, usuario, título, contenido o responsable..."
+            placeholder={esMovil ? 'Buscar tickets...' : 'Buscar por número, usuario, título, contenido o responsable...'}
             value={busqueda}
             onChange={(event) => setBusqueda(event.target.value)}
           />
 
-          <Link to="/tickets/nuevo">
-            <Button type="button">Nuevo ticket</Button>
-          </Link>
+          <Button type="button" size="sm" onClick={abrirNuevoTicket}>
+            Nuevo ticket
+          </Button>
 
           <div className="tablero-reporte">
-            <Button variant="secondary" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
+            <Button variant="secondary" size="sm" type="button" onClick={() => setMostrarReporte(!mostrarReporte)}>
               Generar reporte
             </Button>
             {mostrarReporte && (
@@ -311,31 +317,31 @@ function Tablero() {
           <div className="tablero-filtros">
             <label className="tablero-campo">
               <span>Sucursal</span>
-              <select value={filtros.idSucursal} onChange={(event) => handleFiltroChange('idSucursal', event.target.value)}>
+              <Selector aria-label="Sucursal" value={filtros.idSucursal} onChange={(event) => handleFiltroChange('idSucursal', event.target.value)}>
                 <option value="">Todas</option>
                 {catalogos.sucursales.map((sucursal) => (
                   <option key={sucursal.id} value={sucursal.id}>
                     {sucursal.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Sector</span>
-              <select value={filtros.idSector} onChange={(event) => handleFiltroChange('idSector', event.target.value)}>
+              <Selector aria-label="Sector" value={filtros.idSector} onChange={(event) => handleFiltroChange('idSector', event.target.value)}>
                 <option value="">Todos</option>
                 {catalogos.sectores.map((sector) => (
                   <option key={sector.id} value={sector.id}>
                     {sector.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Estado</span>
-              <select value={filtros.idEstado} onChange={(event) => handleFiltroChange('idEstado', event.target.value)}>
+              <Selector aria-label="Estado" value={filtros.idEstado} onChange={(event) => handleFiltroChange('idEstado', event.target.value)}>
                 <option value="">Activos</option>
                 <option value="todos">Todos</option>
                 {catalogos.estados.map((estado) => (
@@ -343,24 +349,24 @@ function Tablero() {
                     {estado.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Prioridad</span>
-              <select value={filtros.idPrioridad} onChange={(event) => handleFiltroChange('idPrioridad', event.target.value)}>
+              <Selector aria-label="Prioridad" value={filtros.idPrioridad} onChange={(event) => handleFiltroChange('idPrioridad', event.target.value)}>
                 <option value="">Todas</option>
                 {catalogos.prioridades.map((prioridad) => (
                   <option key={prioridad.id} value={prioridad.id}>
                     {prioridad.nombre}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
               <span>Responsable</span>
-              <select value={filtros.idTecnico} onChange={(event) => handleFiltroChange('idTecnico', event.target.value)}>
+              <Selector aria-label="Responsable" value={filtros.idTecnico} onChange={(event) => handleFiltroChange('idTecnico', event.target.value)}>
                 <option value="">Todos</option>
                 <option value="sin-asignar">Sin asignar</option>
                 {tecnicos.map((tecnico) => (
@@ -368,7 +374,7 @@ function Tablero() {
                     {tecnico.nombre} {tecnico.apellido}
                   </option>
                 ))}
-              </select>
+              </Selector>
             </label>
 
             <label className="tablero-campo">
@@ -394,7 +400,7 @@ function Tablero() {
         )}
       </div>
 
-      {vista === 'lista' ? (
+      {vistaMostrada === 'lista' ? (
         <TablaTicketsAdmin
           tickets={ticketsFiltrados}
           catalogos={catalogos}

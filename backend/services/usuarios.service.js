@@ -6,7 +6,11 @@ import { generarToken as generarTokenJWT } from '../utils/jwt.util.js';
 import { generarToken as generarTokenAleatorio, hashearToken } from '../utils/tokens.util.js';
 import { enviarMailActivacion, enviarMailResetPassword } from '../utils/mailer.util.js';
 
-const DOMINIOS_CORREO_PERMITIDOS = ['@kalop.com.ar', '@ergoscables.com.ar', '@kalop.cl'];
+const DOMINIOS_CORREO_PERMITIDOS = (process.env.ALLOWED_EMAIL_DOMAINS ?? '')
+  .split(',')
+  .map((dominio) => dominio.trim())
+  .filter(Boolean)
+  .map((dominio) => `@${dominio}`);
 const HORAS_EXPIRACION_ACTIVACION = 24;
 const HORAS_EXPIRACION_RESET = 1;
 

@@ -160,13 +160,15 @@
   accent-color: var(--accent);
 }
 
-.panel-nav-submenu a.panel-nav-destacado {
+.panel-nav-submenu a.panel-nav-destacado,
+.panel-nav-submenu > button.panel-nav-destacado {
   color: #fff;
   background: var(--accent);
   font-weight: 600;
 }
 
-.panel-nav-submenu a.panel-nav-destacado:hover {
+.panel-nav-submenu a.panel-nav-destacado:hover,
+.panel-nav-submenu > button.panel-nav-destacado:hover {
   background: var(--accent-hover);
   color: #fff;
 }

@@ -82,40 +82,16 @@ p {
   background: var(--accent);
 }
 
-/* Fondo de grilla animada (sin imágenes ni recursos externos): UNA
-   sola capa fija (`.app-fondo-animado`, montada una vez en App.jsx),
-   del tamaño de la pantalla y no de la página. Se anima con
-   `transform` en vez de `background-position` para que corra en el
-   compositor/GPU: no dispara repintado por frame, no le importa el
-   alto real de cada pantalla y no se mueve con el scroll (queda fija
-   detrás de todo). `.panel-layout` / `.auth-bg` quedan transparentes
-   a propósito para que se vea a través. */
-.app-fondo-animado {
-  position: fixed;
-  inset: -40px;
-  z-index: -1;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 40px 40px;
-  animation: bg-grilla-scroll 6s linear infinite;
-  will-change: transform;
-  pointer-events: none;
-}
-
-@keyframes bg-grilla-scroll {
-  to {
-    transform: translate(40px, 40px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-fondo-animado {
-    animation: none;
-  }
+/* Contenido que solo aparece en la versión impresa (por ejemplo, el título de un reporte). */
+.solo-imprimir {
+  display: none;
 }
 
 @media print {
+  .solo-imprimir {
+    display: block;
+  }
+
   .no-imprimir {
     display: none !important;
   }
@@ -141,4 +117,9 @@ p {
   .bar-chart-barra {
     background: #3987e5 !important;
   }
+}
+
+.ticket-form-error {
+  color: var(--error);
+  font-size: 14px;
 }

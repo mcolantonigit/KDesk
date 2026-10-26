@@ -1,0 +1,306 @@
+.novedades {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.novedades-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.novedades-cabecera h1 {
+  font-size: 24px;
+}
+
+.novedades-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Indicadores */
+.novedades-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.novedades-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.novedades-kpi-valor {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.novedades-kpi-etiqueta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.novedades-kpi.alerta {
+  border-color: rgba(255, 176, 32, 0.35);
+}
+
+.novedades-kpi.alerta .novedades-kpi-valor {
+  color: var(--warning);
+}
+
+/* Listas */
+.novedades-listas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.novedades-lista {
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.novedades-lista > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.novedades-lista h2 {
+  font-size: 15px;
+}
+
+.novedades-lista-cantidad {
+  min-width: 24px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.novedades-lista ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.novedades-lista li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.novedades-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.novedades-item:hover {
+  background: var(--hover-bg);
+}
+
+.novedades-item-linea {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.novedades-item-numero {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.novedades-item-titulo {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.novedades-item-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.novedades-chip {
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.novedades-chip-critica {
+  color: var(--error);
+  background: rgba(229, 72, 77, 0.14);
+}
+
+.novedades-chip-alta {
+  color: var(--warning);
+  background: rgba(255, 176, 32, 0.14);
+}
+
+.novedades-chip-media {
+  color: var(--series-1);
+  background: rgba(57, 135, 229, 0.14);
+}
+
+.novedades-chip-baja {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.novedades-chip-estancado {
+  color: var(--warning);
+  border-color: rgba(255, 176, 32, 0.4);
+}
+
+.novedades-subtitulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.novedades-lista ul + .novedades-subtitulo {
+  margin-top: 14px;
+}
+
+.novedades-link {
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.novedades-link:hover {
+  text-decoration: underline;
+}
+
+/* Eventos: los no vistos llevan una marca naranja a la izquierda. */
+.novedades-evento {
+  border-left: 3px solid transparent;
+  border-radius: 6px 10px 10px 6px;
+}
+
+.novedades-evento.nueva {
+  border-left-color: var(--accent);
+  background: rgba(242, 101, 34, 0.07);
+}
+
+.novedades-item-mensaje {
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.novedades-chip-ev-ticket_nuevo {
+  color: var(--series-1);
+  background: rgba(57, 135, 229, 0.14);
+}
+
+.novedades-chip-ev-asignado {
+  color: var(--accent);
+  background: rgba(242, 101, 34, 0.14);
+}
+
+.novedades-chip-ev-comentario {
+  color: var(--success);
+  background: rgba(47, 191, 113, 0.14);
+}
+
+.novedades-chip-ev-estado {
+  color: var(--warning);
+  background: rgba(255, 176, 32, 0.14);
+}
+
+.novedades-vacio {
+  padding: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.novedades-mas {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.novedades-mas:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+@media (max-width: 1100px) {
+  .novedades-kpis {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .novedades-listas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .novedades-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .novedades-cabecera {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,30 @@
+.nuevo-ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nuevo-ticket-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.nuevo-ticket-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nuevo-ticket-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .nuevo-ticket-columnas {
+    grid-template-columns: 1fr;
+  }
+}

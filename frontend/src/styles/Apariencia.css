@@ -1,0 +1,68 @@
+.apariencia {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.apariencia h1 {
+  font-size: 24px;
+}
+
+.apariencia-intro {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.apariencia-fondos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.apariencia-fondo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.apariencia-fondo:hover {
+  background: var(--hover-bg);
+}
+
+.apariencia-fondo.elegido {
+  border-color: var(--border-active);
+}
+
+.apariencia-fondo:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.25);
+}
+
+/* Cuadro con el fondo en miniatura: se dibuja con el mismo CSS que el fondo real. */
+.apariencia-vista {
+  position: relative;
+  width: 100%;
+  height: 130px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.apariencia-descripcion {
+  font-size: 13px;
+  color: var(--text-secondary);
+}

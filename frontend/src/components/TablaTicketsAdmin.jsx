@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAsideTicket } from '../context/AsideTicketContext';
+import { useColumnasAnchos } from '../hooks/useColumnasAnchos';
+import { useColumnasOrden } from '../hooks/useColumnasOrden';
+import { usePersistentState } from '../hooks/usePersistentState';
+import ThRedimensionable from './ThRedimensionable';
 import Button from './Button';
 import '../styles/TablaTickets.css';
+import { formatearFechaHora } from '../utils/fechas';
 
 const COLUMNAS = [
   { key: 'numero', label: 'ID', visiblePorDefecto: true },
@@ -20,16 +25,45 @@ const COLUMNAS = [
 
 const ESTADO_CERRADO = 'Cerrado';
 
-function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEstado, onCambiarPrioridad, onAsignarResponsable }) {
-  const [ordenPor, setOrdenPor] = useState('fecha_creacion');
-  const [ordenAsc, setOrdenAsc] = useState(false);
-  const [mostrarColumnas, setMostrarColumnas] = useState(false);
-  const [columnasVisibles, setColumnasVisibles] = useState(() =>
-    Object.fromEntries(COLUMNAS.map((columna) => [columna.key, columna.visiblePorDefecto]))
-  );
-  const navigate = useNavigate();
+const ANCHOS_POR_DEFECTO = {
+  numero: 120,
+  titulo: 340,
+  tipo: 140,
+  prioridad: 140,
+  estado: 150,
+  usuarioCreador: 170,
+  tecnicoResponsable: 200,
+  sucursal: 150,
+  sector: 150,
+  fecha_creacion: 190,
+  fecha_actualizacion: 190,
+  fecha_cierre: 170,
+};
+const ANCHO_ACCIONES = 120;
+const CLAVE_TABLA = 'tablero';
+const CLAVES = COLUMNAS.map((columna) => columna.key);
+const ORDEN_FILAS_POR_DEFECTO = { por: 'fecha_creacion', asc: false };
 
-  const columnasActivas = COLUMNAS.filter((columna) => columnasVisibles[columna.key]);
+function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEstado, onCambiarPrioridad, onAsignarResponsable }) {
+  // Todo lo que el usuario elige de la tabla (orden de filas, columnas
+  // visibles, su orden y sus anchos) se recuerda en el navegador.
+  const [ordenFilas, setOrdenFilas] = usePersistentState(`kdesk:tabla:${CLAVE_TABLA}:orden-filas`, ORDEN_FILAS_POR_DEFECTO);
+  const [visiblesGuardadas, setVisiblesGuardadas] = usePersistentState(`kdesk:tabla:${CLAVE_TABLA}:visibles`, {});
+  const [mostrarColumnas, setMostrarColumnas] = useState(false);
+  const { abrirTicket } = useAsideTicket();
+  const { anchos, cambiarAncho, resetearAncho, restablecerAnchos } = useColumnasAnchos(CLAVE_TABLA, ANCHOS_POR_DEFECTO);
+  const { orden, moverColumna, restablecerOrden } = useColumnasOrden(CLAVE_TABLA, CLAVES);
+
+  const ordenPor = CLAVES.includes(ordenFilas.por) ? ordenFilas.por : ORDEN_FILAS_POR_DEFECTO.por;
+  const ordenAsc = CLAVES.includes(ordenFilas.por) ? ordenFilas.asc : ORDEN_FILAS_POR_DEFECTO.asc;
+  const columnasVisibles = {
+    ...Object.fromEntries(COLUMNAS.map((columna) => [columna.key, columna.visiblePorDefecto])),
+    ...visiblesGuardadas,
+  };
+  const columnasActivas = orden
+    .map((clave) => COLUMNAS.find((columna) => columna.key === clave))
+    .filter((columna) => columnasVisibles[columna.key]);
+  const anchoTotal = columnasActivas.reduce((suma, columna) => suma + anchos[columna.key], ANCHO_ACCIONES);
 
   const ticketsOrdenados = useMemo(() => {
     const copia = [...tickets];
@@ -43,17 +77,18 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
     return copia;
   }, [tickets, ordenPor, ordenAsc]);
 
-  function handleOrdenar(columna) {
-    if (columna === ordenPor) {
-      setOrdenAsc(!ordenAsc);
-    } else {
-      setOrdenPor(columna);
-      setOrdenAsc(true);
-    }
+  function handleOrdenar(clave) {
+    setOrdenFilas(clave === ordenPor ? { por: clave, asc: !ordenAsc } : { por: clave, asc: true });
   }
 
   function toggleColumna(key) {
-    setColumnasVisibles((anteriores) => ({ ...anteriores, [key]: !anteriores[key] }));
+    setVisiblesGuardadas({ ...columnasVisibles, [key]: !columnasVisibles[key] });
+  }
+
+  function restablecerTabla() {
+    setVisiblesGuardadas({});
+    restablecerAnchos();
+    restablecerOrden();
   }
 
   function renderCelda(ticket, key) {
@@ -116,11 +151,11 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
       case 'sector':
         return ticket.sector;
       case 'fecha_creacion':
-        return new Date(ticket.fecha_creacion).toLocaleDateString();
+        return formatearFechaHora(ticket.fecha_creacion);
       case 'fecha_actualizacion':
-        return new Date(ticket.fecha_actualizacion).toLocaleDateString();
+        return formatearFechaHora(ticket.fecha_actualizacion);
       case 'fecha_cierre':
-        return ticket.fecha_cierre ? new Date(ticket.fecha_cierre).toLocaleDateString() : '—';
+        return formatearFechaHora(ticket.fecha_cierre);
       default:
         return null;
     }
@@ -129,7 +164,7 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
   return (
     <div className="tabla-tickets-contenedor">
       <div className="tabla-tickets-columnas no-imprimir">
-        <Button variant="secondary" type="button" onClick={() => setMostrarColumnas(!mostrarColumnas)}>
+        <Button variant="secondary" size="sm" type="button" onClick={() => setMostrarColumnas(!mostrarColumnas)}>
           Columnas
         </Button>
         {mostrarColumnas && (
@@ -144,32 +179,50 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
                 {columna.label}
               </label>
             ))}
+            <button type="button" className="tabla-tickets-restablecer" onClick={restablecerTabla}>
+              Restablecer columnas
+            </button>
           </div>
         )}
       </div>
 
       <div className="tabla-tickets-scroll">
-        <table className="tabla-tickets">
+        <table className="tabla-tickets tabla-tickets-fija" style={{ width: anchoTotal, minWidth: '100%' }}>
+          <colgroup>
+            {columnasActivas.map((columna) => (
+              <col key={columna.key} style={{ width: anchos[columna.key] }} />
+            ))}
+            <col style={{ width: ANCHO_ACCIONES }} />
+          </colgroup>
           <thead>
             <tr>
               {columnasActivas.map((columna) => (
-                <th key={columna.key} onClick={() => handleOrdenar(columna.key)}>
+                <ThRedimensionable
+                  key={columna.key}
+                  clave={columna.key}
+                  etiqueta={columna.label}
+                  ancho={anchos[columna.key]}
+                  onResize={(ancho) => cambiarAncho(columna.key, ancho)}
+                  onReset={() => resetearAncho(columna.key)}
+                  onMover={moverColumna}
+                  onClick={() => handleOrdenar(columna.key)}
+                >
                   {columna.label}
                   {ordenPor === columna.key && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
-                </th>
+                </ThRedimensionable>
               ))}
-              <th className="no-imprimir">Acciones</th>
+              <th className="no-imprimir tabla-tickets-acciones">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {ticketsOrdenados.map((ticket) => (
-              <tr key={ticket.id} onClick={() => navigate(`/tickets/${ticket.id}`)}>
+              <tr key={ticket.id} onClick={() => abrirTicket(ticket.id)}>
                 {columnasActivas.map((columna) => (
                   <td key={columna.key}>{renderCelda(ticket, columna.key)}</td>
                 ))}
-                <td className="no-imprimir" onClick={(event) => event.stopPropagation()}>
+                <td className="no-imprimir tabla-tickets-acciones" onClick={(event) => event.stopPropagation()}>
                   {ticket.estado !== ESTADO_CERRADO && (
-                    <Button variant="secondary" onClick={() => onCerrar(ticket)}>
+                    <Button variant="secondary" size="sm" onClick={() => onCerrar(ticket)}>
                       Cerrar
                     </Button>
                   )}

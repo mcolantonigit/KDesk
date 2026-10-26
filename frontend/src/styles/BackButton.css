@@ -1,0 +1,38 @@
+.back-button {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px 0 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.back-button svg {
+  transition: transform var(--transition);
+}
+
+.back-button:hover {
+  color: var(--text);
+  background: var(--hover-bg);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.back-button:hover svg {
+  transform: translateX(-2px);
+}
+
+.back-button:focus-visible {
+  outline: none;
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.15);
+}

@@ -31,7 +31,7 @@ de como una etapa propia al final.
 
 # 2. Autenticación y registro (RF-001, RF-002)
 
-- [x] Registro de usuarios: validación de dominio @kalop.com.ar, correo
+- [x] Registro de usuarios: validación de dominio @tuempresa.com, correo
       duplicado y hasheo de contraseña
 - [x] Auditoría: registrar alta de usuario (registro)
 - [x] Login con JWT en cookie httpOnly
@@ -56,7 +56,7 @@ de como una etapa propia al final.
       sin eso Office 365 rechazaba el login (error 535) aunque la
       contraseña fuera correcta, porque el tenant exige TLS antes de
       autenticar. Probado con un registro real: el mail sale
-      correctamente (`prueba.mailreal@kalop.com.ar`, `email_verificado: false`
+      correctamente (`prueba.mailreal@tuempresa.com`, `email_verificado: false`
       hasta que se activa desde el link del mail)
 - [x] Tabla `tokens_verificacion` (un solo uso, con expiración, tipo
       ACTIVACION/RESET_PASSWORD, `ON DELETE CASCADE` contra usuarios).
@@ -324,10 +324,10 @@ puntual.
 - [x] Reemplazar textos por íconos en el nav: "Administrar" → ícono de
       engranaje, "Cerrar sesión" → ícono de puerta con flecha (ambos
       con `title`/`aria-label` para no perder accesibilidad)
-- [x] Registro: permitir también los dominios @ergoscables.com.ar y
-      @kalop.cl (antes solo @kalop.com.ar). Había DOS validaciones que
+- [x] Registro: permitir también los dominios @otraempresa.com y
+      @tuempresa.cl (antes solo @tuempresa.com). Había DOS validaciones que
       actualizar: la del servicio (`usuarios.service.js`) y una
-      restricción `CHECK` a nivel de base de datos (`chk_correo_kalop`)
+      restricción `CHECK` a nivel de base de datos (`chk_correo_dominio`)
       que no se había detectado al principio y también hacía falta
       alterar; probado registrando un usuario con cada uno de los 3
       dominios y confirmando que un dominio ajeno sigue rechazado
@@ -506,3 +506,128 @@ del header junto a Estadísticas/Auditoría.
       (1876 líneas), restauración del mismo dump sobre la propia base
       (`--clean --if-exists`) y verificación de que los datos siguieron
       intactos (15 usuarios, 14 tickets) después del ciclo completo
+
+---
+
+# 12. Entorno de desarrollo y tests
+
+Branch `develop`: backend sin TLS en `localhost:4000`, base `kdesk_dev`
+(clon de producción) en el server de la red, y todo mail redirigido a
+`MAIL_REDIRECT_TO`. Al hacer merge a `main`, el `.env` del server sigue
+siendo el de producción (con TLS, `COOKIE_SECURE=true` y sin
+`MAIL_REDIRECT_TO`).
+
+- [x] Backend: HTTP plano si `TLS_PFX_PATH` está vacío; `MAIL_REDIRECT_TO`
+      en el mailer; `.gitignore` con `.env*`
+- [x] Frontend: proxy de Vite configurable con `VITE_API_TARGET`
+      (`frontend/.env.development`)
+- [x] `database/clone-to-dev.ps1` (clona `kdesk` en `kdesk_dev`) y
+      `backend/scripts/db.js` (SQL contra dev/test; se niega a correr
+      contra `kdesk`)
+- [x] Tests de frontend: Vitest + Testing Library (`npm test` en `frontend/`)
+- [x] Tests de backend: Vitest + Supertest sobre la base `kdesk_test`
+      (`npm run test:db` la recrea desde `schema.sql`; `npm test` en
+      `backend/`). Primer cubrimiento: comentarios
+- [x] `npm audit fix` en frontend y backend; `nodemailer` subido a 10.2.1.
+      Quedan 3 avisos de `nodemon`/`braces`/`chokidar` (solo desarrollo;
+      el arreglo obliga a bajar nodemon a una versión vieja)
+
+# 13. Mejoras de UI/UX (pendientes, en `develop`)
+
+Se trabajan en este orden; cada bloque se prueba en `localhost:5173`, se
+aprueba y se commitea por separado.
+
+**Bloque 1 — Base visual**
+- [x] Botón "volver" (`detalle-ticket-volver` y los demás botones de
+      atrás del sistema): rediseño acorde a la estética de KDesk, con ícono SVG
+- [x] `btn btn-secondary`: corregir padding (se ve feo); además más chico en el Tablero
+- [x] Componente de subida de archivos (hoy `<input type="file">` crudo en
+      nuevo ticket, comentarios, cierre de ticket y restaurar backup):
+      zona de arrastrar/soltar con ícono SVG, nombre del archivo elegido y
+      botón para quitarlo
+
+**Bloque 2 — Componente `Combobox`**
+- [x] Input escribible que reemplaza a los `<select>` de nuevo ticket: sugiere
+      la opción más cercana a lo escrito, y no deja guardar un valor que no
+      esté en el listado
+- [x] Todos los listados de opciones ordenados alfabéticamente
+
+**Bloque 3 — Modal de nuevo ticket**
+- [x] Reemplazar la página `/tickets/nuevo` por una ventana modal que se abre
+      desde "Nuevo ticket"
+- [x] Acomodar los campos en columnas (evaluar 2) para pantallas 16:9 sin tanto scroll
+
+**Bloque 4 — Modal de motivo de cierre**
+- [x] "Cerrar ticket" abre el motivo de cierre como modal por encima del
+      detalle (hoy se abre inline y se pierde entre la info)
+
+**Bloque 5 — Detalle de ticket en 16:9**
+- [x] Reordenar la info del detalle (`/tickets/:id`) en columnas y más
+      compacta para reducir el scroll en escritorio
+- [x] Mostrar quién cargó cada comentario (`comentarios.id_autor` ya existe
+      en la base; falta traer nombre/apellido en la consulta). Test primero (TDD)
+
+**Bloque 6 — Aside lateral de ticket**
+- [x] Click en una fila de la tabla de tickets abre un aside a la derecha con
+      una versión acotada del detalle, con animación que entra de derecha a
+      izquierda (hoy navega a `/tickets/:id`)
+
+**Bloque 7 — Tabla de tickets**
+- [x] Encabezados con ancho ajustable arrastrando el borde, para evitar
+      el scroll horizontal innecesario
+
+**Bloque 8 — Tablero**
+- [x] Sacar el H1 de `/dashboard/tablero` y subir `tablero-toolbar`
+- [x] Botones `btn-secondary` del Tablero más chicos
+
+**Bloque 9 — Novedades**
+- [x] Rediseñar la vista de Novedades como un panel más útil, con la
+      información más importante para cada técnico (a definir con Matías
+      antes de implementar)
+
+**Pendientes técnicos**
+- [ ] Merge de `develop` a `main` y deploy: build del frontend en el server
+      (`dist` no está en git), reinicio de la tarea "KDesk Backend" y
+      verificar que el `.env` del server no tenga valores de dev
+
+# 14. Notificaciones y alertas
+
+Popups tipo Windows (abajo a la derecha) con sonido y lectura por voz (TTS
+del navegador), y lista "Notificaciones" en Novedades. Preferencias por tipo
+en una página "Alertas" del menú de configuración. Se guardan en el
+navegador (las voces cambian según navegador y PC).
+
+Tipos de notificación: ticket nuevo (técnicos), asignado a mí, comentario
+nuevo y cambio de estado o cierre (para creador y responsable). Nunca se
+notifica una acción propia.
+
+- [x] Etapa 1 — Backend: `GET /api/notificaciones?despuesDe=&limite=`, armado
+      desde `historial_ticket` (sin tablas nuevas), con cursor `ultimoId`,
+      texto en pantalla y texto para leer en voz alta (`mensajeVoz`)
+- [x] Etapa 2 — Popups (apilados, se cierran solos, clic abre el ticket),
+      sonido (Web Audio) y TTS; consulta cada 20 s y al volver a la pestaña
+- [x] Etapa 3 — Página "Alertas" (`/configuracion/alertas`): interruptor
+      general, volumen, popup/sonido/voz por tipo, selector de voz con
+      "Escuchar prueba". Voz por defecto: Edge "Microsoft Gonzalo Online
+      (Natural)"; Chrome "Google español" (en línea)
+- [x] Etapa 4 — Novedades: "Requieren atención" pasa a "Notificaciones" y
+      mezcla el feed con las alertas actuales (alta/crítica y sin movimiento)
+- Limitaciones: solo avisa con KDesk abierto en una pestaña; el navegador no
+  deja sonar ni hablar antes del primer clic en la página
+
+# 15. Versión móvil (celular, hasta 768px)
+
+Se trabaja en tandas, con un commit por tanda. Navegación: barra inferior
+(Novedades/Inicio, Tickets, "+", Tablero/Cerrados, Más). En el celular las
+tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
+
+- [x] Tanda 1 — Estructura: barra superior compacta, barra inferior con menú
+      "Más", márgenes, controles táctiles (44px, campos de 16px), login
+- [x] Tanda 2 — Novedades, Tickets y Tablero como tarjetas; detalle del ticket
+- [x] Tanda 3 — Nuevo ticket, cierre y panel del ticket como pantallas
+      completas; popups de notificación; selector propio para reemplazar la
+      lista nativa de los <select> (hoja con filas cómodas y buscador)
+- [x] Pantallas de administración: Auditoría, Backups y Usuarios pasan a tarjetas
+      (cada celda trae su data-label); Estadísticas, Parámetros, Alertas y
+      Apariencia ya entraban bien. Sin desbordes en ninguna pantalla (se
+      revisó con un detector sobre un celular emulado de 390px)
