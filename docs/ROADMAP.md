@@ -643,12 +643,12 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       puertos abrir (idealmente ninguno, con Cloudflare Tunnel) y las medidas
       para que el backend no quede expuesto (CORS cerrado al dominio del
       frontend, WAF/rate limiting en Cloudflare, cookies entre subdominios)
-- [ ] Dominio: subdominio `kdesk.kalop.com.ar` (el dominio hoy tiene la web
-      de la empresa en Hostinger, WordPress + Elementor). El DNS de
-      `kalop.com.ar` se queda en Hostinger (pasarlo a Cloudflare no es
-      opción): CNAME `kdesk` → `<proyecto>.pages.dev`. Para el backend sin
-      abrir puertos: Cloudflare Tunnel con un dominio aparte en Cloudflare y
-      `/api` pasado por una Pages Function (misma URL para el navegador)
+- [ ] Dominio propio `kdesk.com.ar` (registrado en NIC Argentina, con los
+      nameservers delegados a Cloudflare, plan gratis). `kalop.com.ar` no se
+      toca. `kdesk.com.ar` → Cloudflare Pages; `api.kdesk.com.ar` → Cloudflare
+      Tunnel al server local (sin puertos de entrada abiertos), protegido con
+      Access (token de servicio) y alcanzado solo por una Pages Function que
+      reenvía `/api` (el navegador ve una sola dirección)
 - [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
       solo cuentas de `kalop.com.ar` y `kalop.cl`
 - [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
