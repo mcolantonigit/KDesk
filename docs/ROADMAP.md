@@ -702,6 +702,15 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         "Completar registro" y entrada de un usuario existente)
   - [ ] Probar con una cuenta de Chile
   - [ ] Ocultar "Cambiar contraseña" del menú a quien entra con Microsoft
+- [x] Más de un administrador: desde "Usuarios y permisos" un administrador
+      puede dar o sacar el rol de administrador (con confirmación). Nadie cambia
+      su propio rol, y no se le saca el rol ni se deshabilita al último
+      administrador activo
+- [ ] **En el deploy a producción:** hacer administrador a
+      matias.colantoni@kalop.com.ar (en dev ya lo es). Desde la red local, con
+      la cuenta sistemas@kalop.com.ar, en "Usuarios y permisos". Antes de pasar
+      LOGIN_PASSWORD a off, confirmar que haya al menos un administrador que
+      entre con Microsoft
 - [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
 - [ ] Sector Mantenimiento: rol nuevo "mantenimiento" con su propio tablero de
       tickets. Mantenimiento puede derivar un ticket a Sistemas y los técnicos

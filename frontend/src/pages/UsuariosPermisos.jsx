@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getUsuarios, cambiarRolUsuario, cambiarEstadoActivo } from '../services/usuarios.service';
 import { getRoles } from '../services/roles.service';
+import { useAuth } from '../context/AuthContext';
 import { getSucursales } from '../services/sucursales.service';
 import { getSectores } from '../services/sectores.service';
 import ModalBlanquearPassword from '../components/ModalBlanquearPassword';
@@ -10,7 +11,7 @@ import Selector from '../components/Selector';
 import '../styles/Tablero.css';
 
 const ROL_ADMINISTRADOR = 3;
-const ROLES_ASIGNABLES = [1, 2];
+const ROLES_ASIGNABLES = [1, 2, ROL_ADMINISTRADOR];
 
 const COLUMNAS = [
   { key: 'nombre', label: 'Nombre', visiblePorDefecto: true },
@@ -23,6 +24,7 @@ const COLUMNAS = [
 ];
 
 function UsuariosPermisos() {
+  const { usuario: sesion } = useAuth();
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
   const [sucursales, setSucursales] = useState([]);
@@ -132,6 +134,13 @@ function UsuariosPermisos() {
   }
 
   async function handleCambiarRol(usuario, idRol) {
+    if (idRol === ROL_ADMINISTRADOR) {
+      const confirmado = window.confirm(
+        `${usuario.nombre} ${usuario.apellido} va a poder administrar usuarios, roles y parámetros de KDesk. ¿Confirmás?`
+      );
+      if (!confirmado) return;
+    }
+
     try {
       await cambiarRolUsuario(usuario.id, idRol);
       await refrescarUsuarios();
@@ -172,7 +181,8 @@ function UsuariosPermisos() {
       case 'correo':
         return usuario.correo;
       case 'rol':
-        return usuario.id_rol === ROL_ADMINISTRADOR ? (
+        // El propio rol no se cambia, para no quedarse afuera por error.
+        return usuario.id === sesion?.id ? (
           rolesPorId[usuario.id_rol] ?? '—'
         ) : (
           <Selector aria-label="Rol" value={usuario.id_rol} onChange={(event) => handleCambiarRol(usuario, Number(event.target.value))}>

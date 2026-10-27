@@ -66,6 +66,18 @@ export async function updateRol(id, idRol) {
   return result.rows[0];
 }
 
+// Administradores activos sin contar al indicado: para no dejar nunca al
+// sistema sin ninguno.
+export async function countOtrosAdministradoresActivos(idExcluido) {
+  const result = await pool.query(
+    `SELECT count(*)::int AS cantidad
+     FROM usuarios u JOIN roles r ON r.id = u.id_rol
+     WHERE r.nombre = 'administrador' AND u.activo AND u.id <> $1`,
+    [idExcluido]
+  );
+  return result.rows[0].cantidad;
+}
+
 export async function updateActivo(id, activo) {
   const result = await pool.query(
     `UPDATE usuarios SET activo = $1 WHERE id = $2 RETURNING ${CAMPOS_PUBLICOS}`,

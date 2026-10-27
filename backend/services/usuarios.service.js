@@ -311,11 +311,17 @@ export async function cambiarPassword({ id, correo, passwordActual, passwordNuev
   });
 }
 
-const ROLES_ASIGNABLES = [1, 2];
+const ROL_ADMINISTRADOR = 3;
+const ROLES_ASIGNABLES = [ROL_USUARIO, 2, ROL_ADMINISTRADOR];
+const NOMBRES_ROL = { [ROL_USUARIO]: 'usuario', 2: 'técnico', [ROL_ADMINISTRADOR]: 'administrador' };
 
 export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
-  if (!ROLES_ASIGNABLES.includes(Number(idRol))) {
-    throw crearError('El rol debe ser usuario o técnico', 400);
+  const rolNuevo = Number(idRol);
+  if (!ROLES_ASIGNABLES.includes(rolNuevo)) {
+    throw crearError('El rol debe ser usuario, técnico o administrador', 400);
+  }
+  if (Number(id) === Number(idUsuarioQueCambia)) {
+    throw crearError('No podés cambiar tu propio rol', 400);
   }
 
   const usuario = await usuariosModel.findById(id);
@@ -323,12 +329,19 @@ export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
     throw crearError('Usuario no encontrado', 404);
   }
 
-  const usuarioActualizado = await usuariosModel.updateRol(id, idRol);
+  if (usuario.id_rol === ROL_ADMINISTRADOR && rolNuevo !== ROL_ADMINISTRADOR) {
+    const otros = await usuariosModel.countOtrosAdministradoresActivos(usuario.id);
+    if (otros === 0) {
+      throw crearError('Es el único administrador activo: primero dale el rol de administrador a otra persona', 400);
+    }
+  }
+
+  const usuarioActualizado = await usuariosModel.updateRol(id, rolNuevo);
 
   await auditoriaService.registrarEvento({
     idUsuario: idUsuarioQueCambia,
     accion: 'CAMBIO_ROL',
-    detalle: `Cambio de rol de ${usuario.correo} -> id_rol ${idRol}`,
+    detalle: `Cambio de rol de ${usuario.correo} -> ${NOMBRES_ROL[rolNuevo]}`,
   });
 
   return usuarioActualizado;
@@ -341,6 +354,9 @@ export async function cambiarEstadoActivo({ id, activo, idUsuarioQueCambia }) {
   }
   if (!activo && Number(id) === Number(idUsuarioQueCambia)) {
     throw crearError('No podés deshabilitar tu propia cuenta', 400);
+  }
+  if (!activo && usuario.id_rol === ROL_ADMINISTRADOR && (await usuariosModel.countOtrosAdministradoresActivos(usuario.id)) === 0) {
+    throw crearError('Es el único administrador activo: no se puede deshabilitar', 400);
   }
 
   const usuarioActualizado = await usuariosModel.updateActivo(id, activo);
