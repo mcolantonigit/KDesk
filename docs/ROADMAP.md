@@ -675,13 +675,27 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
   - [ ] Reglas de firewall y límite de pedidos para `api.kdesk.ar`
   - [ ] Túnel de producción en el server (`api.kdesk.ar`), cuando se abra a los usuarios
-  - [ ] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
-        gratis). Adjuntos (hoy hasta 500 MB) y restaurar un backup subido (2 GB)
-        siguen así por la red local; decidir el límite al entrar por Cloudflare
-  - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a `kdesk.ar`
-  - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar` o cerrarlo con Access
+  - [x] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
+        gratis). Adjuntos bajan a 80 MB; restaurar un backup subiendo un
+        archivo (2 GB) queda solo para la red local
+  - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a
+        `kdesk.ar`: solo cambiar el valor en el .env del server
+  - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar`
 - [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
-      solo cuentas de `kalop.com.ar` y `kalop.cl`
+      solo cuentas de `kalop.com.ar` y `kalop.cl` (tenants separados: app
+      multi-organización filtrada por `M365_TENANTS` y `M365_DOMINIOS`)
+  - [x] Backend: OpenID Connect con PKCE (`/api/auth/microsoft/*`), sin
+        dependencias nuevas ni cambios en la base. Los usuarios existentes se
+        vinculan por correo; los nuevos se crean como "usuario" y eligen
+        sucursal y sector en `/completar-registro`. Quedan sin contraseña
+  - [x] `LOGIN_PASSWORD` (vacío / `local` / `off`): desde internet no hay
+        login con contraseña, registro ni recuperación. La versión local se
+        apaga cuando `kdesk.ar` esté terminada: ahí pasa a `off`
+  - [x] Corregido: el registro aceptaba el rol que mandaba el navegador
+        (cualquiera podía registrarse como administrador armando el pedido)
+  - [ ] Registro de la app en Entra ID (tenant AR) y consentimiento del
+        tenant de Chile; cargar `M365_*` en el .env de dev y probar
+  - [ ] Ocultar "Cambiar contraseña" del menú a quien entra con Microsoft
 - [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
 - [ ] Sector Mantenimiento: rol nuevo "mantenimiento" con su propio tablero de
       tickets. Mantenimiento puede derivar un ticket a Sistemas y los técnicos

@@ -26,7 +26,7 @@ const upload = multer({
 export function subirArchivo(req, res, next) {
   upload.single('archivo')(req, res, (error) => {
     if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ message: 'El archivo supera el tamaño máximo permitido (500MB)' });
+      return res.status(400).json({ message: 'El archivo supera el tamaño máximo permitido (80MB)' });
     }
     if (error) {
       return res.status(400).json({ message: error.message });

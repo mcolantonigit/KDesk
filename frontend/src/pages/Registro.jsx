@@ -9,8 +9,6 @@ import Button from '../components/Button';
 import ModalActivacionEnviada from '../components/ModalActivacionEnviada';
 import '../styles/Registro.css';
 
-const ROL_USUARIO = 1;
-
 function Registro() {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
@@ -46,7 +44,6 @@ function Registro() {
         apellido,
         correo,
         password,
-        idRol: ROL_USUARIO,
         idSucursal,
         idSector,
       });

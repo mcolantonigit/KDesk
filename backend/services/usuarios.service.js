@@ -32,7 +32,14 @@ export async function getUsuarioById(id) {
   return usuariosModel.findById(id);
 }
 
-export async function registrarUsuario({ nombre, apellido, correo, password, idRol, idSucursal, idSector }) {
+const ROL_USUARIO = 1;
+
+// Los usuarios creados por el login de Microsoft 365 no tienen contraseña: se
+// guarda este valor, que no es un hash de bcrypt y nunca coincide con nada.
+const SIN_PASSWORD = '!microsoft365';
+
+export async function registrarUsuario({ nombre, apellido, correo, password, idSucursal, idSector }) {
+  const idRol = ROL_USUARIO;
   if (!DOMINIOS_CORREO_PERMITIDOS.some((dominio) => correo.endsWith(dominio))) {
     throw crearError(`El correo debe pertenecer a alguno de estos dominios: ${DOMINIOS_CORREO_PERMITIDOS.join(', ')}`, 400);
   }
@@ -185,7 +192,11 @@ export async function autenticarUsuario({ correo, password }) {
     throw crearError('Correo o contraseña incorrectos', 401);
   }
 
-  const passwordValida = await compararPassword(password, usuario.password_hash);
+  if (usuario.password_hash === SIN_PASSWORD) {
+    throw crearError('Esta cuenta entra con Microsoft 365: usá el botón "Entrar con Microsoft"', 401);
+  }
+
+  const passwordValida = await compararPassword(password ?? '', usuario.password_hash);
   if (!passwordValida) {
     throw crearError('Correo o contraseña incorrectos', 401);
   }
@@ -198,6 +209,11 @@ export async function autenticarUsuario({ correo, password }) {
     throw crearError('Tu cuenta está deshabilitada. Contactá a un administrador', 403);
   }
 
+  return iniciarSesion(usuario, `Inicio de sesión (${usuario.correo})`);
+}
+
+// Genera el token de sesión y deja el login en la auditoría.
+export async function iniciarSesion(usuario, detalleAuditoria) {
   const { password_hash, ...usuarioSinPassword } = usuario;
 
   const token = generarTokenJWT({ id: usuario.id, correo: usuario.correo, idRol: usuario.id_rol });
@@ -205,10 +221,41 @@ export async function autenticarUsuario({ correo, password }) {
   await auditoriaService.registrarEvento({
     idUsuario: usuario.id,
     accion: 'LOGIN',
-    detalle: `Inicio de sesión (${usuario.correo})`,
+    detalle: detalleAuditoria,
   });
 
   return { token, usuario: usuarioSinPassword };
+}
+
+export async function buscarPorCorreo(correo) {
+  return usuariosModel.findByCorreo(correo);
+}
+
+export async function marcarEmailVerificado(id) {
+  return usuariosModel.marcarEmailVerificado(id);
+}
+
+// Alta de alguien que entró por primera vez con Microsoft 365: la cuenta ya
+// está verificada (Microsoft garantiza el correo) y no tiene contraseña.
+export async function crearUsuarioMicrosoft({ nombre, apellido, correo, idSucursal, idSector }) {
+  const usuario = await usuariosModel.create({
+    nombre,
+    apellido,
+    correo,
+    passwordHash: SIN_PASSWORD,
+    idRol: ROL_USUARIO,
+    idSucursal,
+    idSector,
+  });
+  const verificado = await usuariosModel.marcarEmailVerificado(usuario.id);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: usuario.id,
+    accion: 'REGISTRO',
+    detalle: `Alta de usuario con Microsoft 365 (${usuario.correo})`,
+  });
+
+  return verificado;
 }
 
 const NOMBRE_LONGITUD_MAXIMA = 100;

@@ -1,4 +1,5 @@
-export const TAMANO_MAXIMO_BYTES = 500 * 1024 * 1024;
+// 80 MB: por Cloudflare (plan gratis) un pedido no puede pasar de 100 MB.
+export const TAMANO_MAXIMO_BYTES = 80 * 1024 * 1024;
 
 const TIPOS_MIME_PERMITIDOS = [
   'image/jpeg',
