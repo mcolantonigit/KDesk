@@ -18,8 +18,16 @@ export async function findAllByUsuarioCreador(idUsuarioCreador) {
   return result.rows;
 }
 
+// Trae además el nombre del técnico responsable: el detalle lo muestra
+// también a usuarios comunes, que no pueden pedir la lista de usuarios.
 export async function findById(id) {
-  const result = await pool.query(`SELECT ${CAMPOS} FROM tickets WHERE id = $1`, [id]);
+  const result = await pool.query(
+    `SELECT ${CAMPOS},
+       (SELECT u.nombre || ' ' || u.apellido FROM usuarios u WHERE u.id = tickets.id_tecnico_responsable)
+         AS tecnico_responsable
+     FROM tickets WHERE id = $1`,
+    [id]
+  );
   return result.rows[0];
 }
 
@@ -56,6 +64,14 @@ export async function cerrar(id, idEstado) {
   const result = await pool.query(
     `UPDATE tickets SET id_estado = $1, fecha_cierre = NOW() WHERE id = $2 RETURNING ${CAMPOS}`,
     [idEstado, id]
+  );
+  return result.rows[0];
+}
+
+export async function updateTipo(id, idTipo) {
+  const result = await pool.query(
+    `UPDATE tickets SET id_tipo = $1 WHERE id = $2 RETURNING ${CAMPOS}`,
+    [idTipo, id]
   );
   return result.rows[0];
 }

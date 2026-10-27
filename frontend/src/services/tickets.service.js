@@ -87,6 +87,23 @@ export async function cambiarEstado(id, idEstado) {
   return data;
 }
 
+export async function cambiarTipo(id, idTipo) {
+  const response = await fetch(`/api/tickets/${id}/tipo`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ idTipo }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo cambiar el tipo');
+  }
+
+  return data;
+}
+
 export async function cambiarPrioridad(id, idPrioridad) {
   const response = await fetch(`/api/tickets/${id}/prioridad`, {
     method: 'PATCH',

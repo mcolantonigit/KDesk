@@ -61,6 +61,16 @@ export async function getPerfil(req, res) {
   }
 }
 
+export async function actualizarPerfil(req, res) {
+  try {
+    const { nombre, apellido } = req.body;
+    const usuario = await usuariosService.actualizarPerfil({ id: req.usuario.id, nombre, apellido });
+    res.json(usuario);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudieron guardar los datos' });
+  }
+}
+
 export async function cambiarPassword(req, res) {
   try {
     const { passwordActual, passwordNueva, confirmacion } = req.body;

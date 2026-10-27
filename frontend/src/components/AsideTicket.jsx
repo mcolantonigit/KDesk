@@ -62,6 +62,7 @@ function AsideTicket({ idTicket, onClose }) {
             {dato('Estado', nombres.estado)}
             {dato('Prioridad', nombres.prioridad)}
             {dato('Tipo', nombres.tipo)}
+            {dato('Responsable', nombres.responsable)}
             {dato('Creado por', nombres.creador)}
             {dato('Sucursal', nombres.sucursal)}
             {dato('Sector', nombres.sector)}

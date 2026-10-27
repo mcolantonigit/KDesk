@@ -62,7 +62,7 @@ describe('NavegacionMovil', () => {
     await userEvent.click(barra().getByRole('button', { name: 'Más' }));
 
     expect(menu().getByText('Luis Gómez')).toBeInTheDocument();
-    for (const texto of ['Tickets cerrados', 'Alertas', 'Apariencia', 'Cambiar contraseña', 'Estadísticas', 'Auditoría', 'Backups', 'Cerrar sesión']) {
+    for (const texto of ['Tickets cerrados', 'Alertas', 'Apariencia', 'Mis datos', 'Cambiar contraseña', 'Estadísticas', 'Auditoría', 'Backups', 'Cerrar sesión']) {
       expect(menu().getByText(texto)).toBeInTheDocument();
     }
     expect(menu().queryByText('Usuarios y permisos')).not.toBeInTheDocument();

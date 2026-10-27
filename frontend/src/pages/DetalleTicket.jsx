@@ -6,6 +6,7 @@ import ModalCerrarTicket from '../components/ModalCerrarTicket';
 import BackButton from '../components/BackButton';
 import Checklist from '../components/Checklist';
 import ActividadTicket from '../components/ActividadTicket';
+import Selector from '../components/Selector';
 import '../styles/DetalleTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
 
@@ -21,12 +22,18 @@ function DetalleTicket() {
     comentarios,
     adjuntosTicket,
     historial,
+    catalogos,
+    tecnicos,
     nombres,
     yaCerrado,
     puedeCerrar,
     recargar,
     agregarComentario,
     quitarComentario,
+    cambiarEstado,
+    cambiarTipo,
+    cambiarPrioridad,
+    asignarResponsable,
   } = useTicketDetalle(id);
 
   const [mostrarCierre, setMostrarCierre] = useState(false);
@@ -63,6 +70,29 @@ function DetalleTicket() {
     </div>
   );
 
+  // Los técnicos editan estado, tipo, prioridad y responsable como en el Tablero;
+  // el resto los ve como texto.
+  const editable = (etiqueta, textoActual, valor, opciones, onCambiar, textoSinValor) =>
+    esTecnico
+      ? dato(
+          etiqueta,
+          <Selector aria-label={etiqueta} value={valor ?? ''} onChange={(event) => onCambiar(Number(event.target.value))}>
+            {textoSinValor && (
+              <option value="" disabled>
+                {textoSinValor}
+              </option>
+            )}
+            {opciones.map((opcion) => (
+              <option key={opcion.id} value={opcion.id}>
+                {opcion.nombre}
+              </option>
+            ))}
+          </Selector>
+        )
+      : dato(etiqueta, textoActual);
+
+  const opcionesTecnicos = tecnicos.map((tecnico) => ({ id: tecnico.id, nombre: `${tecnico.nombre} ${tecnico.apellido}` }));
+
   return (
     <div className="detalle-ticket">
       <div className="detalle-ticket-cabecera">
@@ -78,9 +108,23 @@ function DetalleTicket() {
       </div>
 
       <dl className="detalle-ticket-datos">
-        {dato('Estado', nombres.estado)}
-        {dato('Tipo', nombres.tipo)}
-        {dato('Prioridad', nombres.prioridad)}
+        {editable('Estado', nombres.estado, ticket.id_estado, catalogos.estados, cambiarEstado)}
+        {editable('Tipo', nombres.tipo, ticket.id_tipo, catalogos.tipos, cambiarTipo)}
+        {editable(
+          'Prioridad',
+          nombres.prioridad,
+          ticket.id_prioridad ?? ticket.id_prioridad_sugerida,
+          catalogos.prioridades,
+          cambiarPrioridad
+        )}
+        {editable(
+          'Responsable',
+          nombres.responsable,
+          ticket.id_tecnico_responsable,
+          opcionesTecnicos,
+          asignarResponsable,
+          'Sin asignar'
+        )}
         {dato('Creado por', nombres.creador)}
         {dato('Sucursal', nombres.sucursal)}
         {dato('Sector', nombres.sector)}

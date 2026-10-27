@@ -24,7 +24,7 @@ const ICONOS = {
 
 // Navegación del celular: barra fija abajo con los destinos principales, un botón
 // central para crear un ticket y "Más", que abre el resto de las opciones.
-function NavegacionMovil({ usuario, onCambiarPassword, onCerrarSesion }) {
+function NavegacionMovil({ usuario, onMisDatos, onCambiarPassword, onCerrarSesion }) {
   const { abrir: abrirNuevoTicket } = useNuevoTicket();
   const [menuAbierto, setMenuAbierto] = useState(false);
 
@@ -93,6 +93,17 @@ function NavegacionMovil({ usuario, onCambiarPassword, onCerrarSesion }) {
               {esTecnico && opcion('/tickets/cerrados', 'Tickets cerrados')}
               {opcion('/configuracion/alertas', 'Alertas')}
               {opcion('/configuracion/apariencia', 'Apariencia')}
+              {usuario && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuAbierto(false);
+                    onMisDatos();
+                  }}
+                >
+                  Mis datos
+                </button>
+              )}
               {usuario && !esAdministrador && (
                 <button
                   type="button"

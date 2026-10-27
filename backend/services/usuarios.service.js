@@ -211,6 +211,34 @@ export async function autenticarUsuario({ correo, password }) {
   return { token, usuario: usuarioSinPassword };
 }
 
+const NOMBRE_LONGITUD_MAXIMA = 100;
+
+export async function actualizarPerfil({ id, nombre, apellido }) {
+  const nombreLimpio = (nombre ?? '').trim();
+  const apellidoLimpio = (apellido ?? '').trim();
+  if (!nombreLimpio || !apellidoLimpio) {
+    throw crearError('El nombre y el apellido son obligatorios', 400);
+  }
+  if (nombreLimpio.length > NOMBRE_LONGITUD_MAXIMA || apellidoLimpio.length > NOMBRE_LONGITUD_MAXIMA) {
+    throw crearError(`El nombre y el apellido pueden tener hasta ${NOMBRE_LONGITUD_MAXIMA} caracteres`, 400);
+  }
+
+  const anterior = await usuariosModel.findById(id);
+  if (!anterior) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  const usuario = await usuariosModel.updateNombreApellido(id, { nombre: nombreLimpio, apellido: apellidoLimpio });
+
+  await auditoriaService.registrarEvento({
+    idUsuario: id,
+    accion: 'CAMBIO_DATOS_PERFIL',
+    detalle: `Nombre: ${anterior.nombre} ${anterior.apellido} -> ${usuario.nombre} ${usuario.apellido} (${usuario.correo})`,
+  });
+
+  return usuario;
+}
+
 export async function cambiarPassword({ id, correo, passwordActual, passwordNueva, confirmacion }) {
   if (passwordNueva !== confirmacion) {
     throw crearError('La nueva contraseña y su confirmación no coinciden', 400);

@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getTicketById, getComentarios, crearComentario, eliminarComentario } from '../services/tickets.service';
+import {
+  getTicketById,
+  getComentarios,
+  crearComentario,
+  eliminarComentario,
+  cambiarEstado,
+  cambiarTipo,
+  cambiarPrioridad,
+  asignarResponsable,
+} from '../services/tickets.service';
 import { getEstados } from '../services/estados.service';
 import { getPrioridades } from '../services/prioridades.service';
 import { getTiposTicket } from '../services/tiposTicket.service';
@@ -14,7 +23,8 @@ const ESTADO_CERRADO = 'Cerrado';
 const ROLES_TECNICOS = [2, 3];
 
 // Carga un ticket con todo lo necesario para mostrarlo (comentarios,
-// adjuntos, historial y nombres de catálogos) y las acciones para comentar.
+// adjuntos, historial y nombres de catálogos), las acciones para comentar
+// y, para técnicos, las de cambiar estado, tipo, prioridad y responsable.
 // Lo usan la página de detalle y el panel lateral.
 export function useTicketDetalle(id) {
   const { usuario } = useAuth();
@@ -102,6 +112,18 @@ export function useTicketDetalle(id) {
     }
   }
 
+  // Igual que en el Tablero: si falla, se avisa y el ticket queda como estaba.
+  async function editar(accion, valor) {
+    try {
+      await accion(id, valor);
+      await cargarTicket();
+    } catch (err) {
+      window.alert(err.message);
+    }
+  }
+
+  const tecnicos = catalogos.usuarios.filter((item) => ROLES_TECNICOS.includes(item.id_rol));
+
   const nombres = ticket && {
     estado: catalogos.estados.find((estado) => estado.id === ticket.id_estado)?.nombre ?? '—',
     tipo: catalogos.tipos.find((tipo) => tipo.id === ticket.id_tipo)?.nombre ?? '—',
@@ -112,6 +134,7 @@ export function useTicketDetalle(id) {
     })(),
     sucursal: catalogos.sucursales.find((sucursal) => sucursal.id === ticket.id_sucursal)?.nombre ?? '—',
     sector: catalogos.sectores.find((sector) => sector.id === ticket.id_sector)?.nombre ?? '—',
+    responsable: ticket.tecnico_responsable ?? 'Sin asignar',
     creador: (() => {
       if (!esTecnico) return `${usuario.nombre} ${usuario.apellido}`;
       const creador = catalogos.usuarios.find((item) => item.id === ticket.id_usuario_creador);
@@ -131,11 +154,17 @@ export function useTicketDetalle(id) {
     comentarios,
     adjuntosTicket,
     historial,
+    catalogos,
+    tecnicos,
     nombres,
     yaCerrado,
     puedeCerrar,
     recargar: cargarTicket,
     agregarComentario,
     quitarComentario,
+    cambiarEstado: (idEstado) => editar(cambiarEstado, idEstado),
+    cambiarTipo: (idTipo) => editar(cambiarTipo, idTipo),
+    cambiarPrioridad: (idPrioridad) => editar(cambiarPrioridad, idPrioridad),
+    asignarResponsable: (idTecnico) => editar(asignarResponsable, idTecnico),
   };
 }

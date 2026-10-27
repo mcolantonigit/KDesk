@@ -4,6 +4,7 @@ import * as sectoresModel from '../models/sectores.model.js';
 import * as sucursalesModel from '../models/sucursales.model.js';
 import * as estadosModel from '../models/estados.model.js';
 import * as prioridadesModel from '../models/prioridades.model.js';
+import * as tiposTicketModel from '../models/tiposTicket.model.js';
 import * as comentariosModel from '../models/comentarios.model.js';
 import * as rolesService from './roles.service.js';
 import * as auditoriaService from './auditoria.service.js';
@@ -181,6 +182,35 @@ export async function cambiarPrioridad({ idTicket, idPrioridad, idUsuarioQueCamb
     idUsuario: idUsuarioQueCambia,
     evento: 'CAMBIO_PRIORIDAD',
     detalle: `Ticket ${ticket.numero}: prioridad -> ${prioridad.nombre}`,
+  });
+
+  return ticketActualizado;
+}
+
+export async function cambiarTipo({ idTicket, idTipo, idUsuarioQueCambia }) {
+  const ticket = await ticketsModel.findById(idTicket);
+  if (!ticket) {
+    throw crearError('Ticket no encontrado', 404);
+  }
+
+  const tipo = await tiposTicketModel.findById(idTipo);
+  if (!tipo) {
+    throw crearError('Tipo inválido', 400);
+  }
+
+  const ticketActualizado = await ticketsModel.updateTipo(idTicket, idTipo);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: idUsuarioQueCambia,
+    accion: 'CAMBIO_TIPO',
+    detalle: `Ticket ${ticket.numero}: tipo -> ${tipo.nombre}`,
+  });
+
+  await historialService.registrarEvento({
+    idTicket,
+    idUsuario: idUsuarioQueCambia,
+    evento: 'CAMBIO_TIPO',
+    detalle: `Ticket ${ticket.numero}: tipo -> ${tipo.nombre}`,
   });
 
   return ticketActualizado;

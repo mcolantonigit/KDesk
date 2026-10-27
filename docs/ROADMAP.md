@@ -638,10 +638,15 @@ Numeración de versiones: 1.0 fue la primera puesta en producción; 1.2 es lo
 de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
 1.3, todavía sin diseño ni orden definido.
 
-- [ ] Detalle del ticket (`/tickets/:id`): poder cambiar prioridad, tipo y
+- [x] Detalle del ticket (`/tickets/:id`): poder cambiar prioridad, tipo y
       estado desde ahí, igual que desde el Tablero; y mostrar el técnico
-      responsable, que hoy no aparece
-- [ ] Perfil: que cada usuario pueda cambiar su nombre y apellido
+      responsable, que hoy no aparece. El tipo no se podía cambiar en ningún
+      lado: endpoint nuevo `PATCH /api/tickets/:id/tipo` (técnicos), con
+      historial y auditoría `CAMBIO_TIPO`. El panel lateral también muestra el
+      responsable
+- [x] Perfil: que cada usuario pueda cambiar su nombre y apellido ("Mis
+      datos" en el menú, `PUT /api/usuarios/perfil`, auditoría
+      `CAMBIO_DATOS_PERFIL`)
 - [ ] Frontend en Cloudflare Pages y backend en el server local: definir qué
       puertos abrir (idealmente ninguno, con Cloudflare Tunnel) y las medidas
       para que el backend no quede expuesto (CORS cerrado al dominio del

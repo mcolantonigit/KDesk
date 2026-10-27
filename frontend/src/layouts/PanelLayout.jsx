@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import ModalCambiarPassword from '../components/ModalCambiarPassword';
+import ModalMisDatos from '../components/ModalMisDatos';
 import { NuevoTicketProvider, useNuevoTicket } from '../context/NuevoTicketContext';
 import { AsideTicketProvider } from '../context/AsideTicketContext';
 import { NotificacionesProvider } from '../context/NotificacionesContext';
@@ -43,6 +44,7 @@ function PanelLayoutContenido() {
   const { pathname } = useLocation();
   const esMovil = useEsMovil();
   const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
+  const [modalMisDatosAbierto, setModalMisDatosAbierto] = useState(false);
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esTecnicoOAdministrador = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esAdministrador = usuario?.id_rol === ROL_ADMINISTRADOR;
@@ -100,6 +102,9 @@ function PanelLayoutContenido() {
               {ICONO_ENGRANAJE}
             </Button>
             <div className="panel-nav-submenu panel-nav-submenu-derecha">
+              <button type="button" onClick={() => setModalMisDatosAbierto(true)}>
+                Mis datos
+              </button>
               {puedeCambiarPasswordDesdeMenu && (
                 <button type="button" onClick={() => setModalPasswordAbierto(true)}>
                   Cambiar contraseña
@@ -128,13 +133,19 @@ function PanelLayoutContenido() {
       </header>
 
       {modalPasswordAbierto && <ModalCambiarPassword onClose={() => setModalPasswordAbierto(false)} />}
+      {modalMisDatosAbierto && <ModalMisDatos onClose={() => setModalMisDatosAbierto(false)} />}
 
       <main className="panel-content">
         <Outlet />
       </main>
 
       {esMovil && (
-        <NavegacionMovil usuario={usuario} onCambiarPassword={() => setModalPasswordAbierto(true)} onCerrarSesion={handleLogout} />
+        <NavegacionMovil
+          usuario={usuario}
+          onMisDatos={() => setModalMisDatosAbierto(true)}
+          onCambiarPassword={() => setModalPasswordAbierto(true)}
+          onCerrarSesion={handleLogout}
+        />
       )}
     </div>
   );

@@ -26,6 +26,14 @@ export async function findPasswordHashById(id) {
   return result.rows[0]?.password_hash;
 }
 
+export async function updateNombreApellido(id, { nombre, apellido }) {
+  const result = await pool.query(
+    `UPDATE usuarios SET nombre = $1, apellido = $2 WHERE id = $3 RETURNING ${CAMPOS_PUBLICOS}`,
+    [nombre, apellido, id]
+  );
+  return result.rows[0];
+}
+
 export async function updatePassword(id, passwordHash) {
   await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [passwordHash, id]);
 }

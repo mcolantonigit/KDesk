@@ -139,6 +139,23 @@ export async function cambiarRolUsuario(id, idRol) {
   return data;
 }
 
+export async function actualizarPerfil({ nombre, apellido }) {
+  const response = await fetch('/api/usuarios/perfil', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ nombre, apellido }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudieron guardar los datos');
+  }
+
+  return data;
+}
+
 export async function cambiarPassword({ passwordActual, passwordNueva, confirmacion }) {
   const response = await fetch('/api/usuarios/perfil/password', {
     method: 'PUT',
