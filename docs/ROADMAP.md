@@ -674,13 +674,21 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
   - [x] Preview de `develop` en Pages con dominio `dev.kdesk.ar` (CNAME `dev` → `develop.kdesk.pages.dev`) y
         `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
   - [ ] Reglas de firewall y límite de pedidos para `api.kdesk.ar`
-  - [ ] Túnel de producción en el server (`api.kdesk.ar`), cuando se abra a los usuarios
+  - [x] Túnel de producción `kdesk-prod`: `cloudflared` como servicio en el server → `api.kdesk.ar` → `https://localhost:443`.
+        Bloqueado por la regla de firewall (solo la IP de Matías) hasta la salida a producción
+  - [ ] **Al salir a producción:** sacar `api.kdesk.ar` de la regla de bloqueo del firewall
   - [x] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
         gratis). Adjuntos bajan a 80 MB; restaurar un backup subiendo un
         archivo (2 GB) queda solo para la red local
   - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a
         `kdesk.ar`: solo cambiar el valor en el .env del server
   - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar`
+  - [ ] Cuando se apague la versión local: sacar el certificado autofirmado
+        del server (`TLS_PFX_PATH` vacío, backend en HTTP plano) y pasar la
+        ruta del túnel `kdesk-prod` a `http://localhost:PUERTO`. El navegador
+        ya ve el certificado de Cloudflare; el tramo túnel → backend no sale
+        del server. Hasta entonces la ruta va a `https://localhost:443` con
+        "Disable TLS certificate verification"
 - [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
       solo cuentas de `kalop.com.ar` y `kalop.cl` (tenants separados: app
       multi-organización filtrada por `M365_TENANTS` y `M365_DOMINIOS`)
