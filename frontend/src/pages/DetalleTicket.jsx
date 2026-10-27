@@ -10,6 +10,7 @@ import Selector from '../components/Selector';
 import '../styles/DetalleTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
 import { API } from '../utils/api';
+import { elegibles } from '../utils/opciones';
 
 function DetalleTicket() {
   const { id } = useParams();
@@ -83,7 +84,7 @@ function DetalleTicket() {
                 {textoSinValor}
               </option>
             )}
-            {opciones.map((opcion) => (
+            {elegibles(opciones, valor).map((opcion) => (
               <option key={opcion.id} value={opcion.id}>
                 {opcion.nombre}
               </option>

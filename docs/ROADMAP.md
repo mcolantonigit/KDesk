@@ -644,6 +644,9 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       lado: endpoint nuevo `PATCH /api/tickets/:id/tipo` (técnicos), con
       historial y auditoría `CAMBIO_TIPO`. El panel lateral también muestra el
       responsable
+- [x] Tablero: el tipo también se cambia desde la lista y las tarjetas. Al
+      editar (Tablero y detalle) no se ofrecen las opciones deshabilitadas en
+      Parámetros, salvo la que ya tiene el ticket
 - [x] Perfil: que cada usuario pueda cambiar su nombre y apellido ("Mis
       datos" en el menú, `PUT /api/usuarios/perfil`, auditoría
       `CAMBIO_DATOS_PERFIL`)
@@ -698,7 +701,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         ya ve el certificado de Cloudflare; el tramo túnel → backend no sale
         del server. Hasta entonces la ruta va a `https://localhost:443` con
         "Disable TLS certificate verification"
-- [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
+- [x] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
       solo cuentas de `kalop.com.ar` y `kalop.cl` (tenants separados: app
       multi-organización filtrada por `M365_TENANTS` y `M365_DOMINIOS`)
   - [x] Backend: OpenID Connect con PKCE (`/api/auth/microsoft/*`), sin
@@ -717,7 +720,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
   - [x] Consentimiento del administrador del tenant de Chile
   - [x] Probado en `dev.kdesk.ar` con una cuenta de AR (alta nueva con
         "Completar registro" y entrada de un usuario existente)
-  - [ ] Probar con una cuenta de Chile
+  - [x] Probado con cuentas de Chile
   - [x] Quien entra con Microsoft no ve "Cambiar contraseña" (ni en el menú ni
         en "Usuarios y permisos"). Su cuenta no tiene contraseña: no se le puede
         cambiar, blanquear ni recuperar (sería una entrada sin pasar por Microsoft)

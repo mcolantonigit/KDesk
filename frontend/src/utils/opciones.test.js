@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normalizar, ordenarAlfabeticamente, filtrarOpciones, buscarExacta } from './opciones';
+import { normalizar, elegibles, ordenarAlfabeticamente, filtrarOpciones, buscarExacta } from './opciones';
 
 const opciones = [
   { id: 1, nombre: 'Sucursal Córdoba' },
@@ -62,5 +62,17 @@ describe('buscarExacta', () => {
 
   it('no devuelve nada si el texto es solo parte del nombre', () => {
     expect(buscarExacta(opciones, 'Casa')).toBeUndefined();
+  });
+});
+
+describe('elegibles', () => {
+  it('deja las activas y la actual aunque esté deshabilitada', () => {
+    const tipos = [
+      { id: 1, nombre: 'Hardware', activo: true },
+      { id: 2, nombre: 'Viejo', activo: false },
+      { id: 3, nombre: 'Otro viejo', activo: false },
+      { id: 4, nombre: 'Sin flag' },
+    ];
+    expect(elegibles(tipos, 2).map((t) => t.id)).toEqual([1, 2, 4]);
   });
 });
