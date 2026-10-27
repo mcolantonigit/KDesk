@@ -33,10 +33,7 @@ export async function getUsuarioById(id) {
 }
 
 const ROL_USUARIO = 1;
-
-// Los usuarios creados por el login de Microsoft 365 no tienen contraseña: se
-// guarda este valor, que no es un hash de bcrypt y nunca coincide con nada.
-const SIN_PASSWORD = '!microsoft365';
+const { SIN_PASSWORD } = usuariosModel;
 
 export async function registrarUsuario({ nombre, apellido, correo, password, idSucursal, idSector }) {
   const idRol = ROL_USUARIO;
@@ -135,7 +132,9 @@ export async function activarCuenta(token) {
 
 export async function solicitarResetPassword(correo) {
   const usuario = await usuariosModel.findByCorreo(correo);
-  if (!usuario) {
+  // Igual que con un correo que no existe: no se avisa nada. Las cuentas de
+  // Microsoft 365 no tienen contraseña que recuperar.
+  if (!usuario || !usuario.con_password) {
     return;
   }
 
@@ -295,6 +294,9 @@ export async function cambiarPassword({ id, correo, passwordActual, passwordNuev
   if (!passwordHashActual) {
     throw crearError('Usuario no encontrado', 404);
   }
+  if (passwordHashActual === SIN_PASSWORD) {
+    throw crearError('Tu cuenta entra con Microsoft 365 y no tiene contraseña', 400);
+  }
 
   const passwordActualValida = await compararPassword(passwordActual, passwordHashActual);
   if (!passwordActualValida) {
@@ -374,6 +376,9 @@ export async function blanquearPassword({ id, passwordNueva, idUsuarioQueBlanque
   const usuario = await usuariosModel.findById(id);
   if (!usuario) {
     throw crearError('Usuario no encontrado', 404);
+  }
+  if (!usuario.con_password) {
+    throw crearError('Esta cuenta entra con Microsoft 365 y no tiene contraseña', 400);
   }
   if (!passwordNueva || passwordNueva.length < 8) {
     throw crearError('La nueva contraseña debe tener al menos 8 caracteres', 400);

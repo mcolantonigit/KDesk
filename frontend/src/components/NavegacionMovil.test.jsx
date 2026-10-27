@@ -7,9 +7,9 @@ import NavegacionMovil from './NavegacionMovil';
 const abrirNuevoTicket = vi.fn();
 vi.mock('../context/NuevoTicketContext', () => ({ useNuevoTicket: () => ({ abrir: abrirNuevoTicket }) }));
 
-const tecnico = { id: 1, id_rol: 2, nombre: 'Luis', apellido: 'Gómez' };
+const tecnico = { id: 1, id_rol: 2, nombre: 'Luis', apellido: 'Gómez', con_password: true };
 const comun = { id: 2, id_rol: 1, nombre: 'Ana', apellido: 'Pérez' };
-const administrador = { id: 3, id_rol: 3, nombre: 'Marta', apellido: 'Ruiz' };
+const administrador = { id: 3, id_rol: 3, nombre: 'Marta', apellido: 'Ruiz', con_password: false };
 
 function abrir(usuario, { ruta = '/', onCambiarPassword = () => {}, onCerrarSesion = () => {} } = {}) {
   return render(
@@ -69,13 +69,21 @@ describe('NavegacionMovil', () => {
     expect(menu().queryByText('Parámetros')).not.toBeInTheDocument();
   });
 
-  it('un administrador ve además Usuarios y Parámetros, y no "Cambiar contraseña"', async () => {
+  it('un administrador ve además Usuarios y Parámetros', async () => {
     abrir(administrador);
 
     await userEvent.click(barra().getByRole('button', { name: 'Más' }));
 
     expect(menu().getByText('Usuarios y permisos')).toBeInTheDocument();
     expect(menu().getByText('Parámetros')).toBeInTheDocument();
+  });
+
+  it('quien entra con Microsoft 365 no ve "Cambiar contraseña"', async () => {
+    abrir({ ...tecnico, con_password: false });
+
+    await userEvent.click(barra().getByRole('button', { name: 'Más' }));
+
+    expect(menu().getByText('Mis datos')).toBeInTheDocument();
     expect(menu().queryByText('Cambiar contraseña')).not.toBeInTheDocument();
   });
 

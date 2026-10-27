@@ -104,7 +104,7 @@ function NavegacionMovil({ usuario, onMisDatos, onCambiarPassword, onCerrarSesio
                   Mis datos
                 </button>
               )}
-              {usuario && !esAdministrador && (
+              {usuario?.con_password && (
                 <button
                   type="button"
                   onClick={() => {

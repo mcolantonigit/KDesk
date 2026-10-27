@@ -48,7 +48,8 @@ function PanelLayoutContenido() {
   const puedeVerDashboard = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esTecnicoOAdministrador = ROLES_DASHBOARD.includes(usuario?.id_rol);
   const esAdministrador = usuario?.id_rol === ROL_ADMINISTRADOR;
-  const puedeCambiarPasswordDesdeMenu = usuario && !esAdministrador;
+  // Quien entra con Microsoft 365 no tiene contraseña.
+  const puedeCambiarPasswordDesdeMenu = Boolean(usuario?.con_password);
 
   async function handleLogout() {
     await cerrarSesion();

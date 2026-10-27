@@ -1,7 +1,12 @@
 import { pool } from '../config/db.js';
 
+// Los usuarios creados por el login de Microsoft 365 no tienen contraseña: se
+// guarda este valor, que no es un hash de bcrypt y nunca coincide con nada.
+export const SIN_PASSWORD = '!microsoft365';
+
 const CAMPOS_PUBLICOS =
-  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado, activacion_reenviada';
+  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado, activacion_reenviada, ' +
+  `password_hash <> '${SIN_PASSWORD}' AS con_password`;
 
 export async function findAll() {
   const result = await pool.query(`SELECT ${CAMPOS_PUBLICOS} FROM usuarios ORDER BY id`);

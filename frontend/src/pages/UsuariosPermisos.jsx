@@ -284,9 +284,13 @@ function UsuariosPermisos() {
                     </Button>
                   </td>
                   <td data-label="">
-                    <Button variant="secondary" onClick={() => setUsuarioParaPassword(usuario)}>
-                      Cambiar contraseña
-                    </Button>
+                    {usuario.con_password ? (
+                      <Button variant="secondary" onClick={() => setUsuarioParaPassword(usuario)}>
+                        Cambiar contraseña
+                      </Button>
+                    ) : (
+                      'Microsoft 365'
+                    )}
                   </td>
                 </tr>
               ))}
