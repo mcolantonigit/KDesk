@@ -668,10 +668,10 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         los usuarios (no ocupan lugares de Zero Trust)
   - [x] Frontend: `VITE_API_URL` (`src/utils/api.js`); backend: CORS por
         `CORS_ORIGINS` (`middleware/cors.middleware.js`)
-  - [ ] Túnel de dev: `cloudflared` en la PC de desarrollo → `api-dev.kdesk.ar`
+  - [x] Túnel de dev (`kdesk-dev`): `cloudflared` como servicio en la PC de desarrollo → `api-dev.kdesk.ar` → `localhost:4000`
         (cerrado con una regla de firewall a la IP de quien prueba: `kdesk_dev`
         es un clon con datos reales)
-  - [ ] Preview de `develop` en Pages con dominio `dev.kdesk.ar` y
+  - [x] Preview de `develop` en Pages con dominio `dev.kdesk.ar` (CNAME `dev` → `develop.kdesk.pages.dev`) y
         `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
   - [ ] Reglas de firewall y límite de pedidos para `api.kdesk.ar`
   - [ ] Túnel de producción en el server (`api.kdesk.ar`), cuando se abra a los usuarios
