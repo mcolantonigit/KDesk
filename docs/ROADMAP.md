@@ -693,8 +693,14 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         apaga cuando `kdesk.ar` esté terminada: ahí pasa a `off`
   - [x] Corregido: el registro aceptaba el rol que mandaba el navegador
         (cualquiera podía registrarse como administrador armando el pedido)
-  - [ ] Registro de la app en Entra ID (tenant AR) y consentimiento del
-        tenant de Chile; cargar `M365_*` en el .env de dev y probar
+  - [x] Registro de la app "KDesk" en Entra ID (tenant ACROPOLIS CABLES SA),
+        varios inquilinos limitada a ACROPOLIS CABLES SA y KALOP CHILENA.
+        **El secreto de cliente vence el 27/10/2028**: crear uno nuevo antes y
+        cambiar `M365_CLIENT_SECRET`, o el login con Microsoft deja de andar
+  - [ ] Consentimiento del administrador del tenant de Chile
+  - [x] Probado en `dev.kdesk.ar` con una cuenta de AR (alta nueva con
+        "Completar registro" y entrada de un usuario existente)
+  - [ ] Probar con una cuenta de Chile
   - [ ] Ocultar "Cambiar contraseña" del menú a quien entra con Microsoft
 - [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
 - [ ] Sector Mantenimiento: rol nuevo "mantenimiento" con su propio tablero de
