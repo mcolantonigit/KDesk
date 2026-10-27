@@ -657,6 +657,18 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       Tunnel al server local (sin puertos de entrada abiertos), protegido con
       Access (token de servicio) y alcanzado solo por una Pages Function que
       reenvía `/api` (el navegador ve una sola dirección)
+  - [x] Pages Function `frontend/functions/api/[[path]].js`: reenvía `/api/*`
+        a `API_ORIGIN` con el token de Access (`CF_ACCESS_CLIENT_ID/SECRET`),
+        variables por entorno en Pages. Sin variables responde 503. El backend
+        no necesita cambios (no guarda IPs; la cookie no fija dominio)
+  - [ ] Túnel de dev: `cloudflared` en la PC de desarrollo → `api-dev.kdesk.ar`
+  - [ ] Preview de `develop` en Pages (protegido con Access) contra dev
+  - [ ] Túnel de producción en el server (`api.kdesk.ar`), cuando se abra a los usuarios
+  - [ ] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
+        gratis). Adjuntos (hoy hasta 500 MB) y restaurar un backup subido (2 GB)
+        siguen así por la red local; decidir el límite al entrar por Cloudflare
+  - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a `kdesk.ar`
+  - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar` o cerrarlo con Access
 - [ ] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
       solo cuentas de `kalop.com.ar` y `kalop.cl`
 - [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
