@@ -1,10 +1,10 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 async function subirAdjunto(url, archivo) {
   const formData = new FormData();
   formData.append('archivo', archivo);
 
-  const response = await fetch(url, {
+  const response = await apiFetch(url, {
     method: 'POST',
     credentials: 'include',
     body: formData,
@@ -28,7 +28,7 @@ export async function subirAdjuntoDeComentario(idComentario, archivo) {
 }
 
 export async function getAdjuntosDeTicket(idTicket) {
-  const response = await fetch(`${API}/api/tickets/${idTicket}/adjuntos`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/adjuntos`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -39,7 +39,7 @@ export async function getAdjuntosDeTicket(idTicket) {
 }
 
 export async function getAdjuntosDeComentario(idComentario) {
-  const response = await fetch(`${API}/api/comentarios/${idComentario}/adjuntos`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/comentarios/${idComentario}/adjuntos`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {

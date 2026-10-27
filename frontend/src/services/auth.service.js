@@ -1,10 +1,10 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 // Qué formas de entrar ofrece el backend según desde dónde se abre KDesk
 // (desde internet, solo Microsoft 365). Si no responde, se muestra lo de siempre.
 export async function getConfigLogin() {
   try {
-    const response = await fetch(`${API}/api/auth/config`, { credentials: 'include' });
+    const response = await apiFetch(`${API}/api/auth/config`, { credentials: 'include' });
     if (!response.ok) throw new Error();
     return await response.json();
   } catch {
@@ -19,7 +19,7 @@ export function urlLoginMicrosoft() {
 }
 
 export async function getAltaPendiente() {
-  const response = await fetch(`${API}/api/auth/microsoft/alta`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/auth/microsoft/alta`, { credentials: 'include' });
 
   const data = await response.json();
 
@@ -31,7 +31,7 @@ export async function getAltaPendiente() {
 }
 
 export async function confirmarAlta({ nombre, apellido, idSucursal, idSector }) {
-  const response = await fetch(`${API}/api/auth/microsoft/alta`, {
+  const response = await apiFetch(`${API}/api/auth/microsoft/alta`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

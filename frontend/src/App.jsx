@@ -1,6 +1,7 @@
 import { AuthProvider } from './context/AuthContext';
 import { PreferenciasProvider, usePreferencias } from './context/PreferenciasContext';
 import FondoApp from './components/FondoApp';
+import SinConexion from './components/SinConexion';
 import AppRoutes from './routes/AppRoutes';
 
 function Fondo() {
@@ -14,6 +15,7 @@ function App() {
       <AuthProvider>
         <Fondo />
         <AppRoutes />
+        <SinConexion />
       </AuthProvider>
     </PreferenciasProvider>
   );

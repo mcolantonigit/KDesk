@@ -1,7 +1,7 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 export async function getTickets() {
-  const response = await fetch(`${API}/api/tickets`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function getTickets() {
 }
 
 export async function getTicketById(id) {
-  const response = await fetch(`${API}/api/tickets/${id}`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets/${id}`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -31,7 +31,7 @@ export async function crearTicket({
   idSector,
   idUsuarioCreador,
 }) {
-  const response = await fetch(`${API}/api/tickets`, {
+  const response = await apiFetch(`${API}/api/tickets`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -56,7 +56,7 @@ export async function crearTicket({
 }
 
 export async function cerrarTicket(id, comentario) {
-  const response = await fetch(`${API}/api/tickets/${id}/cerrar`, {
+  const response = await apiFetch(`${API}/api/tickets/${id}/cerrar`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -73,7 +73,7 @@ export async function cerrarTicket(id, comentario) {
 }
 
 export async function cambiarEstado(id, idEstado) {
-  const response = await fetch(`${API}/api/tickets/${id}/estado`, {
+  const response = await apiFetch(`${API}/api/tickets/${id}/estado`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -90,7 +90,7 @@ export async function cambiarEstado(id, idEstado) {
 }
 
 export async function cambiarTipo(id, idTipo) {
-  const response = await fetch(`${API}/api/tickets/${id}/tipo`, {
+  const response = await apiFetch(`${API}/api/tickets/${id}/tipo`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -107,7 +107,7 @@ export async function cambiarTipo(id, idTipo) {
 }
 
 export async function cambiarPrioridad(id, idPrioridad) {
-  const response = await fetch(`${API}/api/tickets/${id}/prioridad`, {
+  const response = await apiFetch(`${API}/api/tickets/${id}/prioridad`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -124,7 +124,7 @@ export async function cambiarPrioridad(id, idPrioridad) {
 }
 
 export async function asignarResponsable(id, idTecnicoResponsable) {
-  const response = await fetch(`${API}/api/tickets/${id}/responsable`, {
+  const response = await apiFetch(`${API}/api/tickets/${id}/responsable`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -141,7 +141,7 @@ export async function asignarResponsable(id, idTecnicoResponsable) {
 }
 
 export async function getComentarios(idTicket) {
-  const response = await fetch(`${API}/api/tickets/${idTicket}/comentarios`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/comentarios`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -152,7 +152,7 @@ export async function getComentarios(idTicket) {
 }
 
 export async function eliminarComentario(idComentario) {
-  const response = await fetch(`${API}/api/comentarios/${idComentario}`, {
+  const response = await apiFetch(`${API}/api/comentarios/${idComentario}`, {
     method: 'DELETE',
     credentials: 'include',
   });
@@ -167,7 +167,7 @@ export async function eliminarComentario(idComentario) {
 }
 
 export async function crearComentario(idTicket, contenido) {
-  const response = await fetch(`${API}/api/tickets/${idTicket}/comentarios`, {
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/comentarios`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

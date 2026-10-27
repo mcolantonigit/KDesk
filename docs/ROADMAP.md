@@ -644,6 +644,16 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       lado: endpoint nuevo `PATCH /api/tickets/:id/tipo` (técnicos), con
       historial y auditoría `CAMBIO_TIPO`. El panel lateral también muestra el
       responsable
+- [x] Pantalla "Sin conexión con el servidor": tapa la app cuando un pedido
+      no llega al backend (corte, server reiniciándose, túnel caído: errores de
+      red y 502/503/504/52x de Cloudflare). Reintenta sola cada 10 s y se va
+      sola cuando vuelve; lo que se estaba escribiendo queda debajo. Todos los
+      pedidos pasan por `apiFetch` (`src/utils/api.js`)
+- [x] Pantalla "Tenés que iniciar sesión" / "Tu sesión venció": a los 5 s lleva
+      al login y, al entrar, vuelve a la pantalla donde se estaba (también al
+      abrir sin sesión el link de un ticket). La raíz sin sesión va directo al
+      login. El backend marca los 401 de falta de sesión con `codigo: 'SESION'`
+      para no confundirlos con una contraseña incorrecta
 - [x] Tablero: el tipo también se cambia desde la lista y las tarjetas. Al
       editar (Tablero y detalle) no se ofrecen las opciones deshabilitadas en
       Parámetros, salvo la que ya tiene el ticket

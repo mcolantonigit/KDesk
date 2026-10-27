@@ -1,7 +1,7 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 export async function getEstados() {
-  const response = await fetch(`${API}/api/estados`);
+  const response = await apiFetch(`${API}/api/estados`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function getEstados() {
 }
 
 export async function crearEstado(nombre) {
-  const response = await fetch(`${API}/api/estados`, {
+  const response = await apiFetch(`${API}/api/estados`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -29,7 +29,7 @@ export async function crearEstado(nombre) {
 }
 
 export async function editarEstado(id, cambios) {
-  const response = await fetch(`${API}/api/estados/${id}`, {
+  const response = await apiFetch(`${API}/api/estados/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

@@ -1,7 +1,7 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 export async function getSectores() {
-  const response = await fetch(`${API}/api/sectores`);
+  const response = await apiFetch(`${API}/api/sectores`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function getSectores() {
 }
 
 export async function crearSector(nombre) {
-  const response = await fetch(`${API}/api/sectores`, {
+  const response = await apiFetch(`${API}/api/sectores`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -29,7 +29,7 @@ export async function crearSector(nombre) {
 }
 
 export async function editarSector(id, cambios) {
-  const response = await fetch(`${API}/api/sectores/${id}`, {
+  const response = await apiFetch(`${API}/api/sectores/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

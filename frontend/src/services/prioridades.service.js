@@ -1,7 +1,7 @@
-import { API } from '../utils/api';
+import { API, apiFetch } from '../utils/api';
 
 export async function getPrioridades() {
-  const response = await fetch(`${API}/api/prioridades`);
+  const response = await apiFetch(`${API}/api/prioridades`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function getPrioridades() {
 }
 
 export async function crearPrioridad(nombre) {
-  const response = await fetch(`${API}/api/prioridades`, {
+  const response = await apiFetch(`${API}/api/prioridades`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -29,7 +29,7 @@ export async function crearPrioridad(nombre) {
 }
 
 export async function editarPrioridad(id, cambios) {
-  const response = await fetch(`${API}/api/prioridades/${id}`, {
+  const response = await apiFetch(`${API}/api/prioridades/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

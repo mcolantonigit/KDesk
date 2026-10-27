@@ -13,6 +13,8 @@ describe('editar el propio nombre y apellido', () => {
   it('rechaza el pedido sin sesión', async () => {
     const res = await api().put('/api/usuarios/perfil').send({ nombre: 'Ana', apellido: 'Pérez' });
     expect(res.status).toBe(401);
+    // El frontend distingue así la sesión vencida de otros 401 (contraseña incorrecta)
+    expect(res.body.codigo).toBe('SESION');
   });
 
   it('guarda los datos sin espacios de más y lo registra en la auditoría', async () => {
