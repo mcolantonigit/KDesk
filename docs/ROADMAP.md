@@ -647,22 +647,33 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
 - [x] Perfil: que cada usuario pueda cambiar su nombre y apellido ("Mis
       datos" en el menú, `PUT /api/usuarios/perfil`, auditoría
       `CAMBIO_DATOS_PERFIL`)
-- [ ] Frontend en Cloudflare Pages y backend en el server local: definir qué
-      puertos abrir (idealmente ninguno, con Cloudflare Tunnel) y las medidas
-      para que el backend no quede expuesto (CORS cerrado al dominio del
-      frontend, WAF/rate limiting en Cloudflare, cookies entre subdominios)
-- [ ] Dominio propio `kdesk.ar` (ya comprado, 27/10/2026; NIC Argentina, con los
-      nameservers delegados a Cloudflare, plan gratis). `kalop.com.ar` no se
-      toca. `kdesk.ar` → Cloudflare Pages; `api.kdesk.ar` → Cloudflare
-      Tunnel al server local (sin puertos de entrada abiertos), protegido con
-      Access (token de servicio) y alcanzado solo por una Pages Function que
-      reenvía `/api` (el navegador ve una sola dirección)
-  - [x] Pages Function `frontend/functions/api/[[path]].js`: reenvía `/api/*`
-        a `API_ORIGIN` con el token de Access (`CF_ACCESS_CLIENT_ID/SECRET`),
-        variables por entorno en Pages. Sin variables responde 503. El backend
-        no necesita cambios (no guarda IPs; la cookie no fija dominio)
+- [ ] Frontend en Cloudflare Pages y backend en el server local, con el
+      dominio propio `kdesk.ar` (comprado el 27/10/2026 en NIC Argentina,
+      nameservers delegados a Cloudflare, plan gratis; `kalop.com.ar` no se
+      toca). Sin puertos de entrada abiertos: el backend sale por Cloudflare
+      Tunnel. Todo en planes gratis; nada medido por pedido entre el usuario y
+      el server (por eso NO hay Pages Function: tiene un tope de 100.000
+      pedidos por día y KDesk consulta notificaciones cada 20 s por pestaña).
+      - `kdesk.ar` → Pages (solo archivos estáticos, sin límite de visitas)
+      - `api.kdesk.ar` → Tunnel → backend de producción
+      - `dev.kdesk.ar` → Preview de `develop`; `api-dev.kdesk.ar` → Tunnel →
+        backend de dev en la PC de desarrollo
+      - El navegador le pide directo a la API (`VITE_API_URL` en el build de
+        Pages; sin la variable, `/api` como siempre). Frontend y API son el
+        mismo sitio (`kdesk.ar`), así que la cookie `SameSite=Strict` sigue
+        andando; CORS solo para los orígenes de `CORS_ORIGINS` (vacío = como
+        siempre)
+      - Protección de la API: firewall y límite de pedidos de Cloudflare (plan
+        Free), Turnstile y el login de KDesk. Access queda fuera del camino de
+        los usuarios (no ocupan lugares de Zero Trust)
+  - [x] Frontend: `VITE_API_URL` (`src/utils/api.js`); backend: CORS por
+        `CORS_ORIGINS` (`middleware/cors.middleware.js`)
   - [ ] Túnel de dev: `cloudflared` en la PC de desarrollo → `api-dev.kdesk.ar`
-  - [ ] Preview de `develop` en Pages (protegido con Access) contra dev
+        (cerrado con una regla de firewall a la IP de quien prueba: `kdesk_dev`
+        es un clon con datos reales)
+  - [ ] Preview de `develop` en Pages con dominio `dev.kdesk.ar` y
+        `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
+  - [ ] Reglas de firewall y límite de pedidos para `api.kdesk.ar`
   - [ ] Túnel de producción en el server (`api.kdesk.ar`), cuando se abra a los usuarios
   - [ ] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
         gratis). Adjuntos (hoy hasta 500 MB) y restaurar un backup subido (2 GB)

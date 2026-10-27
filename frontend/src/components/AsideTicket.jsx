@@ -5,6 +5,7 @@ import ActividadTicket from './ActividadTicket';
 import TextoExpandible from './TextoExpandible';
 import '../styles/AsideTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
+import { API } from '../utils/api';
 
 // Panel lateral con una versión acotada del detalle de un ticket: se abre
 // al hacer clic en una fila de las tablas, sin salir de la pantalla.
@@ -81,7 +82,7 @@ function AsideTicket({ idTicket, onClose }) {
               <ul className="detalle-ticket-adjuntos-lista">
                 {adjuntosTicket.map((adjunto) => (
                   <li key={adjunto.id}>
-                    <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
+                    <a href={`${API}/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
                   </li>
                 ))}
               </ul>

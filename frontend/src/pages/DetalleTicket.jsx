@@ -9,6 +9,7 @@ import ActividadTicket from '../components/ActividadTicket';
 import Selector from '../components/Selector';
 import '../styles/DetalleTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
+import { API } from '../utils/api';
 
 function DetalleTicket() {
   const { id } = useParams();
@@ -150,7 +151,7 @@ function DetalleTicket() {
               <ul className="detalle-ticket-adjuntos-lista">
                 {adjuntosTicket.map((adjunto) => (
                   <li key={adjunto.id}>
-                    <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
+                    <a href={`${API}/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
                   </li>
                 ))}
               </ul>

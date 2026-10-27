@@ -19,9 +19,11 @@ import adjuntosRoutes from './routes/adjuntos.routes.js';
 import auditoriaRoutes from './routes/auditoria.routes.js';
 import backupsRoutes from './routes/backups.routes.js';
 import notificacionesRoutes from './routes/notificaciones.routes.js';
+import { cors } from './middleware/cors.middleware.js';
 
 const app = express();
 
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 
