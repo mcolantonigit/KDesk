@@ -664,7 +664,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         andando; CORS solo para los orígenes de `CORS_ORIGINS` (vacío = como
         siempre)
       - Protección de la API: firewall y límite de pedidos de Cloudflare (plan
-        Free), Turnstile y el login de KDesk. Access queda fuera del camino de
+        Free) y el login de KDesk. Access queda fuera del camino de
         los usuarios (no ocupan lugares de Zero Trust)
   - [x] Frontend: `VITE_API_URL` (`src/utils/api.js`); backend: CORS por
         `CORS_ORIGINS` (`middleware/cors.middleware.js`)
@@ -697,7 +697,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         varios inquilinos limitada a ACROPOLIS CABLES SA y KALOP CHILENA.
         **El secreto de cliente vence el 27/10/2028**: crear uno nuevo antes y
         cambiar `M365_CLIENT_SECRET`, o el login con Microsoft deja de andar
-  - [ ] Consentimiento del administrador del tenant de Chile
+  - [x] Consentimiento del administrador del tenant de Chile
   - [x] Probado en `dev.kdesk.ar` con una cuenta de AR (alta nueva con
         "Completar registro" y entrada de un usuario existente)
   - [ ] Probar con una cuenta de Chile
@@ -714,7 +714,10 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       cambio va con un UPDATE en la base de producción, solo cuando Matías lo
       pida. Antes de pasar LOGIN_PASSWORD a off, confirmar que haya al menos un
       administrador que entre con Microsoft
-- [ ] Cloudflare Turnstile (captcha) en las pantallas de autenticación
-- [ ] Sector Mantenimiento: rol nuevo "mantenimiento" con su propio tablero de
-      tickets. Mantenimiento puede derivar un ticket a Sistemas y los técnicos
-      de Sistemas pueden derivar uno a Mantenimiento
+- [x] ~~Cloudflare Turnstile (captcha)~~: descartado. Desde internet solo se
+      entra con Microsoft 365, que ya tiene su propia protección contra bots;
+      alcanza con el límite de pedidos de Cloudflare
+- [ ] Sector Mantenimiento: **pasa a la próxima versión** (1.4). Rol nuevo
+      "mantenimiento" con su propio tablero de tickets. Mantenimiento puede
+      derivar un ticket a Sistemas y los técnicos de Sistemas pueden derivar
+      uno a Mantenimiento
