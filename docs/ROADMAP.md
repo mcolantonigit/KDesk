@@ -673,7 +673,16 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         es un clon con datos reales)
   - [x] Preview de `develop` en Pages con dominio `dev.kdesk.ar` (CNAME `dev` → `develop.kdesk.pages.dev`) y
         `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
-  - [ ] Reglas de firewall y límite de pedidos para `api.kdesk.ar`
+  - [x] Firewall de `kdesk.ar` (plan Free):
+        - Custom rule de bloqueo: `api-dev.kdesk.ar` y `api.kdesk.ar` solo
+          desde la IP de Matías
+        - Rate limiting rule "Limite api.kdesk.ar": rutas `/api/`, 50 pedidos
+          cada 10 s por IP → bloqueo 10 s. En el plan Free la regla de límite
+          no acepta filtrar por IP, por eso las sedes se excluyen aparte
+        - Custom rule "Sedes sin limite" (Skip → rate limiting): ACSA
+          190.221.21.242, Chile 186.10.123.150, Ergos 190.221.148.38. Una sede
+          nueva o un cambio de IP se agrega acá; si no, toda la oficina comparte
+          el límite de una sola IP
   - [x] Túnel de producción `kdesk-prod`: `cloudflared` como servicio en el server → `api.kdesk.ar` → `https://localhost:443`.
         Bloqueado por la regla de firewall (solo la IP de Matías) hasta la salida a producción
   - [ ] **Al salir a producción:** sacar `api.kdesk.ar` de la regla de bloqueo del firewall
