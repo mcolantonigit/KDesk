@@ -666,7 +666,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
 - [x] Perfil: que cada usuario pueda cambiar su nombre y apellido ("Mis
       datos" en el menú, `PUT /api/usuarios/perfil`, auditoría
       `CAMBIO_DATOS_PERFIL`)
-- [ ] Frontend en Cloudflare Pages y backend en el server local, con el
+- [x] Frontend en Cloudflare Pages y backend en el server local, con el
       dominio propio `kdesk.ar` (comprado el 27/10/2026 en NIC Argentina,
       nameservers delegados a Cloudflare, plan gratis; `kalop.com.ar` no se
       toca). Sin puertos de entrada abiertos: el backend sale por Cloudflare
@@ -703,14 +703,17 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
           nueva o un cambio de IP se agrega acá; si no, toda la oficina comparte
           el límite de una sola IP
   - [x] Túnel de producción `kdesk-prod`: `cloudflared` como servicio en el server → `api.kdesk.ar` → `https://localhost:443`.
-        Bloqueado por la regla de firewall (solo la IP de Matías) hasta la salida a producción
-  - [ ] **Al salir a producción:** sacar `api.kdesk.ar` de la regla de bloqueo del firewall
+        Estuvo bloqueado por la regla de firewall hasta la salida a producción
+  - [x] **Al salir a producción:** `api.kdesk.ar` sacado de la regla de bloqueo del firewall (28/10/2026)
   - [x] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
         gratis). Adjuntos bajan a 80 MB; restaurar un backup subiendo un
         archivo (2 GB) queda solo para la red local
-  - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a
-        `kdesk.ar`: solo cambiar el valor en el .env del server
-  - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar`
+  - [x] `FRONTEND_URL=https://kdesk.ar` y `CORS_ORIGINS=https://kdesk.ar,https://kdesk` en el .env del server
+  - [x] ~~`kdesk.pages.dev`: redirigir a `kdesk.ar`~~: descartado, nadie tiene esa dirección. Las
+        reglas de Cloudflare no sirven (pages.dev no es de la cuenta); si hiciera falta, un
+        `if (location.hostname === 'kdesk.pages.dev')` en `index.html`
+  - [x] Buscadores: `public/robots.txt` (`Disallow: /`) y `public/_headers` (`X-Robots-Tag: noindex, nofollow`)
+        en todos los dominios de Pages
   - [ ] Cuando se apague la versión local: sacar el certificado autofirmado
         del server (`TLS_PFX_PATH` vacío, backend en HTTP plano) y pasar la
         ruta del túnel `kdesk-prod` a `http://localhost:PUERTO`. El navegador
@@ -744,7 +747,7 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       puede dar o sacar el rol de administrador (con confirmación). Nadie cambia
       su propio rol, y no se le saca el rol ni se deshabilita al último
       administrador activo
-- [ ] **En el deploy a producción:** hacer administrador a
+- [x] **En el deploy a producción (28/10/2026):** hacer administrador a
       matias.colantoni@kalop.com.ar (en dev ya lo es). sistemas@kalop.com.ar es
       un grupo de distribución, no una cuenta con la que se pueda entrar: el
       cambio va con un UPDATE en la base de producción, solo cuando Matías lo
