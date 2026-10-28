@@ -12,7 +12,7 @@ import Modal from './Modal';
 import FormField from './FormField';
 import Combobox from './Combobox';
 import Button from './Button';
-import FileInput from './FileInput';
+import AdjuntoInput from './AdjuntoInput';
 import '../styles/ModalNuevoTicket.css';
 
 const TITULO_LONGITUD_MAXIMA = 35;
@@ -73,7 +73,12 @@ function ModalNuevoTicket({ onClose }) {
         idUsuarioCreador: esTecnico ? idUsuarioCreador : undefined,
       });
       if (adjunto) {
-        await subirAdjuntoDeTicket(ticket.id, adjunto);
+        try {
+          await subirAdjuntoDeTicket(ticket.id, adjunto);
+        } catch (err) {
+          // El ticket ya existe: avisar y seguir (reintentar crearía otro igual).
+          window.alert(`El ticket se creó, pero no se pudo adjuntar "${adjunto.name}": ${err.message}`);
+        }
       }
       onClose();
       navigate(`/tickets/${ticket.id}`);
@@ -130,7 +135,7 @@ function ModalNuevoTicket({ onClose }) {
               onChange={(event) => setDescripcion(event.target.value)}
               required
             />
-            <FileInput id="adjunto" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
+            <AdjuntoInput id="adjunto" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
           </div>
         </div>
 

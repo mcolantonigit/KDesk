@@ -91,16 +91,30 @@ export function useTicketDetalle(id) {
     cargar();
   }, [cargarTicket, esTecnico]);
 
+  // Devuelve si el comentario se publicó. Los errores se avisan en una ventana,
+  // sin salir del ticket: si falla el comentario, lo escrito queda en el campo.
   async function agregarComentario(contenido, adjunto) {
+    let comentario;
     try {
-      const comentario = await crearComentario(id, contenido);
-      if (adjunto) {
-        await subirAdjuntoDeComentario(comentario.id, adjunto);
-      }
-      await cargarTicket();
+      comentario = await crearComentario(id, contenido);
     } catch (err) {
-      setError(err.message);
+      window.alert(`No se pudo publicar el comentario: ${err.message}`);
+      return false;
     }
+
+    if (adjunto) {
+      try {
+        await subirAdjuntoDeComentario(comentario.id, adjunto);
+      } catch (err) {
+        window.alert(`El comentario se publicó, pero no se pudo adjuntar "${adjunto.name}": ${err.message}`);
+      }
+    }
+    try {
+      await cargarTicket();
+    } catch {
+      // Se ve al refrescar; el comentario ya quedó guardado
+    }
+    return true;
   }
 
   async function quitarComentario(comentario) {
@@ -108,7 +122,7 @@ export function useTicketDetalle(id) {
       await eliminarComentario(comentario.id);
       await cargarTicket();
     } catch (err) {
-      setError(err.message);
+      window.alert(`No se pudo eliminar el comentario: ${err.message}`);
     }
   }
 

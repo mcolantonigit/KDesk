@@ -57,6 +57,23 @@ describe('ModalCerrarTicket', () => {
     await waitFor(() => expect(subirAdjuntoDeComentario).toHaveBeenCalledWith(2, archivo));
   });
 
+  it('si el ticket se cierra pero el adjunto falla, avisa y da el cierre por hecho', async () => {
+    const alerta = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    cerrarTicket.mockResolvedValue({});
+    getComentarios.mockResolvedValue([{ id: 2 }]);
+    subirAdjuntoDeComentario.mockRejectedValue(new Error('Falló la subida'));
+    const onCerrado = vi.fn();
+    abrir({ onCerrado });
+
+    await userEvent.type(screen.getByLabelText('Motivo de cierre'), 'Listo');
+    await userEvent.upload(screen.getByLabelText('Adjunto (opcional)'), new File(['x'], 'captura.png', { type: 'image/png' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Confirmar cierre' }));
+
+    await waitFor(() => expect(onCerrado).toHaveBeenCalled());
+    expect(alerta).toHaveBeenCalledWith(expect.stringContaining('El ticket se cerró, pero no se pudo adjuntar'));
+    alerta.mockRestore();
+  });
+
   it('si falla muestra el error y deja el modal abierto', async () => {
     cerrarTicket.mockRejectedValue(new Error('No se pudo cerrar'));
     const onCerrado = vi.fn();

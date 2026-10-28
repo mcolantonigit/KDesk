@@ -654,6 +654,12 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
       abrir sin sesión el link de un ticket). La raíz sin sesión va directo al
       login. El backend marca los 401 de falta de sesión con `codigo: 'SESION'`
       para no confundirlos con una contraseña incorrecta
+- [x] Adjuntos: el diálogo para elegir archivo muestra solo los tipos permitidos
+      (imágenes, PDF, Word, Excel, TXT); uno no permitido o de más de 80 MB se
+      avisa en una ventana al elegirlo y el campo queda vacío, sin perder el
+      resto. Si el ticket o el comentario se guardan pero el adjunto falla, se
+      avisa sin salir de la pantalla (antes el comentario reemplazaba la
+      página por el error y el ticket nuevo se podía crear dos veces)
 - [x] Tablero: el tipo también se cambia desde la lista y las tarjetas. Al
       editar (Tablero y detalle) no se ofrecen las opciones deshabilitadas en
       Parámetros, salvo la que ya tiene el ticket

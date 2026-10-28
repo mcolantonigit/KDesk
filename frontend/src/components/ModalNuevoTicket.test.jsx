@@ -35,6 +35,7 @@ vi.mock('../services/usuarios.service', () => ({
 }));
 
 import { crearTicket } from '../services/tickets.service';
+import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
 
 function abrir(onClose = () => {}) {
   render(
@@ -95,6 +96,36 @@ describe('ModalNuevoTicket', () => {
       expect.objectContaining({ idTipo: 1, idPrioridadSugerida: 1, titulo: 'No imprime' })
     );
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('el selector de archivos solo ofrece los tipos permitidos', () => {
+    abrir();
+
+    const accept = screen.getByLabelText('Adjunto (opcional)').getAttribute('accept');
+    expect(accept).toContain('.pdf');
+    expect(accept).toContain('.xlsx');
+    expect(accept).not.toContain('.zip');
+  });
+
+  it('si el ticket se crea pero el adjunto falla, avisa y va al ticket (no lo crea dos veces)', async () => {
+    const alerta = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    crearTicket.mockResolvedValue({ id: 56 });
+    subirAdjuntoDeTicket.mockRejectedValue(new Error('Tipo de archivo no permitido'));
+    abrir();
+
+    await userEvent.click(screen.getByLabelText('Tipo de ticket'));
+    await userEvent.click(await screen.findByRole('option', { name: 'Hardware' }));
+    await userEvent.click(screen.getByLabelText('Prioridad sugerida'));
+    await userEvent.click(await screen.findByRole('option', { name: 'Alta' }));
+    await userEvent.type(screen.getByLabelText('Título'), 'No imprime');
+    await userEvent.type(screen.getByLabelText('Descripción'), 'Detalle');
+    await userEvent.upload(screen.getByLabelText('Adjunto (opcional)'), new File(['x'], 'foto.png', { type: 'image/png' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Crear ticket' }));
+
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/tickets/56'));
+    expect(alerta).toHaveBeenCalledWith(expect.stringContaining('El ticket se creó, pero no se pudo adjuntar "foto.png"'));
+    expect(crearTicket).toHaveBeenCalledTimes(1);
+    alerta.mockRestore();
   });
 
   it('muestra el error si no se pudo crear y no cierra el modal', async () => {
