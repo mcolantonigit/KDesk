@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { problemaConArchivo } from '../utils/adjuntos';
 import '../styles/FileInput.css';
 
 function formatearTamano(bytes) {
@@ -28,14 +29,30 @@ function IconoArchivo() {
 
 // Campo para elegir un archivo: zona para arrastrar y soltar (o hacer clic).
 // `value` es el File elegido (o null) y `onChange` recibe el File o null.
-function FileInput({ id, label, value, onChange, accept, hint, compacto = false }) {
+// Un archivo que no cumple `accept` o `tamanoMaximo` se avisa en el momento y
+// el campo queda vacío, sin tocar el resto del formulario.
+function FileInput({ id, label, value, onChange, accept, tamanoMaximo, descripcion, hint, compacto = false }) {
   const [arrastrando, setArrastrando] = useState(false);
+
+  function elegir(archivo) {
+    if (!archivo) {
+      onChange(null);
+      return;
+    }
+    const problema = problemaConArchivo(archivo, { accept, tamanoMaximo, descripcion });
+    if (problema) {
+      window.alert(problema);
+      onChange(null);
+      return;
+    }
+    onChange(archivo);
+  }
 
   function handleDrop(event) {
     event.preventDefault();
     setArrastrando(false);
     const archivo = event.dataTransfer.files[0];
-    if (archivo) onChange(archivo);
+    if (archivo) elegir(archivo);
   }
 
   return (
@@ -74,7 +91,11 @@ function FileInput({ id, label, value, onChange, accept, hint, compacto = false 
             id={id}
             type="file"
             accept={accept}
-            onChange={(event) => onChange(event.target.files[0] ?? null)}
+            onChange={(event) => {
+              elegir(event.target.files[0] ?? null);
+              // Para que elegir de nuevo el mismo archivo vuelva a avisar.
+              event.target.value = '';
+            }}
           />
         </div>
       )}

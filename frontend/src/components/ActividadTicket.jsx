@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import FormField from './FormField';
-import FileInput from './FileInput';
+import AdjuntoInput from './AdjuntoInput';
 import Button from './Button';
 import '../styles/DetalleTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
@@ -31,9 +31,11 @@ function ActividadTicket({
   async function handleSubmit(event) {
     event.preventDefault();
     setEnviando(true);
-    await onAgregarComentario(nuevoComentario, adjuntoComentario);
-    setNuevoComentario('');
-    setAdjuntoComentario(null);
+    const publicado = await onAgregarComentario(nuevoComentario, adjuntoComentario);
+    if (publicado !== false) {
+      setNuevoComentario('');
+      setAdjuntoComentario(null);
+    }
     setEnviando(false);
   }
 
@@ -111,7 +113,7 @@ function ActividadTicket({
                 onChange={(event) => setNuevoComentario(event.target.value)}
                 required
               />
-              <FileInput
+              <AdjuntoInput
                 id="adjuntoComentario"
                 label="Adjunto (opcional)"
                 compacto

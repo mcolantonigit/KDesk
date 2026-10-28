@@ -40,4 +40,32 @@ describe('FileInput', () => {
 
     expect(onChange).toHaveBeenCalledWith(archivo);
   });
+
+  it('un archivo que no cumple accept se avisa en una ventana y el campo queda vacío', async () => {
+    const alerta = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const onChange = vi.fn();
+    render(<FileInput id="adjunto" label="Adjunto" value={null} onChange={onChange} accept=".pdf" descripcion="PDF" />);
+    const zip = new File(['x'], 'fotos.zip', { type: 'application/zip' });
+
+    await userEvent.upload(screen.getByLabelText('Adjunto'), zip, { applyAccept: false });
+
+    expect(alerta).toHaveBeenCalledWith(expect.stringContaining('No se puede adjuntar "fotos.zip"'));
+    expect(alerta).toHaveBeenCalledWith(expect.stringContaining('Se permiten: PDF.'));
+    expect(onChange).toHaveBeenCalledWith(null);
+    expect(onChange).not.toHaveBeenCalledWith(zip);
+    alerta.mockRestore();
+  });
+
+  it('también avisa si se arrastra un archivo demasiado grande', () => {
+    const alerta = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const onChange = vi.fn();
+    render(<FileInput id="adjunto" label="Adjunto" value={null} onChange={onChange} accept=".pdf" tamanoMaximo={3} />);
+    const zona = screen.getByText(/Arrastr/).closest('.file-input-zona');
+
+    fireEvent.drop(zona, { dataTransfer: { files: [archivo] } });
+
+    expect(alerta).toHaveBeenCalledWith(expect.stringContaining('pesa más de'));
+    expect(onChange).not.toHaveBeenCalledWith(archivo);
+    alerta.mockRestore();
+  });
 });

@@ -3,7 +3,7 @@ import { cerrarTicket, getComentarios } from '../services/tickets.service';
 import { subirAdjuntoDeComentario } from '../services/adjuntos.service';
 import Modal from './Modal';
 import FormField from './FormField';
-import FileInput from './FileInput';
+import AdjuntoInput from './AdjuntoInput';
 import Button from './Button';
 import '../styles/ModalCerrarTicket.css';
 
@@ -22,9 +22,14 @@ function ModalCerrarTicket({ ticket, onClose, onCerrado }) {
     try {
       await cerrarTicket(ticket.id, comentario);
       if (adjunto) {
-        const comentarios = await getComentarios(ticket.id);
-        const comentarioDeCierre = comentarios[comentarios.length - 1];
-        await subirAdjuntoDeComentario(comentarioDeCierre.id, adjunto);
+        try {
+          const comentarios = await getComentarios(ticket.id);
+          const comentarioDeCierre = comentarios[comentarios.length - 1];
+          await subirAdjuntoDeComentario(comentarioDeCierre.id, adjunto);
+        } catch (err) {
+          // El ticket ya quedó cerrado: avisar y seguir.
+          window.alert(`El ticket se cerró, pero no se pudo adjuntar "${adjunto.name}": ${err.message}`);
+        }
       }
       onCerrado();
     } catch (err) {
@@ -46,7 +51,7 @@ function ModalCerrarTicket({ ticket, onClose, onCerrado }) {
           onChange={(event) => setComentario(event.target.value)}
           required
         />
-        <FileInput id="adjuntoCierreModal" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
+        <AdjuntoInput id="adjuntoCierreModal" label="Adjunto (opcional)" value={adjunto} onChange={setAdjunto} />
         {error && <p className="ticket-form-error">{error}</p>}
         <div className="modal-cerrar-acciones">
           <Button type="button" variant="secondary" onClick={onClose}>
