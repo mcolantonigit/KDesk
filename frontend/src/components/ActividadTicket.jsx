@@ -4,6 +4,7 @@ import FileInput from './FileInput';
 import Button from './Button';
 import '../styles/DetalleTicket.css';
 import { formatearFechaHora } from '../utils/fechas';
+import { API } from '../utils/api';
 
 // Panel con pestañas Comentarios / Historial de un ticket. Es el mismo en la
 // página de detalle y en el panel lateral. `conHistorial` en false oculta la
@@ -88,7 +89,7 @@ function ActividadTicket({
                   <ul className="detalle-ticket-adjuntos-lista">
                     {comentario.adjuntos.map((adjunto) => (
                       <li key={adjunto.id}>
-                        <a href={`/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
+                        <a href={`${API}/api/adjuntos/${adjunto.id}/descargar`}>{adjunto.nombre_archivo}</a>
                       </li>
                     ))}
                   </ul>

@@ -1,5 +1,7 @@
+import { API, apiFetch } from '../utils/api';
+
 export async function getTareas(idTicket) {
-  const response = await fetch(`/api/tickets/${idTicket}/tareas`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/tareas`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -10,7 +12,7 @@ export async function getTareas(idTicket) {
 }
 
 export async function crearTarea(idTicket, descripcion) {
-  const response = await fetch(`/api/tickets/${idTicket}/tareas`, {
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/tareas`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -27,7 +29,7 @@ export async function crearTarea(idTicket, descripcion) {
 }
 
 export async function editarTarea(id, descripcion) {
-  const response = await fetch(`/api/tareas/${id}`, {
+  const response = await apiFetch(`${API}/api/tareas/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -44,7 +46,7 @@ export async function editarTarea(id, descripcion) {
 }
 
 export async function completarTarea(id) {
-  const response = await fetch(`/api/tareas/${id}/completar`, {
+  const response = await apiFetch(`${API}/api/tareas/${id}/completar`, {
     method: 'PATCH',
     credentials: 'include',
   });
@@ -59,7 +61,7 @@ export async function completarTarea(id) {
 }
 
 export async function eliminarTarea(id) {
-  const response = await fetch(`/api/tareas/${id}`, {
+  const response = await apiFetch(`${API}/api/tareas/${id}`, {
     method: 'DELETE',
     credentials: 'include',
   });

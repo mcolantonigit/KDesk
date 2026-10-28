@@ -32,7 +32,11 @@ export async function getUsuarioById(id) {
   return usuariosModel.findById(id);
 }
 
-export async function registrarUsuario({ nombre, apellido, correo, password, idRol, idSucursal, idSector }) {
+const ROL_USUARIO = 1;
+const { SIN_PASSWORD } = usuariosModel;
+
+export async function registrarUsuario({ nombre, apellido, correo, password, idSucursal, idSector }) {
+  const idRol = ROL_USUARIO;
   if (!DOMINIOS_CORREO_PERMITIDOS.some((dominio) => correo.endsWith(dominio))) {
     throw crearError(`El correo debe pertenecer a alguno de estos dominios: ${DOMINIOS_CORREO_PERMITIDOS.join(', ')}`, 400);
   }
@@ -128,7 +132,9 @@ export async function activarCuenta(token) {
 
 export async function solicitarResetPassword(correo) {
   const usuario = await usuariosModel.findByCorreo(correo);
-  if (!usuario) {
+  // Igual que con un correo que no existe: no se avisa nada. Las cuentas de
+  // Microsoft 365 no tienen contraseña que recuperar.
+  if (!usuario || !usuario.con_password) {
     return;
   }
 
@@ -185,7 +191,11 @@ export async function autenticarUsuario({ correo, password }) {
     throw crearError('Correo o contraseña incorrectos', 401);
   }
 
-  const passwordValida = await compararPassword(password, usuario.password_hash);
+  if (usuario.password_hash === SIN_PASSWORD) {
+    throw crearError('Esta cuenta entra con Microsoft 365: usá el botón "Entrar con Microsoft"', 401);
+  }
+
+  const passwordValida = await compararPassword(password ?? '', usuario.password_hash);
   if (!passwordValida) {
     throw crearError('Correo o contraseña incorrectos', 401);
   }
@@ -198,6 +208,11 @@ export async function autenticarUsuario({ correo, password }) {
     throw crearError('Tu cuenta está deshabilitada. Contactá a un administrador', 403);
   }
 
+  return iniciarSesion(usuario, `Inicio de sesión (${usuario.correo})`);
+}
+
+// Genera el token de sesión y deja el login en la auditoría.
+export async function iniciarSesion(usuario, detalleAuditoria) {
   const { password_hash, ...usuarioSinPassword } = usuario;
 
   const token = generarTokenJWT({ id: usuario.id, correo: usuario.correo, idRol: usuario.id_rol });
@@ -205,10 +220,69 @@ export async function autenticarUsuario({ correo, password }) {
   await auditoriaService.registrarEvento({
     idUsuario: usuario.id,
     accion: 'LOGIN',
-    detalle: `Inicio de sesión (${usuario.correo})`,
+    detalle: detalleAuditoria,
   });
 
   return { token, usuario: usuarioSinPassword };
+}
+
+export async function buscarPorCorreo(correo) {
+  return usuariosModel.findByCorreo(correo);
+}
+
+export async function marcarEmailVerificado(id) {
+  return usuariosModel.marcarEmailVerificado(id);
+}
+
+// Alta de alguien que entró por primera vez con Microsoft 365: la cuenta ya
+// está verificada (Microsoft garantiza el correo) y no tiene contraseña.
+export async function crearUsuarioMicrosoft({ nombre, apellido, correo, idSucursal, idSector }) {
+  const usuario = await usuariosModel.create({
+    nombre,
+    apellido,
+    correo,
+    passwordHash: SIN_PASSWORD,
+    idRol: ROL_USUARIO,
+    idSucursal,
+    idSector,
+  });
+  const verificado = await usuariosModel.marcarEmailVerificado(usuario.id);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: usuario.id,
+    accion: 'REGISTRO',
+    detalle: `Alta de usuario con Microsoft 365 (${usuario.correo})`,
+  });
+
+  return verificado;
+}
+
+const NOMBRE_LONGITUD_MAXIMA = 100;
+
+export async function actualizarPerfil({ id, nombre, apellido }) {
+  const nombreLimpio = (nombre ?? '').trim();
+  const apellidoLimpio = (apellido ?? '').trim();
+  if (!nombreLimpio || !apellidoLimpio) {
+    throw crearError('El nombre y el apellido son obligatorios', 400);
+  }
+  if (nombreLimpio.length > NOMBRE_LONGITUD_MAXIMA || apellidoLimpio.length > NOMBRE_LONGITUD_MAXIMA) {
+    throw crearError(`El nombre y el apellido pueden tener hasta ${NOMBRE_LONGITUD_MAXIMA} caracteres`, 400);
+  }
+
+  const anterior = await usuariosModel.findById(id);
+  if (!anterior) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  const usuario = await usuariosModel.updateNombreApellido(id, { nombre: nombreLimpio, apellido: apellidoLimpio });
+
+  await auditoriaService.registrarEvento({
+    idUsuario: id,
+    accion: 'CAMBIO_DATOS_PERFIL',
+    detalle: `Nombre: ${anterior.nombre} ${anterior.apellido} -> ${usuario.nombre} ${usuario.apellido} (${usuario.correo})`,
+  });
+
+  return usuario;
 }
 
 export async function cambiarPassword({ id, correo, passwordActual, passwordNueva, confirmacion }) {
@@ -219,6 +293,9 @@ export async function cambiarPassword({ id, correo, passwordActual, passwordNuev
   const passwordHashActual = await usuariosModel.findPasswordHashById(id);
   if (!passwordHashActual) {
     throw crearError('Usuario no encontrado', 404);
+  }
+  if (passwordHashActual === SIN_PASSWORD) {
+    throw crearError('Tu cuenta entra con Microsoft 365 y no tiene contraseña', 400);
   }
 
   const passwordActualValida = await compararPassword(passwordActual, passwordHashActual);
@@ -236,11 +313,17 @@ export async function cambiarPassword({ id, correo, passwordActual, passwordNuev
   });
 }
 
-const ROLES_ASIGNABLES = [1, 2];
+const ROL_ADMINISTRADOR = 3;
+const ROLES_ASIGNABLES = [ROL_USUARIO, 2, ROL_ADMINISTRADOR];
+const NOMBRES_ROL = { [ROL_USUARIO]: 'usuario', 2: 'técnico', [ROL_ADMINISTRADOR]: 'administrador' };
 
 export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
-  if (!ROLES_ASIGNABLES.includes(Number(idRol))) {
-    throw crearError('El rol debe ser usuario o técnico', 400);
+  const rolNuevo = Number(idRol);
+  if (!ROLES_ASIGNABLES.includes(rolNuevo)) {
+    throw crearError('El rol debe ser usuario, técnico o administrador', 400);
+  }
+  if (Number(id) === Number(idUsuarioQueCambia)) {
+    throw crearError('No podés cambiar tu propio rol', 400);
   }
 
   const usuario = await usuariosModel.findById(id);
@@ -248,12 +331,19 @@ export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
     throw crearError('Usuario no encontrado', 404);
   }
 
-  const usuarioActualizado = await usuariosModel.updateRol(id, idRol);
+  if (usuario.id_rol === ROL_ADMINISTRADOR && rolNuevo !== ROL_ADMINISTRADOR) {
+    const otros = await usuariosModel.countOtrosAdministradoresActivos(usuario.id);
+    if (otros === 0) {
+      throw crearError('Es el único administrador activo: primero dale el rol de administrador a otra persona', 400);
+    }
+  }
+
+  const usuarioActualizado = await usuariosModel.updateRol(id, rolNuevo);
 
   await auditoriaService.registrarEvento({
     idUsuario: idUsuarioQueCambia,
     accion: 'CAMBIO_ROL',
-    detalle: `Cambio de rol de ${usuario.correo} -> id_rol ${idRol}`,
+    detalle: `Cambio de rol de ${usuario.correo} -> ${NOMBRES_ROL[rolNuevo]}`,
   });
 
   return usuarioActualizado;
@@ -266,6 +356,9 @@ export async function cambiarEstadoActivo({ id, activo, idUsuarioQueCambia }) {
   }
   if (!activo && Number(id) === Number(idUsuarioQueCambia)) {
     throw crearError('No podés deshabilitar tu propia cuenta', 400);
+  }
+  if (!activo && usuario.id_rol === ROL_ADMINISTRADOR && (await usuariosModel.countOtrosAdministradoresActivos(usuario.id)) === 0) {
+    throw crearError('Es el único administrador activo: no se puede deshabilitar', 400);
   }
 
   const usuarioActualizado = await usuariosModel.updateActivo(id, activo);
@@ -283,6 +376,9 @@ export async function blanquearPassword({ id, passwordNueva, idUsuarioQueBlanque
   const usuario = await usuariosModel.findById(id);
   if (!usuario) {
     throw crearError('Usuario no encontrado', 404);
+  }
+  if (!usuario.con_password) {
+    throw crearError('Esta cuenta entra con Microsoft 365 y no tiene contraseña', 400);
   }
   if (!passwordNueva || passwordNueva.length < 8) {
     throw crearError('La nueva contraseña debe tener al menos 8 caracteres', 400);

@@ -3,6 +3,7 @@ import Button from './Button';
 import Selector from './Selector';
 import '../styles/TarjetasTickets.css';
 import { formatearFechaHora } from '../utils/fechas';
+import { elegibles } from '../utils/opciones';
 
 const ESTADO_CERRADO = 'Cerrado';
 
@@ -12,6 +13,7 @@ function TarjetasTickets({
   tecnicos,
   onCerrar,
   onCambiarEstado,
+  onCambiarTipo,
   onCambiarPrioridad,
   onAsignarResponsable,
 }) {
@@ -46,9 +48,21 @@ function TarjetasTickets({
           <p className="tarjeta-ticket-descripcion">{ticket.descripcion}</p>
 
           <dl className="tarjeta-ticket-datos">
-            <div>
+            <div onClick={(event) => event.stopPropagation()}>
               <dt>Tipo</dt>
-              <dd>{ticket.tipo}</dd>
+              <dd>
+                <Selector
+                  aria-label="Tipo"
+                  value={ticket.id_tipo ?? ''}
+                  onChange={(event) => onCambiarTipo(ticket, Number(event.target.value))}
+                >
+                  {elegibles(catalogos.tipos, ticket.id_tipo).map((tipo) => (
+                    <option key={tipo.id} value={tipo.id}>
+                      {tipo.nombre}
+                    </option>
+                  ))}
+                </Selector>
+              </dd>
             </div>
             <div onClick={(event) => event.stopPropagation()}>
               <dt>Prioridad</dt>

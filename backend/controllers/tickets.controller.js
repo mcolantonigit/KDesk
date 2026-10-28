@@ -83,6 +83,20 @@ export async function cambiarPrioridad(req, res) {
   }
 }
 
+export async function cambiarTipo(req, res) {
+  try {
+    const { idTipo } = req.body;
+    const ticket = await ticketsService.cambiarTipo({
+      idTicket: req.params.id,
+      idTipo,
+      idUsuarioQueCambia: req.usuario.id,
+    });
+    res.json(ticket);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cambiar el tipo' });
+  }
+}
+
 export async function asignarResponsable(req, res) {
   try {
     const { idTecnicoResponsable } = req.body;

@@ -19,13 +19,17 @@ import adjuntosRoutes from './routes/adjuntos.routes.js';
 import auditoriaRoutes from './routes/auditoria.routes.js';
 import backupsRoutes from './routes/backups.routes.js';
 import notificacionesRoutes from './routes/notificaciones.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import { cors } from './middleware/cors.middleware.js';
 
 const app = express();
 
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', healthRoutes);
+app.use('/api', authRoutes);
 app.use('/api', rolesRoutes);
 app.use('/api', sucursalesRoutes);
 app.use('/api', sectoresRoutes);

@@ -1,4 +1,5 @@
 import * as usuariosService from '../services/usuarios.service.js';
+import { ponerCookieSesion } from '../utils/sesion.util.js';
 
 export async function getUsuarios(req, res) {
   try {
@@ -23,13 +24,14 @@ export async function getUsuarioById(req, res) {
 
 export async function register(req, res) {
   try {
-    const { nombre, apellido, correo, password, idRol, idSucursal, idSector } = req.body;
+    // El rol no se toma del pedido: quien se registra solo puede ser "usuario"
+    // (los técnicos y administradores los asigna un administrador).
+    const { nombre, apellido, correo, password, idSucursal, idSector } = req.body;
     const usuario = await usuariosService.registrarUsuario({
       nombre,
       apellido,
       correo,
       password,
-      idRol,
       idSucursal,
       idSector,
     });
@@ -58,6 +60,16 @@ export async function getPerfil(req, res) {
     res.json(usuario);
   } catch (error) {
     res.status(500).json({ message: 'No se pudo obtener el perfil' });
+  }
+}
+
+export async function actualizarPerfil(req, res) {
+  try {
+    const { nombre, apellido } = req.body;
+    const usuario = await usuariosService.actualizarPerfil({ id: req.usuario.id, nombre, apellido });
+    res.json(usuario);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudieron guardar los datos' });
   }
 }
 
@@ -156,12 +168,7 @@ export async function login(req, res) {
     const { correo, password } = req.body;
     const { token, usuario } = await usuariosService.autenticarUsuario({ correo, password });
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.COOKIE_SECURE === 'true',
-      sameSite: 'strict',
-      maxAge: 8 * 60 * 60 * 1000,
-    });
+    ponerCookieSesion(res, token);
 
     res.json({ usuario });
   } catch (error) {

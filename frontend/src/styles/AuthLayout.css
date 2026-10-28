@@ -65,3 +65,10 @@
 .auth-links a:hover {
   color: var(--accent);
 }
+
+.auth-texto {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}

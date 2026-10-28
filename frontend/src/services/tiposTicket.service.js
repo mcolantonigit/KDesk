@@ -1,5 +1,7 @@
+import { API, apiFetch } from '../utils/api';
+
 export async function getTiposTicket() {
-  const response = await fetch('/api/tipos-ticket');
+  const response = await apiFetch(`${API}/api/tipos-ticket`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -10,7 +12,7 @@ export async function getTiposTicket() {
 }
 
 export async function crearTipoTicket(nombre) {
-  const response = await fetch('/api/tipos-ticket', {
+  const response = await apiFetch(`${API}/api/tipos-ticket`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -27,7 +29,7 @@ export async function crearTipoTicket(nombre) {
 }
 
 export async function editarTipoTicket(id, cambios) {
-  const response = await fetch(`/api/tipos-ticket/${id}`, {
+  const response = await apiFetch(`${API}/api/tipos-ticket/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

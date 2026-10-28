@@ -7,6 +7,7 @@ import ThRedimensionable from './ThRedimensionable';
 import Button from './Button';
 import '../styles/TablaTickets.css';
 import { formatearFechaHora } from '../utils/fechas';
+import { elegibles } from '../utils/opciones';
 
 const COLUMNAS = [
   { key: 'numero', label: 'ID', visiblePorDefecto: true },
@@ -44,7 +45,7 @@ const CLAVE_TABLA = 'tablero';
 const CLAVES = COLUMNAS.map((columna) => columna.key);
 const ORDEN_FILAS_POR_DEFECTO = { por: 'fecha_creacion', asc: false };
 
-function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEstado, onCambiarPrioridad, onAsignarResponsable }) {
+function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEstado, onCambiarTipo, onCambiarPrioridad, onAsignarResponsable }) {
   // Todo lo que el usuario elige de la tabla (orden de filas, columnas
   // visibles, su orden y sus anchos) se recuerda en el navegador.
   const [ordenFilas, setOrdenFilas] = usePersistentState(`kdesk:tabla:${CLAVE_TABLA}:orden-filas`, ORDEN_FILAS_POR_DEFECTO);
@@ -98,7 +99,19 @@ function TablaTicketsAdmin({ tickets, catalogos, tecnicos, onCerrar, onCambiarEs
       case 'titulo':
         return <span className="tabla-tickets-detalle">{ticket.titulo}</span>;
       case 'tipo':
-        return ticket.tipo;
+        return (
+          <select
+            value={ticket.id_tipo ?? ''}
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => onCambiarTipo(ticket, Number(event.target.value))}
+          >
+            {elegibles(catalogos.tipos, ticket.id_tipo).map((tipo) => (
+              <option key={tipo.id} value={tipo.id}>
+                {tipo.nombre}
+              </option>
+            ))}
+          </select>
+        );
       case 'prioridad':
         return (
           <select

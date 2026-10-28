@@ -1,5 +1,7 @@
+import { API, apiFetch } from '../utils/api';
+
 export async function getAuditoria() {
-  const response = await fetch('/api/auditoria', { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/auditoria`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -10,7 +12,7 @@ export async function getAuditoria() {
 }
 
 export async function getRetencion() {
-  const response = await fetch('/api/auditoria/retencion', { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/auditoria/retencion`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {
@@ -21,7 +23,7 @@ export async function getRetencion() {
 }
 
 export async function actualizarRetencion(diasRetencionLogs) {
-  const response = await fetch('/api/auditoria/retencion', {
+  const response = await apiFetch(`${API}/api/auditoria/retencion`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -38,7 +40,7 @@ export async function actualizarRetencion(diasRetencionLogs) {
 }
 
 export async function limpiarLogs(diasPreservar) {
-  const response = await fetch('/api/auditoria/limpiar', {
+  const response = await apiFetch(`${API}/api/auditoria/limpiar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

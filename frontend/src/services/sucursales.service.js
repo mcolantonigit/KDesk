@@ -1,5 +1,7 @@
+import { API, apiFetch } from '../utils/api';
+
 export async function getSucursales() {
-  const response = await fetch('/api/sucursales');
+  const response = await apiFetch(`${API}/api/sucursales`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -10,7 +12,7 @@ export async function getSucursales() {
 }
 
 export async function crearSucursal(nombre) {
-  const response = await fetch('/api/sucursales', {
+  const response = await apiFetch(`${API}/api/sucursales`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -27,7 +29,7 @@ export async function crearSucursal(nombre) {
 }
 
 export async function editarSucursal(id, cambios) {
-  const response = await fetch(`/api/sucursales/${id}`, {
+  const response = await apiFetch(`${API}/api/sucursales/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

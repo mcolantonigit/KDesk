@@ -586,7 +586,7 @@ aprueba y se commitea por separado.
       antes de implementar)
 
 **Pendientes técnicos**
-- [ ] Merge de `develop` a `main` y deploy: build del frontend en el server
+- [x] Merge de `develop` a `main` y deploy: build del frontend en el server
       (`dist` no está en git), reinicio de la tarea "KDesk Backend" y
       verificar que el `.env` del server no tenga valores de dev
 
@@ -631,3 +631,123 @@ tablas pasan a listas de tarjetas y los modales/paneles a pantallas completas.
       (cada celda trae su data-label); Estadísticas, Parámetros, Alertas y
       Apariencia ya entraban bien. Sin desbordes en ninguna pantalla (se
       revisó con un detector sobre un celular emulado de 390px)
+
+# 16. Versión 1.3 (ideas, sin empezar)
+
+Numeración de versiones: 1.0 fue la primera puesta en producción; 1.2 es lo
+de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
+1.3, todavía sin diseño ni orden definido.
+
+- [x] Detalle del ticket (`/tickets/:id`): poder cambiar prioridad, tipo y
+      estado desde ahí, igual que desde el Tablero; y mostrar el técnico
+      responsable, que hoy no aparece. El tipo no se podía cambiar en ningún
+      lado: endpoint nuevo `PATCH /api/tickets/:id/tipo` (técnicos), con
+      historial y auditoría `CAMBIO_TIPO`. El panel lateral también muestra el
+      responsable
+- [x] Pantalla "Sin conexión con el servidor": tapa la app cuando un pedido
+      no llega al backend (corte, server reiniciándose, túnel caído: errores de
+      red y 502/503/504/52x de Cloudflare). Reintenta sola cada 10 s y se va
+      sola cuando vuelve; lo que se estaba escribiendo queda debajo. Todos los
+      pedidos pasan por `apiFetch` (`src/utils/api.js`)
+- [x] Pantalla "Tenés que iniciar sesión" / "Tu sesión venció": a los 5 s lleva
+      al login y, al entrar, vuelve a la pantalla donde se estaba (también al
+      abrir sin sesión el link de un ticket). La raíz sin sesión va directo al
+      login. El backend marca los 401 de falta de sesión con `codigo: 'SESION'`
+      para no confundirlos con una contraseña incorrecta
+- [x] Tablero: el tipo también se cambia desde la lista y las tarjetas. Al
+      editar (Tablero y detalle) no se ofrecen las opciones deshabilitadas en
+      Parámetros, salvo la que ya tiene el ticket
+- [x] Perfil: que cada usuario pueda cambiar su nombre y apellido ("Mis
+      datos" en el menú, `PUT /api/usuarios/perfil`, auditoría
+      `CAMBIO_DATOS_PERFIL`)
+- [ ] Frontend en Cloudflare Pages y backend en el server local, con el
+      dominio propio `kdesk.ar` (comprado el 27/10/2026 en NIC Argentina,
+      nameservers delegados a Cloudflare, plan gratis; `kalop.com.ar` no se
+      toca). Sin puertos de entrada abiertos: el backend sale por Cloudflare
+      Tunnel. Todo en planes gratis; nada medido por pedido entre el usuario y
+      el server (por eso NO hay Pages Function: tiene un tope de 100.000
+      pedidos por día y KDesk consulta notificaciones cada 20 s por pestaña).
+      - `kdesk.ar` → Pages (solo archivos estáticos, sin límite de visitas)
+      - `api.kdesk.ar` → Tunnel → backend de producción
+      - `dev.kdesk.ar` → Preview de `develop`; `api-dev.kdesk.ar` → Tunnel →
+        backend de dev en la PC de desarrollo
+      - El navegador le pide directo a la API (`VITE_API_URL` en el build de
+        Pages; sin la variable, `/api` como siempre). Frontend y API son el
+        mismo sitio (`kdesk.ar`), así que la cookie `SameSite=Strict` sigue
+        andando; CORS solo para los orígenes de `CORS_ORIGINS` (vacío = como
+        siempre)
+      - Protección de la API: firewall y límite de pedidos de Cloudflare (plan
+        Free) y el login de KDesk. Access queda fuera del camino de
+        los usuarios (no ocupan lugares de Zero Trust)
+  - [x] Frontend: `VITE_API_URL` (`src/utils/api.js`); backend: CORS por
+        `CORS_ORIGINS` (`middleware/cors.middleware.js`)
+  - [x] Túnel de dev (`kdesk-dev`): `cloudflared` como servicio en la PC de desarrollo → `api-dev.kdesk.ar` → `localhost:4000`
+        (cerrado con una regla de firewall a la IP de quien prueba: `kdesk_dev`
+        es un clon con datos reales)
+  - [x] Preview de `develop` en Pages con dominio `dev.kdesk.ar` (CNAME `dev` → `develop.kdesk.pages.dev`) y
+        `VITE_API_URL=https://api-dev.kdesk.ar` en el entorno Preview
+  - [x] Firewall de `kdesk.ar` (plan Free):
+        - Custom rule de bloqueo: `api-dev.kdesk.ar` y `api.kdesk.ar` solo
+          desde la IP de Matías
+        - Rate limiting rule "Limite api.kdesk.ar": rutas `/api/`, 50 pedidos
+          cada 10 s por IP → bloqueo 10 s. En el plan Free la regla de límite
+          no acepta filtrar por IP, por eso las sedes se excluyen aparte
+        - Custom rule "Sedes sin limite" (Skip → rate limiting): ACSA
+          190.221.21.242, Chile 186.10.123.150, Ergos 190.221.148.38. Una sede
+          nueva o un cambio de IP se agrega acá; si no, toda la oficina comparte
+          el límite de una sola IP
+  - [x] Túnel de producción `kdesk-prod`: `cloudflared` como servicio en el server → `api.kdesk.ar` → `https://localhost:443`.
+        Bloqueado por la regla de firewall (solo la IP de Matías) hasta la salida a producción
+  - [ ] **Al salir a producción:** sacar `api.kdesk.ar` de la regla de bloqueo del firewall
+  - [x] Archivos grandes: por Cloudflare el límite de un pedido es 100 MB (plan
+        gratis). Adjuntos bajan a 80 MB; restaurar un backup subiendo un
+        archivo (2 GB) queda solo para la red local
+  - [ ] `FRONTEND_URL` (links de los mails) cuando los usuarios pasen a
+        `kdesk.ar`: solo cambiar el valor en el .env del server
+  - [ ] `kdesk.pages.dev`: redirigir a `kdesk.ar`
+  - [ ] Cuando se apague la versión local: sacar el certificado autofirmado
+        del server (`TLS_PFX_PATH` vacío, backend en HTTP plano) y pasar la
+        ruta del túnel `kdesk-prod` a `http://localhost:PUERTO`. El navegador
+        ya ve el certificado de Cloudflare; el tramo túnel → backend no sale
+        del server. Hasta entonces la ruta va a `https://localhost:443` con
+        "Disable TLS certificate verification"
+- [x] Login con cuentas de Microsoft 365 de la empresa (Entra ID), aceptando
+      solo cuentas de `kalop.com.ar` y `kalop.cl` (tenants separados: app
+      multi-organización filtrada por `M365_TENANTS` y `M365_DOMINIOS`)
+  - [x] Backend: OpenID Connect con PKCE (`/api/auth/microsoft/*`), sin
+        dependencias nuevas ni cambios en la base. Los usuarios existentes se
+        vinculan por correo; los nuevos se crean como "usuario" y eligen
+        sucursal y sector en `/completar-registro`. Quedan sin contraseña
+  - [x] `LOGIN_PASSWORD` (vacío / `local` / `off`): desde internet no hay
+        login con contraseña, registro ni recuperación. La versión local se
+        apaga cuando `kdesk.ar` esté terminada: ahí pasa a `off`
+  - [x] Corregido: el registro aceptaba el rol que mandaba el navegador
+        (cualquiera podía registrarse como administrador armando el pedido)
+  - [x] Registro de la app "KDesk" en Entra ID (tenant ACROPOLIS CABLES SA),
+        varios inquilinos limitada a ACROPOLIS CABLES SA y KALOP CHILENA.
+        **El secreto de cliente vence el 27/10/2028**: crear uno nuevo antes y
+        cambiar `M365_CLIENT_SECRET`, o el login con Microsoft deja de andar
+  - [x] Consentimiento del administrador del tenant de Chile
+  - [x] Probado en `dev.kdesk.ar` con una cuenta de AR (alta nueva con
+        "Completar registro" y entrada de un usuario existente)
+  - [x] Probado con cuentas de Chile
+  - [x] Quien entra con Microsoft no ve "Cambiar contraseña" (ni en el menú ni
+        en "Usuarios y permisos"). Su cuenta no tiene contraseña: no se le puede
+        cambiar, blanquear ni recuperar (sería una entrada sin pasar por Microsoft)
+- [x] Más de un administrador: desde "Usuarios y permisos" un administrador
+      puede dar o sacar el rol de administrador (con confirmación). Nadie cambia
+      su propio rol, y no se le saca el rol ni se deshabilita al último
+      administrador activo
+- [ ] **En el deploy a producción:** hacer administrador a
+      matias.colantoni@kalop.com.ar (en dev ya lo es). sistemas@kalop.com.ar es
+      un grupo de distribución, no una cuenta con la que se pueda entrar: el
+      cambio va con un UPDATE en la base de producción, solo cuando Matías lo
+      pida. Antes de pasar LOGIN_PASSWORD a off, confirmar que haya al menos un
+      administrador que entre con Microsoft
+- [x] ~~Cloudflare Turnstile (captcha)~~: descartado. Desde internet solo se
+      entra con Microsoft 365, que ya tiene su propia protección contra bots;
+      alcanza con el límite de pedidos de Cloudflare
+- [ ] Sector Mantenimiento: **pasa a la próxima versión** (1.4). Rol nuevo
+      "mantenimiento" con su propio tablero de tickets. Mantenimiento puede
+      derivar un ticket a Sistemas y los técnicos de Sistemas pueden derivar
+      uno a Mantenimiento

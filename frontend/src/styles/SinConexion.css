@@ -1,0 +1,54 @@
+.sin-conexion-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.sin-conexion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 400px;
+  max-width: 100%;
+  padding: 32px;
+  background: #121722;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.sin-conexion-logo {
+  width: 72px;
+  height: 72px;
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
+.sin-conexion h1 {
+  font-size: 22px;
+}
+
+.sin-conexion p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sin-conexion-estado {
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .sin-conexion {
+    padding: 24px 20px;
+  }
+}

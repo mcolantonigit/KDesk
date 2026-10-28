@@ -1,5 +1,7 @@
+import { API, apiFetch } from '../utils/api';
+
 export async function getHistorial(idTicket) {
-  const response = await fetch(`/api/tickets/${idTicket}/historial`, { credentials: 'include' });
+  const response = await apiFetch(`${API}/api/tickets/${idTicket}/historial`, { credentials: 'include' });
   const data = await response.json();
 
   if (!response.ok) {

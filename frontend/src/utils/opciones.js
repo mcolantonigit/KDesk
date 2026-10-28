@@ -8,6 +8,12 @@ export function normalizar(texto) {
     .trim();
 }
 
+// Lo que se puede elegir al editar: las opciones activas y, aunque esté
+// deshabilitada en Parámetros, la que ya tiene el ticket.
+export function elegibles(opciones, valorActual) {
+  return opciones.filter((opcion) => opcion.activo !== false || opcion.id === valorActual);
+}
+
 export function ordenarAlfabeticamente(opciones) {
   return [...opciones].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 }

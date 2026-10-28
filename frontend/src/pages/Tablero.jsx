@@ -4,6 +4,7 @@ import { useEsMovil } from '../hooks/useEsMovil';
 import {
   getTickets,
   cambiarEstado,
+  cambiarTipo,
   cambiarPrioridad,
   asignarResponsable,
 } from '../services/tickets.service';
@@ -220,6 +221,15 @@ function Tablero() {
     }
   }
 
+  async function handleCambiarTipo(ticket, idTipo) {
+    try {
+      await cambiarTipo(ticket.id, idTipo);
+      await refrescarTickets();
+    } catch (err) {
+      window.alert(err.message);
+    }
+  }
+
   async function handleCambiarPrioridad(ticket, idPrioridad) {
     try {
       await cambiarPrioridad(ticket.id, idPrioridad);
@@ -407,6 +417,7 @@ function Tablero() {
           tecnicos={tecnicos}
           onCerrar={setTicketACerrar}
           onCambiarEstado={handleCambiarEstado}
+          onCambiarTipo={handleCambiarTipo}
           onCambiarPrioridad={handleCambiarPrioridad}
           onAsignarResponsable={handleAsignarResponsable}
         />
@@ -417,6 +428,7 @@ function Tablero() {
           tecnicos={tecnicos}
           onCerrar={setTicketACerrar}
           onCambiarEstado={handleCambiarEstado}
+          onCambiarTipo={handleCambiarTipo}
           onCambiarPrioridad={handleCambiarPrioridad}
           onAsignarResponsable={handleAsignarResponsable}
         />

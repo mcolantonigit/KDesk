@@ -48,6 +48,29 @@
   font-weight: 600;
 }
 
+/* Campos editables (solo técnicos): mismo aspecto que en las tarjetas del Tablero. */
+.detalle-ticket-datos dd select {
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.detalle-ticket-datos dd select:focus {
+  border-color: var(--border-active);
+}
+
+.detalle-ticket-datos dd select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
 /* Dos columnas: lo estático a la izquierda, la actividad a la derecha. */
 .detalle-ticket-cuerpo {
   display: grid;

@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Login from '../pages/Login';
 import Registro from '../pages/Registro';
+import CompletarRegistro from '../pages/CompletarRegistro';
 import RecuperarContrasena from '../pages/RecuperarContrasena';
 import ResetearContrasena from '../pages/ResetearContrasena';
 import ActivarCuenta from '../pages/ActivarCuenta';
@@ -28,6 +29,7 @@ function AppRoutes() {
       <Route element={<RutaPublica />}>
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/completar-registro" element={<CompletarRegistro />} />
       </Route>
 
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
