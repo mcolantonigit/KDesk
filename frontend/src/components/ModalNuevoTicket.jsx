@@ -164,6 +164,11 @@ function ModalNuevoTicket({ onClose }) {
           <Button type="button" variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
+          {kadiHabilitada && (
+            <Button type="button" variant="secondary" onClick={() => setUsarFormulario(false)} disabled={enviando}>
+              Generar asistido
+            </Button>
+          )}
           <Button type="submit" disabled={enviando}>
             {enviando ? 'Creando...' : 'Crear ticket'}
           </Button>

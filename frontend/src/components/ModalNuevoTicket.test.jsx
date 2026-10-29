@@ -64,6 +64,11 @@ describe('ModalNuevoTicket', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Generar manual' }));
 
     expect(await screen.findByLabelText('Tipo de ticket')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Generar asistido' }));
+
+    expect(await screen.findByText(/Hola, soy Kadi/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Tipo de ticket')).not.toBeInTheDocument();
   });
 
   it('si Kadi no está habilitada o no se puede consultar, queda el formulario', async () => {
@@ -72,6 +77,7 @@ describe('ModalNuevoTicket', () => {
 
     expect(await screen.findByLabelText('Tipo de ticket')).toBeInTheDocument();
     expect(screen.queryByText(/Hola, soy Kadi/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Generar asistido' })).not.toBeInTheDocument();
   });
 
   it('a un usuario común le pide tipo, prioridad, título y descripción', async () => {
