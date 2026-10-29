@@ -20,6 +20,7 @@ import auditoriaRoutes from './routes/auditoria.routes.js';
 import backupsRoutes from './routes/backups.routes.js';
 import notificacionesRoutes from './routes/notificaciones.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import kadiRoutes from './routes/kadi.routes.js';
 import { cors } from './middleware/cors.middleware.js';
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api', estadosRoutes);
 app.use('/api', prioridadesRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', ticketsRoutes);
+app.use('/api', kadiRoutes);
 app.use('/api', comentariosRoutes);
 app.use('/api', tareasTecnicasRoutes);
 app.use('/api', historialRoutes);

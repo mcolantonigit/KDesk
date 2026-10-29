@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import ModalNuevoTicket from './ModalNuevoTicket';
+import { getEstadoKadi } from '../services/kadi.service';
 
 const navigate = vi.fn();
 let usuarioActual = { id: 7, id_rol: 1 };
@@ -14,6 +15,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 vi.mock('../context/AuthContext', () => ({ useAuth: () => ({ usuario: usuarioActual }) }));
 vi.mock('../services/tickets.service', () => ({ crearTicket: vi.fn() }));
 vi.mock('../services/adjuntos.service', () => ({ subirAdjuntoDeTicket: vi.fn() }));
+vi.mock('../services/kadi.service', () => ({ getEstadoKadi: vi.fn(), enviarMensajeAKadi: vi.fn() }));
 vi.mock('../services/tiposTicket.service', () => ({
   getTiposTicket: vi.fn().mockResolvedValue([
     { id: 2, nombre: 'Software', activo: true },
@@ -49,6 +51,27 @@ describe('ModalNuevoTicket', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     usuarioActual = { id: 7, id_rol: 1 };
+    getEstadoKadi.mockResolvedValue(false);
+  });
+
+  it('si Kadi está habilitada abre el chat, y "Prefiero el formulario" muestra el formulario de siempre', async () => {
+    getEstadoKadi.mockResolvedValue(true);
+    abrir();
+
+    expect(await screen.findByText(/Hola, soy Kadi/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Tipo de ticket')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Prefiero el formulario' }));
+
+    expect(await screen.findByLabelText('Tipo de ticket')).toBeInTheDocument();
+  });
+
+  it('si Kadi no está habilitada o no se puede consultar, queda el formulario', async () => {
+    getEstadoKadi.mockRejectedValue(new Error('sin conexión'));
+    abrir();
+
+    expect(await screen.findByLabelText('Tipo de ticket')).toBeInTheDocument();
+    expect(screen.queryByText(/Hola, soy Kadi/)).not.toBeInTheDocument();
   });
 
   it('a un usuario común le pide tipo, prioridad, título y descripción', async () => {

@@ -1,0 +1,139 @@
+.kadi {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.kadi-mensajes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.kadi-burbuja {
+  max-width: 85%;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.kadi-burbuja-kadi {
+  align-self: flex-start;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.kadi-burbuja-persona {
+  align-self: flex-end;
+  color: var(--text);
+  background: var(--hover-bg);
+  border: 1px solid var(--border-active);
+  border-bottom-right-radius: 4px;
+}
+
+.kadi-escribiendo {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.kadi-propuesta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+}
+
+.kadi-propuesta h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.kadi-propuesta dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.kadi-propuesta dt {
+  color: var(--text-secondary);
+}
+
+.kadi-propuesta dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.kadi-propuesta-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.kadi-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.kadi-form textarea {
+  flex: 1;
+  resize: none;
+  padding: 10px 12px;
+  color: var(--text);
+  font: inherit;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.kadi-form textarea:focus {
+  outline: none;
+  border-color: var(--border-active);
+}
+
+.kadi-limite {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.kadi-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.kadi-enlace {
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .kadi-mensajes {
+    height: 300px;
+  }
+
+  .kadi-burbuja {
+    max-width: 92%;
+  }
+}

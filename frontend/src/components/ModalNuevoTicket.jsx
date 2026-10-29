@@ -8,11 +8,13 @@ import { getSucursales } from '../services/sucursales.service';
 import { getSectores } from '../services/sectores.service';
 import { getUsuarios } from '../services/usuarios.service';
 import { subirAdjuntoDeTicket } from '../services/adjuntos.service';
+import { getEstadoKadi } from '../services/kadi.service';
 import Modal from './Modal';
 import FormField from './FormField';
 import Combobox from './Combobox';
 import Button from './Button';
 import AdjuntoInput from './AdjuntoInput';
+import ChatKadi from './ChatKadi';
 import '../styles/ModalNuevoTicket.css';
 
 const TITULO_LONGITUD_MAXIMA = 35;
@@ -37,8 +39,17 @@ function ModalNuevoTicket({ onClose }) {
   const [adjunto, setAdjunto] = useState(null);
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [kadiHabilitada, setKadiHabilitada] = useState(false);
+  const [usarFormulario, setUsarFormulario] = useState(false);
 
   const navigate = useNavigate();
+
+  // Kadi (el asistente que arma el ticket charlando) solo aparece para quien la tiene habilitada.
+  useEffect(() => {
+    getEstadoKadi()
+      .then(setKadiHabilitada)
+      .catch(() => setKadiHabilitada(false));
+  }, []);
 
   useEffect(() => {
     getTiposTicket().then((data) => setTipos(data.filter((tipo) => tipo.activo)));
@@ -86,6 +97,14 @@ function ModalNuevoTicket({ onClose }) {
       setError(err.message);
       setEnviando(false);
     }
+  }
+
+  if (kadiHabilitada && !usarFormulario) {
+    return (
+      <Modal titulo="Nuevo ticket con Kadi" onClose={onClose}>
+        <ChatKadi onClose={onClose} onUsarFormulario={() => setUsarFormulario(true)} />
+      </Modal>
+    );
   }
 
   return (
