@@ -23,6 +23,12 @@
   gap: 12px;
 }
 
+/* Igual que "Generar manual" en el chat: el botón que cambia de modo queda
+   siempre en la esquina inferior izquierda de la ventana. */
+.nuevo-ticket-cambiar-modo {
+  margin-right: auto;
+}
+
 @media (max-width: 720px) {
   .nuevo-ticket-columnas {
     grid-template-columns: 1fr;
