@@ -133,6 +133,7 @@ describe('Kadi', () => {
     expect(corta).toContain('Indagá un poco más');
     expect(corta).toContain('Jamás');
     expect(corta).toContain('luz de link');
+    expect(corta).toContain('Posible diagnóstico:');
     expect(corta).not.toContain('Ya pasaste la meta');
     expect(pasadaLaMeta).toContain('Ya pasaste la meta');
     expect(casiEnElTope).toContain('Cerrá ya');
