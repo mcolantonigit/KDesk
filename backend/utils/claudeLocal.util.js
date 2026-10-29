@@ -1,7 +1,18 @@
 import { spawn } from 'child_process';
 import os from 'os';
+import path from 'path';
 
 const TIEMPO_MAXIMO_MS = 90000;
+
+// Si el backend corre con otra cuenta de Windows que la de quien inició sesión
+// en Claude (por ejemplo la tarea programada como SYSTEM), KADI_CLAUDE_HOME es
+// la carpeta de usuario de esa persona (C:/Users/NOMBRE): Claude busca ahí su
+// sesión en lugar de en el perfil de la cuenta del backend.
+export function entornoDeClaude(env = process.env) {
+  const casa = env.KADI_CLAUDE_HOME;
+  if (!casa) return env;
+  return { ...env, USERPROFILE: casa, HOME: casa, CLAUDE_CONFIG_DIR: path.join(casa, '.claude') };
+}
 
 // Corre `claude -p` (Claude Code) con la sesión de quien lo instaló y devuelve
 // el texto de la respuesta. Uso personal en desarrollo: Kadi con Claude solo
@@ -19,7 +30,7 @@ export function ejecutarClaude({ sistema, conversacion }) {
   if (process.env.KADI_MODELO) args.push('--model', process.env.KADI_MODELO);
 
   return new Promise((resolve, reject) => {
-    const proceso = spawn(binario, args, { cwd: os.tmpdir(), windowsHide: true });
+    const proceso = spawn(binario, args, { cwd: os.tmpdir(), windowsHide: true, env: entornoDeClaude() });
     let salida = '';
     let errores = '';
     const reloj = setTimeout(() => {
