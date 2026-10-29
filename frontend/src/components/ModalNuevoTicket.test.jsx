@@ -54,14 +54,14 @@ describe('ModalNuevoTicket', () => {
     getEstadoKadi.mockResolvedValue(false);
   });
 
-  it('si Kadi está habilitada abre el chat, y "Prefiero el formulario" muestra el formulario de siempre', async () => {
+  it('si Kadi está habilitada abre el chat, y "Generar manual" muestra el formulario de siempre', async () => {
     getEstadoKadi.mockResolvedValue(true);
     abrir();
 
     expect(await screen.findByText(/Hola, soy Kadi/)).toBeInTheDocument();
     expect(screen.queryByLabelText('Tipo de ticket')).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Prefiero el formulario' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Generar manual' }));
 
     expect(await screen.findByLabelText('Tipo de ticket')).toBeInTheDocument();
   });

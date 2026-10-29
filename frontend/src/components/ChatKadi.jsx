@@ -135,12 +135,9 @@ function ChatKadi({ onClose, onUsarFormulario }) {
       )}
 
       <div className="kadi-pie">
-        <span>
-          Mensaje {Math.min(mensajesPersona + (sinMensajes ? 0 : 1), MAX_MENSAJES)} de {MAX_MENSAJES}
-        </span>
-        <button type="button" className="kadi-enlace" onClick={onUsarFormulario}>
-          Prefiero el formulario
-        </button>
+        <Button type="button" variant="secondary" onClick={onUsarFormulario}>
+          Generar manual
+        </Button>
       </div>
     </div>
   );

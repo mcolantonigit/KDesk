@@ -101,7 +101,7 @@ function ModalNuevoTicket({ onClose }) {
 
   if (kadiHabilitada && !usarFormulario) {
     return (
-      <Modal titulo="Nuevo ticket con Kadi" onClose={onClose}>
+      <Modal titulo="Nuevo ticket con Kadi" size="chat" onClose={onClose}>
         <ChatKadi onClose={onClose} onUsarFormulario={() => setUsarFormulario(true)} />
       </Modal>
     );

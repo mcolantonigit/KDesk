@@ -3,7 +3,7 @@ import '../styles/Modal.css';
 
 // Ventana modal genérica: se cierra con Escape o haciendo clic en el fondo,
 // y bloquea el scroll de la página mientras está abierta.
-// `size`: 'md' (formularios chicos) o 'lg' (formularios en dos columnas).
+// `size`: 'md' (formularios chicos), 'chat' (charla con Kadi) o 'lg' (formularios en dos columnas).
 function Modal({ titulo, onClose, size = 'md', children }) {
   const idTitulo = useId();
 

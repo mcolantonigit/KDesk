@@ -29,6 +29,10 @@
   max-width: 480px;
 }
 
+.modal-chat {
+  max-width: 680px;
+}
+
 .modal-lg {
   max-width: 880px;
 }

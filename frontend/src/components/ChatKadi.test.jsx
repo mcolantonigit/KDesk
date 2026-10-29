@@ -55,7 +55,6 @@ describe('ChatKadi', () => {
       expect.objectContaining({ rol: 'kadi' }),
       { rol: 'persona', texto: 'No imprime' },
     ]);
-    expect(screen.getByText('Mensaje 2 de 10')).toBeInTheDocument();
   });
 
   it('cuando Kadi propone el ticket, al confirmar lo crea y va a él', async () => {
@@ -129,11 +128,11 @@ describe('ChatKadi', () => {
     expect(screen.queryByLabelText('Tu mensaje')).not.toBeInTheDocument();
   }, 20000);
 
-  it('"Prefiero el formulario" avisa al modal', async () => {
+  it('"Generar manual" avisa al modal', async () => {
     const onUsarFormulario = vi.fn();
     abrir({ onUsarFormulario });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Prefiero el formulario' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Generar manual' }));
 
     expect(onUsarFormulario).toHaveBeenCalled();
   });
