@@ -47,6 +47,10 @@ export function ejecutarClaude({ sistema, conversacion }) {
       }
     });
 
+    // Si Claude se cierra antes de leer la charla (sin sesión, mal instalado),
+    // escribirle falla con EPIPE: sin este manejador el error tira abajo todo el
+    // backend. El motivo real lo da el código de salida en 'close'.
+    proceso.stdin.on('error', () => {});
     proceso.stdin.end(conversacion);
   });
 }
