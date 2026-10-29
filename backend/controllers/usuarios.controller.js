@@ -103,6 +103,19 @@ export async function cambiarRol(req, res) {
   }
 }
 
+export async function cambiarKadi(req, res) {
+  try {
+    const usuario = await usuariosService.cambiarKadiUsuario({
+      id: req.params.id,
+      habilitada: req.body.habilitada,
+      idUsuarioQueCambia: req.usuario.id,
+    });
+    res.json(usuario);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'No se pudo cambiar Kadi para el usuario' });
+  }
+}
+
 export async function cambiarActivo(req, res) {
   try {
     const { activo } = req.body;

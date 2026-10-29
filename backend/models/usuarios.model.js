@@ -5,7 +5,7 @@ import { pool } from '../config/db.js';
 export const SIN_PASSWORD = '!microsoft365';
 
 const CAMPOS_PUBLICOS =
-  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado, activacion_reenviada, ' +
+  'id, nombre, apellido, correo, id_rol, id_sucursal, id_sector, fecha_registro, activo, email_verificado, activacion_reenviada, kadi_habilitada, ' +
   `password_hash <> '${SIN_PASSWORD}' AS con_password`;
 
 export async function findAll() {
@@ -81,6 +81,14 @@ export async function countOtrosAdministradoresActivos(idExcluido) {
     [idExcluido]
   );
   return result.rows[0].cantidad;
+}
+
+export async function updateKadi(id, habilitada) {
+  const result = await pool.query(
+    `UPDATE usuarios SET kadi_habilitada = $1 WHERE id = $2 RETURNING ${CAMPOS_PUBLICOS}`,
+    [habilitada, id]
+  );
+  return result.rows[0];
 }
 
 export async function updateActivo(id, activo) {

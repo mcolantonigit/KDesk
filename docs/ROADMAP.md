@@ -756,6 +756,25 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
 - [x] ~~Cloudflare Turnstile (captcha)~~: descartado. Desde internet solo se
       entra con Microsoft 365, que ya tiene su propia protección contra bots;
       alcanza con el límite de pedidos de Cloudflare
+- [ ] **Kadi** (versión 1.4): asistente que arma el ticket en una charla de hasta 10
+      mensajes (reemplaza al formulario de "Nuevo ticket"; "Generar manual" abre
+      el formulario de siempre). Propone tipo, prioridad sugerida, título y
+      descripción; el ticket se crea cuando la persona confirma.
+  - [x] Prototipo en `develop`: `POST /api/kadi/mensaje`, instrucciones en
+        `backend/kadi/instrucciones.md`, chat en `ChatKadi.jsx`. Responde con
+        Claude Code (`claude -p`) usando la sesión personal de Matías: **solo para
+        desarrollo, nunca para usuarios reales** (un plan Pro es de uso personal)
+  - [x] Se habilita por usuario con la columna `usuarios.kadi_habilitada`
+        (casilla "Kadi" en "Usuarios y permisos", solo administradores) y el
+        interruptor general `KADI_ACTIVA=on` del .env. Sin `KADI_ACTIVA` la
+        columna no se ve y nadie tiene Kadi
+  - [ ] **Antes de desplegar este código en producción:** agregar la columna a la
+        base de producción: `ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS
+        kadi_habilitada BOOLEAN NOT NULL DEFAULT FALSE;` (si no, falla todo lo que
+        lee usuarios). Dejar `KADI_ACTIVA` sin definir en el .env de producción
+  - [ ] Para usuarios reales falta otra fuente de respuestas que no cueste: Kadi
+        guiada sin IA (preguntas fijas y reglas de prioridad) o un modelo local
+        (Ollama). La pieza que da las respuestas es `utils/claudeLocal.util.js`
 - [ ] Sector Mantenimiento: **pasa a la próxima versión** (1.4). Rol nuevo
       "mantenimiento" con su propio tablero de tickets. Mantenimiento puede
       derivar un ticket a Sistemas y los técnicos de Sistemas pueden derivar

@@ -75,6 +75,7 @@ CREATE TABLE usuarios (
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
     email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
     activacion_reenviada BOOLEAN NOT NULL DEFAULT FALSE,
+    kadi_habilitada BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- Ajustar al mismo listado que ALLOWED_EMAIL_DOMAINS en backend/.env
     CONSTRAINT chk_correo_dominio CHECK (

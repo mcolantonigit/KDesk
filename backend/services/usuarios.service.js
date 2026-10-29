@@ -349,6 +349,26 @@ export async function cambiarRolUsuario({ id, idRol, idUsuarioQueCambia }) {
   return usuarioActualizado;
 }
 
+export async function cambiarKadiUsuario({ id, habilitada, idUsuarioQueCambia }) {
+  if (typeof habilitada !== 'boolean') {
+    throw crearError('Indicá si Kadi queda habilitada o no', 400);
+  }
+  const usuario = await usuariosModel.findById(id);
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  const usuarioActualizado = await usuariosModel.updateKadi(id, habilitada);
+
+  await auditoriaService.registrarEvento({
+    idUsuario: idUsuarioQueCambia,
+    accion: 'CAMBIO_KADI',
+    detalle: `${habilitada ? 'Habilitación' : 'Deshabilitación'} de Kadi para ${usuario.correo}`,
+  });
+
+  return usuarioActualizado;
+}
+
 export async function cambiarEstadoActivo({ id, activo, idUsuarioQueCambia }) {
   const usuario = await usuariosModel.findById(id);
   if (!usuario) {

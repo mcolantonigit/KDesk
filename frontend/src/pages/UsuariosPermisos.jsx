@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsuarios, cambiarRolUsuario, cambiarEstadoActivo } from '../services/usuarios.service';
+import { getUsuarios, cambiarRolUsuario, cambiarEstadoActivo, cambiarKadiUsuario } from '../services/usuarios.service';
+import { getKadiActiva } from '../services/kadi.service';
 import { getRoles } from '../services/roles.service';
 import { useAuth } from '../context/AuthContext';
 import { getSucursales } from '../services/sucursales.service';
@@ -41,15 +42,18 @@ function UsuariosPermisos() {
   );
   const [ordenPor, setOrdenPor] = useState('nombre');
   const [ordenAsc, setOrdenAsc] = useState(true);
+  const [kadiActiva, setKadiActiva] = useState(false);
 
   async function cargarTodo() {
     try {
-      const [usuariosData, rolesData, sucursalesData, sectoresData] = await Promise.all([
+      const [usuariosData, rolesData, sucursalesData, sectoresData, activa] = await Promise.all([
         getUsuarios(),
         getRoles(),
         getSucursales(),
         getSectores(),
+        getKadiActiva().catch(() => false),
       ]);
+      setKadiActiva(activa);
       setUsuarios(usuariosData);
       setRoles(rolesData);
       setSucursales(sucursalesData);
@@ -106,6 +110,8 @@ function UsuariosPermisos() {
         return new Date(usuario.fecha_registro).getTime();
       case 'activo':
         return usuario.activo ? 1 : 0;
+      case 'kadi_habilitada':
+        return usuario.kadi_habilitada ? 1 : 0;
       default:
         return usuario[key] ?? '';
     }
@@ -160,6 +166,15 @@ function UsuariosPermisos() {
 
     try {
       await cambiarEstadoActivo(usuario.id, !usuario.activo);
+      await refrescarUsuarios();
+    } catch (err) {
+      window.alert(err.message);
+    }
+  }
+
+  async function handleToggleKadi(usuario) {
+    try {
+      await cambiarKadiUsuario(usuario.id, !usuario.kadi_habilitada);
       await refrescarUsuarios();
     } catch (err) {
       window.alert(err.message);
@@ -267,6 +282,12 @@ function UsuariosPermisos() {
                   Activo
                   {ordenPor === 'activo' && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
                 </th>
+                {kadiActiva && (
+                  <th onClick={() => handleOrdenar('kadi_habilitada')}>
+                    Kadi
+                    {ordenPor === 'kadi_habilitada' && <span className="tabla-tickets-orden">{ordenAsc ? ' ▲' : ' ▼'}</span>}
+                  </th>
+                )}
                 <th>Contraseña</th>
               </tr>
             </thead>
@@ -283,6 +304,16 @@ function UsuariosPermisos() {
                       {usuario.activo ? 'Deshabilitar' : 'Habilitar'}
                     </Button>
                   </td>
+                  {kadiActiva && (
+                    <td data-label="Kadi">
+                      <input
+                        type="checkbox"
+                        aria-label={`Kadi para ${usuario.nombre} ${usuario.apellido}`}
+                        checked={Boolean(usuario.kadi_habilitada)}
+                        onChange={() => handleToggleKadi(usuario)}
+                      />
+                    </td>
+                  )}
                   <td data-label="">
                     {usuario.con_password ? (
                       <Button variant="secondary" onClick={() => setUsuarioParaPassword(usuario)}>
@@ -296,7 +327,7 @@ function UsuariosPermisos() {
               ))}
               {usuariosOrdenados.length === 0 && (
                 <tr>
-                  <td colSpan={columnasActivas.length + 2} className="tabla-tickets-vacio">
+                  <td colSpan={columnasActivas.length + (kadiActiva ? 3 : 2)} className="tabla-tickets-vacio">
                     No hay usuarios para mostrar
                   </td>
                 </tr>

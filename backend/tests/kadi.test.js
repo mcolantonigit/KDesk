@@ -8,40 +8,80 @@ vi.mock('../utils/claudeLocal.util.js', () => ({ ejecutarClaude: vi.fn() }));
 const persona = (texto) => ({ rol: 'persona', texto });
 
 describe('Kadi', () => {
-  let usuario, otro, tipo, prioridad;
+  let usuario, otro, admin, tipo, prioridad;
 
   beforeEach(async () => {
     await limpiarDatos();
     usuario = await crearUsuario();
     otro = await crearUsuario();
-    process.env.KADI_USUARIOS = usuario.correo.toUpperCase();
+    admin = await crearUsuario({ rol: 'administrador' });
+    process.env.KADI_ACTIVA = 'on';
+    await pool.query('UPDATE usuarios SET kadi_habilitada = TRUE WHERE id = $1', [usuario.id]);
     tipo = (await pool.query('SELECT id, nombre FROM tipos_ticket WHERE activo ORDER BY id LIMIT 1')).rows[0];
     prioridad = (await pool.query('SELECT id, nombre FROM prioridades WHERE activo ORDER BY id LIMIT 1')).rows[0];
     ejecutarClaude.mockReset();
   });
 
   afterEach(() => {
-    delete process.env.KADI_USUARIOS;
+    delete process.env.KADI_ACTIVA;
   });
 
-  it('solo está habilitada para los correos de KADI_USUARIOS', async () => {
+  it('solo está habilitada para los usuarios que la tienen habilitada', async () => {
     const propia = await api().get('/api/kadi/estado').set('Cookie', usuario.cookie);
     const ajena = await api().get('/api/kadi/estado').set('Cookie', otro.cookie);
 
-    expect(propia.body).toEqual({ habilitada: true });
-    expect(ajena.body).toEqual({ habilitada: false });
+    expect(propia.body).toEqual({ habilitada: true, activa: true });
+    expect(ajena.body).toEqual({ habilitada: false, activa: true });
 
     const intento = await api().post('/api/kadi/mensaje').set('Cookie', otro.cookie).send({ mensajes: [persona('hola')] });
     expect(intento.status).toBe(403);
     expect(ejecutarClaude).not.toHaveBeenCalled();
   });
 
-  it('sin KADI_USUARIOS está apagada para todos', async () => {
-    process.env.KADI_USUARIOS = '';
+  it('sin el interruptor general (KADI_ACTIVA) está apagada para todos, aunque el usuario la tenga', async () => {
+    delete process.env.KADI_ACTIVA;
 
     const res = await api().get('/api/kadi/estado').set('Cookie', usuario.cookie);
+    const intento = await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: [persona('hola')] });
 
-    expect(res.body).toEqual({ habilitada: false });
+    expect(res.body).toEqual({ habilitada: false, activa: false });
+    expect(intento.status).toBe(403);
+  });
+
+  it('un administrador habilita y deshabilita Kadi para un usuario, y queda auditado', async () => {
+    const habilita = await api().patch(`/api/usuarios/${otro.id}/kadi`).set('Cookie', admin.cookie).send({ habilitada: true });
+    expect(habilita.status).toBe(200);
+    expect(habilita.body.kadi_habilitada).toBe(true);
+    const estado = await api().get('/api/kadi/estado').set('Cookie', otro.cookie);
+    expect(estado.body.habilitada).toBe(true);
+
+    const deshabilita = await api().patch(`/api/usuarios/${otro.id}/kadi`).set('Cookie', admin.cookie).send({ habilitada: false });
+    expect(deshabilita.body.kadi_habilitada).toBe(false);
+
+    const auditoria = await pool.query("SELECT detalle FROM auditoria WHERE accion = 'CAMBIO_KADI' ORDER BY id");
+    expect(auditoria.rows.map((fila) => fila.detalle)).toEqual([
+      `Habilitación de Kadi para ${otro.correo}`,
+      `Deshabilitación de Kadi para ${otro.correo}`,
+    ]);
+  });
+
+  it('solo un administrador puede cambiarlo, y pide un valor válido', async () => {
+    const comun = await api().patch(`/api/usuarios/${otro.id}/kadi`).set('Cookie', usuario.cookie).send({ habilitada: true });
+    expect(comun.status).toBe(403);
+
+    const invalido = await api().patch(`/api/usuarios/${otro.id}/kadi`).set('Cookie', admin.cookie).send({ habilitada: 'si' });
+    expect(invalido.status).toBe(400);
+
+    const inexistente = await api().patch('/api/usuarios/999999/kadi').set('Cookie', admin.cookie).send({ habilitada: true });
+    expect(inexistente.status).toBe(404);
+  });
+
+  it('el listado de usuarios informa quién tiene Kadi', async () => {
+    const res = await api().get('/api/usuarios').set('Cookie', admin.cookie);
+
+    const porId = Object.fromEntries(res.body.map((fila) => [fila.id, fila.kadi_habilitada]));
+    expect(porId[usuario.id]).toBe(true);
+    expect(porId[otro.id]).toBe(false);
   });
 
   it('exige sesión', async () => {

@@ -24,16 +24,17 @@ function crearError(mensaje, status) {
 }
 
 // Kadi con Claude corre con la sesión personal de quien tiene Claude Code
-// instalado, así que solo la usan los correos de KADI_USUARIOS (separados por
-// coma). Vacío = apagada para todos, que es como debe quedar en producción.
+// instalado. KADI_ACTIVA=on es el interruptor general (solo en desarrollo; en
+// producción queda sin definir) y, con él prendido, la habilita cada usuario
+// desde "Usuarios y permisos" (columna kadi_habilitada).
+export function kadiActiva() {
+  return process.env.KADI_ACTIVA === 'on';
+}
+
 export async function estaHabilitada(idUsuario) {
-  const permitidos = (process.env.KADI_USUARIOS || '')
-    .split(',')
-    .map((correo) => correo.trim().toLowerCase())
-    .filter(Boolean);
-  if (permitidos.length === 0) return false;
+  if (!kadiActiva()) return false;
   const usuario = await usuariosModel.findById(idUsuario);
-  return Boolean(usuario) && permitidos.includes(usuario.correo.toLowerCase());
+  return Boolean(usuario?.kadi_habilitada);
 }
 
 function validarMensajes(mensajes) {

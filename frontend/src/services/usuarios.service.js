@@ -175,6 +175,23 @@ export async function cambiarPassword({ passwordActual, passwordNueva, confirmac
   return data;
 }
 
+export async function cambiarKadiUsuario(id, habilitada) {
+  const response = await apiFetch(`${API}/api/usuarios/${id}/kadi`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ habilitada }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'No se pudo cambiar Kadi para el usuario');
+  }
+
+  return data;
+}
+
 export async function cambiarEstadoActivo(id, activo) {
   const response = await apiFetch(`${API}/api/usuarios/${id}/activo`, {
     method: 'PATCH',

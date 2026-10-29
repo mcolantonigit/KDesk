@@ -2,7 +2,10 @@ import * as kadiService from '../services/kadi.service.js';
 
 export async function getEstado(req, res) {
   try {
-    res.json({ habilitada: await kadiService.estaHabilitada(req.usuario.id) });
+    res.json({
+      habilitada: await kadiService.estaHabilitada(req.usuario.id),
+      activa: kadiService.kadiActiva(),
+    });
   } catch (error) {
     res.status(500).json({ message: 'No se pudo consultar a Kadi' });
   }

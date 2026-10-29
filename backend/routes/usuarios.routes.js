@@ -22,6 +22,7 @@ router.put('/usuarios/perfil/password', requiereAutenticacion, requiereLoginConP
 router.get('/usuarios', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarios);
 router.get('/usuarios/:id', requiereAutenticacion, requiereRolTecnico, usuariosController.getUsuarioById);
 router.patch('/usuarios/:id/rol', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarRol);
+router.patch('/usuarios/:id/kadi', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarKadi);
 router.patch('/usuarios/:id/activo', requiereAutenticacion, requiereRolAdministrador, usuariosController.cambiarActivo);
 router.put('/usuarios/:id/password', requiereAutenticacion, requiereRolAdministrador, usuariosController.blanquearPassword);
 
