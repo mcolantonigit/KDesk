@@ -767,7 +767,8 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
   - [x] Se habilita por usuario con la columna `usuarios.kadi_habilitada`
         (casilla "Kadi" en "Usuarios y permisos", solo administradores) y el
         interruptor general `KADI_ACTIVA=on` del .env. Sin `KADI_ACTIVA` la
-        columna no se ve y nadie tiene Kadi
+        columna no se ve y nadie tiene Kadi. Las cuentas nuevas nacen con la casilla
+        tildada (también en producción); las que ya existían quedan sin Kadi
   - [ ] **Antes de desplegar este código en producción:** agregar la columna a la
         base de producción: `ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS
         kadi_habilitada BOOLEAN NOT NULL DEFAULT FALSE;` (si no, falla todo lo que

@@ -77,7 +77,7 @@ describe('Kadi', () => {
     expect(inexistente.status).toBe(404);
   });
 
-  it('las cuentas nuevas nacen con Kadi habilitada solo donde Kadi está activa', async () => {
+  it('las cuentas nuevas nacen con Kadi habilitada', async () => {
     const datos = async (correo) => ({
       nombre: 'Nueva',
       apellido: 'Cuenta',
@@ -88,12 +88,9 @@ describe('Kadi', () => {
       idSector: (await pool.query('SELECT id FROM sectores ORDER BY id LIMIT 1')).rows[0].id,
     });
 
-    const conKadi = await usuariosModel.create(await datos('nueva-on@tuempresa.com'));
-    delete process.env.KADI_ACTIVA;
-    const sinKadi = await usuariosModel.create(await datos('nueva-off@tuempresa.com'));
+    const nueva = await usuariosModel.create(await datos('nueva@tuempresa.com'));
 
-    expect(conKadi.kadi_habilitada).toBe(true);
-    expect(sinKadi.kadi_habilitada).toBe(false);
+    expect(nueva.kadi_habilitada).toBe(true);
   });
 
   it('el listado de usuarios informa quién tiene Kadi', async () => {
