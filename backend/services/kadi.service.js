@@ -13,7 +13,9 @@ const INSTRUCCIONES = fs.readFileSync(
   'utf8'
 );
 
-const MAX_MENSAJES_PERSONA = 10;
+// Meta de la charla (a Kadi se le pide cerrar cerca de ahí) y tope duro.
+const OBJETIVO_MENSAJES_PERSONA = 15;
+const MAX_MENSAJES_PERSONA = 50;
 const LARGO_MAXIMO_MENSAJE = 1000;
 const TITULO_LONGITUD_MAXIMA = 35;
 
@@ -59,6 +61,15 @@ function listaParaClaude(titulo, filas) {
   return `### ${titulo}\n${filas.map((fila) => `- id ${fila.id}: ${fila.nombre}`).join('\n')}`;
 }
 
+function estadoDeLaCharla(deLaPersona) {
+  const base = `La persona lleva ${deLaPersona} mensajes (meta: ${OBJETIVO_MENSAJES_PERSONA}; tope duro: ${MAX_MENSAJES_PERSONA}).`;
+  if (deLaPersona >= MAX_MENSAJES_PERSONA - 3) return `${base} Cerrá ya: armá el ticket con lo que tengas.`;
+  if (deLaPersona >= OBJETIVO_MENSAJES_PERSONA) {
+    return `${base} Ya pasaste la meta: cerrá el ticket salvo que falte algo realmente importante.`;
+  }
+  return base;
+}
+
 async function armarSistema(usuario, tipos, prioridades, deLaPersona) {
   const sucursal = await sucursalesModel.findById(usuario.id_sucursal);
   const sector = await sectoresModel.findById(usuario.id_sector);
@@ -69,9 +80,8 @@ async function armarSistema(usuario, tipos, prioridades, deLaPersona) {
     '## Listas',
     listaParaClaude('Tipos de ticket', tipos),
     listaParaClaude('Prioridades (de la más alta a la más baja)', prioridades),
-    `## Estado de la charla\nLa persona lleva ${deLaPersona} de ${MAX_MENSAJES_PERSONA} mensajes.${
-      deLaPersona >= MAX_MENSAJES_PERSONA - 2 ? ' Cerrá ya: armá el ticket con lo que tengas.' : ''
-    }`,
+    `## Estado de la charla
+${estadoDeLaCharla(deLaPersona)}`,
   ].join('\n\n');
 }
 

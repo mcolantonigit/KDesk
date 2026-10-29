@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import ChatKadi from './ChatKadi';
@@ -115,18 +115,24 @@ describe('ChatKadi', () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  it('al llegar a 10 mensajes se cierra la charla y manda al formulario', async () => {
+  it('la charla sigue pasados los 15 mensajes y recién se corta a los 50, mandando al formulario', async () => {
     enviarMensajeAKadi.mockResolvedValue({ mensaje: 'Seguimos', ticket: null });
     abrir();
 
-    for (let i = 0; i < 10; i += 1) {
-      await escribir(`mensaje ${i}`);
-      await screen.findAllByText('Seguimos');
+    for (let i = 0; i < 49; i += 1) {
+      fireEvent.change(screen.getByLabelText('Tu mensaje'), { target: { value: `mensaje ${i}` } });
+      fireEvent.click(screen.getByRole('button', { name: 'Enviar' }));
+      await waitFor(() => expect(enviarMensajeAKadi).toHaveBeenCalledTimes(i + 1));
+      await waitFor(() => expect(screen.getByLabelText('Tu mensaje')).toBeEnabled());
     }
+    expect(screen.queryByText(/Llegamos al máximo/)).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Tu mensaje'), { target: { value: 'el último' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar' }));
 
     expect(await screen.findByText(/Llegamos al máximo/)).toBeInTheDocument();
     expect(screen.queryByLabelText('Tu mensaje')).not.toBeInTheDocument();
-  }, 20000);
+  }, 60000);
 
   it('"Generar manual" avisa al modal', async () => {
     const onUsarFormulario = vi.fn();

@@ -5,7 +5,7 @@ import { crearTicket } from '../services/tickets.service';
 import Button from './Button';
 import '../styles/ChatKadi.css';
 
-const MAX_MENSAJES = 10;
+const MAX_MENSAJES = 50;
 const SALUDO = {
   rol: 'kadi',
   texto: 'Hola, soy Kadi. Contame qué te pasa o qué necesitás y armamos el ticket juntos.',

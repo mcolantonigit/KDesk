@@ -121,6 +121,23 @@ describe('Kadi', () => {
     expect(conversacion).toContain('Persona: Hola');
   });
 
+  it('Kadi indaga con preguntas de observación pero sin dar diagnóstico, y se le pide cerrar al pasar la meta de 15', async () => {
+    ejecutarClaude.mockResolvedValue('{"mensaje": "ok", "ticket": null}');
+    const charla = (n) => Array.from({ length: n }, (_, i) => persona(`mensaje ${i}`));
+
+    await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: charla(3) });
+    await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: charla(16) });
+    await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: charla(48) });
+
+    const [corta, pasadaLaMeta, casiEnElTope] = ejecutarClaude.mock.calls.map(([datos]) => datos.sistema);
+    expect(corta).toContain('Indagá un poco más');
+    expect(corta).toContain('Jamás');
+    expect(corta).toContain('luz de link');
+    expect(corta).not.toContain('Ya pasaste la meta');
+    expect(pasadaLaMeta).toContain('Ya pasaste la meta');
+    expect(casiEnElTope).toContain('Cerrá ya');
+  });
+
   it('devuelve el ticket propuesto con los nombres, y el título recortado a 35', async () => {
     const titulo = 'Impresora de la planta que no imprime nada de nada';
     ejecutarClaude.mockResolvedValue(
@@ -153,12 +170,12 @@ describe('Kadi', () => {
     expect(res.body.ticket).toBeNull();
   });
 
-  it('si Claude falla avisa con 502, y si la charla se pasa de 10 mensajes la corta', async () => {
+  it('si Claude falla avisa con 502, y si la charla se pasa de 50 mensajes la corta', async () => {
     ejecutarClaude.mockRejectedValue(new Error('se cayó'));
     const caido = await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: [persona('hola')] });
     expect(caido.status).toBe(502);
 
-    const largo = Array.from({ length: 11 }, () => persona('seguimos'));
+    const largo = Array.from({ length: 51 }, () => persona('seguimos'));
     const res = await api().post('/api/kadi/mensaje').set('Cookie', usuario.cookie).send({ mensajes: largo });
     expect(res.status).toBe(400);
   });
