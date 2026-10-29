@@ -756,8 +756,8 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
 - [x] ~~Cloudflare Turnstile (captcha)~~: descartado. Desde internet solo se
       entra con Microsoft 365, que ya tiene su propia protección contra bots;
       alcanza con el límite de pedidos de Cloudflare
-- [ ] **Kadi** (versión 1.4): asistente que arma el ticket en una charla de hasta 10
-      mensajes (reemplaza al formulario de "Nuevo ticket"; "Generar manual" abre
+- [ ] **Kadi** (versión 1.4): asistente que arma el ticket en una charla (meta de
+      unos 15 mensajes, tope de 50; reemplaza al formulario de "Nuevo ticket"; "Generar manual" abre
       el formulario de siempre). Propone tipo, prioridad sugerida, título y
       descripción; el ticket se crea cuando la persona confirma.
   - [x] Prototipo en `develop`: `POST /api/kadi/mensaje`, instrucciones en
@@ -769,11 +769,27 @@ de las secciones 12 a 15 (deploy del 26/10/2026). Esto es lo pensado para la
         interruptor general `KADI_ACTIVA=on` del .env. Sin `KADI_ACTIVA` la
         columna no se ve y nadie tiene Kadi. Las cuentas nuevas nacen con la casilla
         tildada (también en producción); las que ya existían quedan sin Kadi
-  - [ ] **Antes de desplegar este código en producción:** agregar la columna a la
-        base de producción: `ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS
-        kadi_habilitada BOOLEAN NOT NULL DEFAULT FALSE;` (si no, falla todo lo que
-        lee usuarios). Dejar `KADI_ACTIVA` sin definir en el .env de producción
-  - [ ] Para usuarios reales falta otra fuente de respuestas que no cueste: Kadi
+  - [x] Columna `kadi_habilitada` agregada a la base de producción (29/10/2026,
+        128 usuarios, ninguno con Kadi). Hay que hacerlo antes de desplegar este
+        código en cualquier base nueva
+  - [x] Kadi indaga un poco más cuando el problema parece simple (red, impresora,
+        PC) con preguntas de observación, sin dar diagnóstico a la persona; la
+        descripción del ticket cierra con "Posible diagnóstico:" para el técnico
+  - [x] **Decisión de Matías (29/10/2026): Kadi queda prendida en producción**
+        (`KADI_ACTIVA=on`) usando su sesión de Claude en el server, y las cuentas
+        nuevas nacen con la casilla tildada. Modelo `KADI_MODELO=haiku`
+  - [x] Corregido: si `claude.exe` se cerraba antes de leer la charla, el error de
+        escritura sin capturar tiraba abajo todo el backend (ahora responde 502)
+  - [ ] **Pendiente:** en el server la tarea "KDesk Backend" corre como SYSTEM, que
+        no ve la sesión de Claude de `Administrador`. Solución en `develop`
+        (`de8526d`, **todavía no está en `main`**):
+        `KADI_CLAUDE_HOME=C:/Users/Administrador.KALOP` en el .env del server. Si
+        no alcanza (la sesión no es un archivo que SYSTEM pueda leer), cambiar la
+        cuenta de la tarea a `Administrador`
+  - [ ] Probar Kadi en kdesk.ar con un usuario con la casilla tildada. Si falla,
+        el error se ve en el chat y en el log del backend
+  - [ ] Riesgo conocido: Kadi usa la suscripción personal de Matías (uso personal);
+        para atender a toda la empresa falta otra fuente que no cueste: Kadi
         guiada sin IA (preguntas fijas y reglas de prioridad) o un modelo local
         (Ollama). La pieza que da las respuestas es `utils/claudeLocal.util.js`
 - [ ] Sector Mantenimiento: **pasa a la próxima versión** (1.4). Rol nuevo
