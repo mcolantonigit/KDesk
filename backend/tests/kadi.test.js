@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { pool } from '../config/db.js';
 import { ejecutarClaude } from '../utils/claudeLocal.util.js';
+import * as usuariosModel from '../models/usuarios.model.js';
 import { api, crearUsuario, limpiarDatos } from './helpers.js';
 
 vi.mock('../utils/claudeLocal.util.js', () => ({ ejecutarClaude: vi.fn() }));
@@ -74,6 +75,25 @@ describe('Kadi', () => {
 
     const inexistente = await api().patch('/api/usuarios/999999/kadi').set('Cookie', admin.cookie).send({ habilitada: true });
     expect(inexistente.status).toBe(404);
+  });
+
+  it('las cuentas nuevas nacen con Kadi habilitada solo donde Kadi está activa', async () => {
+    const datos = async (correo) => ({
+      nombre: 'Nueva',
+      apellido: 'Cuenta',
+      correo,
+      passwordHash: 'x',
+      idRol: 1,
+      idSucursal: (await pool.query('SELECT id FROM sucursales ORDER BY id LIMIT 1')).rows[0].id,
+      idSector: (await pool.query('SELECT id FROM sectores ORDER BY id LIMIT 1')).rows[0].id,
+    });
+
+    const conKadi = await usuariosModel.create(await datos('nueva-on@tuempresa.com'));
+    delete process.env.KADI_ACTIVA;
+    const sinKadi = await usuariosModel.create(await datos('nueva-off@tuempresa.com'));
+
+    expect(conKadi.kadi_habilitada).toBe(true);
+    expect(sinKadi.kadi_habilitada).toBe(false);
   });
 
   it('el listado de usuarios informa quién tiene Kadi', async () => {

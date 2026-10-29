@@ -99,12 +99,14 @@ export async function updateActivo(id, activo) {
   return result.rows[0];
 }
 
+// Donde Kadi está activa (KADI_ACTIVA=on, solo desarrollo) las cuentas nuevas
+// nacen con Kadi habilitada; en el resto de los entornos, apagada.
 export async function create({ nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector }) {
   const result = await pool.query(
-    `INSERT INTO usuarios (nombre, apellido, correo, password_hash, id_rol, id_sucursal, id_sector)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO usuarios (nombre, apellido, correo, password_hash, id_rol, id_sucursal, id_sector, kadi_habilitada)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING ${CAMPOS_PUBLICOS}`,
-    [nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector]
+    [nombre, apellido, correo, passwordHash, idRol, idSucursal, idSector, process.env.KADI_ACTIVA === 'on']
   );
   return result.rows[0];
 }
